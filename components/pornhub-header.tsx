@@ -56,11 +56,11 @@ export function PornhubHeader() {
             </button>
 
             <Link
-                              href="/dashboard"
+              href="/dashboard"
               className="flex items-center hover:opacity-80 hover:shadow-[0_0_10px_rgba(255,107,53,0.2)] transition-all p-1 rounded"
             >
-              <span className="text-white text-2xl font-bold">Bonk</span>
-              <span className="bg-orange-500 text-black px-2 py-1 rounded text-xl font-bold">hub</span>
+              <span className="text-white text-3xl font-bold mr-1">Bonk</span>
+              <span className="bg-orange-500 text-black px-2 py-1.5 rounded-md text-2xl font-bold">hub</span>
             </Link>
           </div>
 
@@ -90,12 +90,12 @@ export function PornhubHeader() {
                 <MessageCircle className="w-6 h-6" />
               </button>
             </Link>
-            <button className="hidden sm:block text-gray-400 hover:text-orange-500 hover:shadow-[0_0_10px_rgba(255,107,53,0.3)] transition-all p-2 rounded">
+            <Link href="/meme-gallery" className="hidden sm:block text-gray-400 hover:text-orange-500 hover:shadow-[0_0_10px_rgba(255,107,53,0.3)] transition-all p-2 rounded">
               <Camera className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-700 rounded-full p-1" />
-            </button>
-            <button className="text-gray-400 hover:text-orange-500 hover:shadow-[0_0_10px_rgba(255,107,53,0.3)] transition-all p-2 rounded">
+            </Link>
+            <Link href="/profile" className="text-gray-400 hover:text-orange-500 hover:shadow-[0_0_10px_rgba(255,107,53,0.3)] transition-all p-2 rounded">
               <User className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-700 rounded-full p-1" />
-            </button>
+            </Link>
           </div>
         </div>
 

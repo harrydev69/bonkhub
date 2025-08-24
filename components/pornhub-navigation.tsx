@@ -13,7 +13,7 @@ export function PornhubNavigation() {
   return (
     <nav className="bg-black border-b border-gray-800">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-12 text-sm">
+        <div className="flex items-center justify-center h-12 text-sm relative">
           <div className="flex items-center space-x-8">
             {["BONK DATA", "MEME CENTRO", "CRYPTO WELLNESS", "INSIGHTS", "SITES", "SHOP", "TRUST & SAFETY"].map(
               (item) => (
@@ -23,7 +23,7 @@ export function PornhubNavigation() {
               ),
             )}
           </div>
-          <div className="text-gray-300">EN</div>
+          <div className="absolute right-4 text-gray-300">EN</div>
         </div>
       </div>
     </nav>
