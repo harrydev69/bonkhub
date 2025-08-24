@@ -2,6 +2,7 @@ import { AuthGuard } from "@/components/auth-guard"
 import { PornhubNavigation } from "@/components/pornhub-navigation"
 import { PornhubHeader } from "@/components/pornhub-header"
 import { AnalyticsGrid } from "@/components/analytics-grid"
+import { Footer } from "@/components/footer"
 
 export default function DashboardPage() {
   return (
@@ -30,7 +31,6 @@ export default function DashboardPage() {
                 "defi metrics",
                 "social trends",
                 "whale activity",
-                "price alerts",
               ].map((tag) => (
                 <button
                   key={tag}
@@ -45,6 +45,9 @@ export default function DashboardPage() {
           {/* Analytics Grid */}
           <AnalyticsGrid />
         </main>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </AuthGuard>
   )

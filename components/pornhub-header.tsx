@@ -2,14 +2,17 @@
 
 import { Search, MessageCircle, Camera, User, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { MobileNavigation } from "./mobile-navigation"
 
 export function PornhubHeader() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const [clickedDropdown, setClickedDropdown] = useState<string | null>(null)
   const pathname = usePathname()
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const navItems = [
     { name: "HOME", href: "/dashboard" },
@@ -36,6 +39,50 @@ export function PornhubHeader() {
 
   const isActive = (href: string) => pathname === href
   const isDropdownActive = (dropdownItems: any[]) => dropdownItems?.some((item) => pathname === item.href)
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setActiveDropdown(null)
+        setClickedDropdown(null)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Handle dropdown interactions
+  const handleDropdownEnter = (itemName: string) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+    setActiveDropdown(itemName)
+  }
+
+  const handleDropdownLeave = (itemName: string) => {
+    timeoutRef.current = setTimeout(() => {
+      // Only close if not clicked and mouse is not over dropdown
+      if (clickedDropdown !== itemName) {
+        setActiveDropdown(null)
+      }
+    }, 300) // 300ms delay before closing
+  }
+
+  const handleDropdownClick = (itemName: string) => {
+    if (clickedDropdown === itemName) {
+      setClickedDropdown(null)
+      setActiveDropdown(null)
+    } else {
+      setClickedDropdown(itemName)
+      setActiveDropdown(itemName)
+    }
+  }
+
+  const isDropdownOpen = (itemName: string) => {
+    return activeDropdown === itemName || clickedDropdown === itemName
+  }
 
   return (
     <header className="bg-black border-b border-gray-800">
@@ -93,6 +140,8 @@ export function PornhubHeader() {
             <Link href="/meme-gallery" className="hidden sm:block text-gray-400 hover:text-orange-500 hover:shadow-[0_0_10px_rgba(255,107,53,0.3)] transition-all p-2 rounded">
               <Camera className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-700 rounded-full p-1" />
             </Link>
+            
+            {/* Profile Icon - Now aligned with other icons */}
             <Link href="/profile" className="text-gray-400 hover:text-orange-500 hover:shadow-[0_0_10px_rgba(255,107,53,0.3)] transition-all p-2 rounded">
               <User className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-700 rounded-full p-1" />
             </Link>
@@ -100,17 +149,18 @@ export function PornhubHeader() {
         </div>
 
         {/* Navigation Menu */}
-        <nav className="border-t border-gray-800 relative hidden md:block">
+        <nav className="border-t border-gray-800 relative hidden md:block" ref={dropdownRef}>
           <div className="flex items-center justify-center space-x-8 h-12">
             {navItems.map((item) => (
               <div key={item.name} className="relative">
                 {item.dropdown ? (
                   <div
                     className="relative"
-                    onMouseEnter={() => setActiveDropdown(item.name)}
-                    onMouseLeave={() => setActiveDropdown(null)}
+                    onMouseEnter={() => handleDropdownEnter(item.name)}
+                    onMouseLeave={() => handleDropdownLeave(item.name)}
                   >
                     <button
+                      onClick={() => handleDropdownClick(item.name)}
                       className={`text-sm font-medium transition-all flex items-center space-x-1 px-2 py-1 rounded hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] ${
                         isDropdownActive(item.dropdownItems)
                           ? "text-orange-500 border-b-2 border-orange-500"
@@ -118,16 +168,24 @@ export function PornhubHeader() {
                       }`}
                     >
                       <span>{item.name}</span>
-                      <ChevronDown className="w-3 h-3" />
+                      <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isDropdownOpen(item.name) ? 'rotate-180' : ''}`} />
                     </button>
 
-                    {activeDropdown === item.name && item.dropdownItems && (
-                      <div className="absolute top-full left-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50 min-w-[200px] shadow-[0_0_20px_rgba(255,107,53,0.2)]">
+                    {isDropdownOpen(item.name) && item.dropdownItems && (
+                      <div 
+                        className="absolute top-full left-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50 min-w-[200px] shadow-[0_0_20px_rgba(255,107,53,0.2)] animate-in fade-in-0 slide-in-from-top-2 duration-200"
+                        onMouseEnter={() => handleDropdownEnter(item.name)}
+                        onMouseLeave={() => handleDropdownLeave(item.name)}
+                      >
                         {item.dropdownItems.map((dropdownItem) => (
                           <Link
                             key={dropdownItem.name}
                             href={dropdownItem.href}
-                            className="block px-4 py-2 text-sm text-gray-300 hover:text-orange-500 hover:bg-gray-800 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all first:rounded-t-lg last:rounded-b-lg"
+                            className="block px-4 py-3 text-sm text-gray-300 hover:text-orange-500 hover:bg-gray-800 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all first:rounded-t-lg last:rounded-b-lg border-b border-gray-800 last:border-b-0"
+                            onClick={() => {
+                              setActiveDropdown(null)
+                              setClickedDropdown(null)
+                            }}
                           >
                             {dropdownItem.name}
                           </Link>
