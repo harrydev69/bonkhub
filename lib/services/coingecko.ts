@@ -90,4 +90,12 @@ export const CoinGecko = {
     order?: string;
     depth?: string;
   }) => request(`coins/${id}/tickers`, params),
+  
+  // Simple price data
+  simplePrice: (ids: string, vs_currencies: string, include_market_cap?: boolean) => 
+    request('simple/price', {
+      ids,
+      vs_currencies,
+      include_market_cap: include_market_cap ? 'true' : 'false'
+    }),
 };
