@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -60,6 +60,23 @@ export function SocialFeed({
   const [currentPage, setCurrentPage] = useState(1)
   const postsPerPage = 7
 
+  // Fetch influencers data to filter posts
+  const { data: influencersData } = useQuery({
+    queryKey: ["influencers", "bonk", 200], // Use same key as InfluencerList
+    queryFn: async () => {
+      const res = await fetch(`/api/influencers/bonk?limit=200`, {
+        cache: "force-cache",
+      })
+      if (!res.ok) {
+        const body = await res.text().catch(() => "")
+        throw new Error(`influencers ${res.status}: ${body || res.statusText}`)
+      }
+      const json = await res.json().catch(() => ({}))
+      return json.influencers || []
+    },
+    staleTime: Infinity,
+  })
+
   const { data: rawData, isLoading, error } = useQuery({
     queryKey: ["feeds", "bonk", limit],
     queryFn: async () => {
@@ -84,7 +101,19 @@ export function SocialFeed({
     staleTime: Infinity,
   })
 
-  const posts = rawData || []
+  // Get influencer names for filtering
+  const influencerNames = useMemo(() => {
+    if (!influencersData || !Array.isArray(influencersData)) return new Set()
+    return new Set(influencersData.map((inf: any) => inf.creator_name?.toLowerCase()))
+  }, [influencersData])
+
+  // Filter posts to only include those from influencers
+  const posts = useMemo(() => {
+    if (!rawData || !Array.isArray(rawData)) return []
+    return rawData.filter((post: Post) => 
+      post.creator_name && influencerNames.has(post.creator_name.toLowerCase())
+    )
+  }, [rawData, influencerNames])
   
   const totalPages = Math.ceil(posts.length / postsPerPage)
   const indexOfLastPost = currentPage * postsPerPage
