@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { InteractivePriceChart } from "./interactive-price-chart"
+
 import { BONKNewsFeed } from "./bonk-news-feed"
 import { TrendingUp, ArrowUpRight, ArrowDownRight, AlertCircle, ChevronDown, Copy, ExternalLink } from "lucide-react"
 
@@ -46,10 +46,18 @@ export function ComprehensiveBONKDashboard() {
     const fetchData = async () => {
       try {
         setLoading(true)
-        const response = await fetch("/api/bonk/overview")
+        console.log('🔄 Fetching BONK data from /api/bonk/overview...')
+        
+        const response = await fetch("/api/bonk/overview", {
+          cache: 'no-store', // Force fresh data
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        })
 
         if (response.ok) {
           const overviewData = await response.json()
+          console.log('✅ BONK data received:', overviewData)
           setOverview(overviewData)
         } else {
           throw new Error(`Failed to fetch overview: ${response.status}`)
@@ -130,15 +138,7 @@ export function ComprehensiveBONKDashboard() {
     <div className="flex gap-6">
       {/* Main Content Area */}
       <div className="flex-1 space-y-6">
-        {/* BONK Price Chart - Main Feature */}
-        <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">
-          <CardHeader>
-            <CardTitle className="text-white">BONK Price Chart</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <InteractivePriceChart />
-          </CardContent>
-        </Card>
+
 
         {/* Price Performance Timeline */}
         <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">

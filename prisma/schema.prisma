@@ -1,0 +1,278 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ========================================
+// USER MANAGEMENT & AUTHENTICATION
+// ========================================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Profile
+  avatar    String?
+  bio       String?
+  isVerified Boolean @default(false)
+  isPremium Boolean  @default(false)
+  
+  // BONK Stats
+  bonkBalance Float? @default(0)
+  nbonkBalance Float? @default(0)
+  lastBalanceUpdate DateTime?
+  
+  // Relationships
+  watchlists Watchlist[]
+  favorites  Favorite[]
+  searches   SearchHistory[]
+  portfolios Portfolio[]
+  alerts     PriceAlert[]
+  apiKeys    ApiKey[]
+  
+  @@map("users")
+}
+
+// ========================================
+// TOKEN & CRYPTO DATA
+// ========================================
+
+model Token {
+  id          String   @id @default(cuid())
+  symbol      String   @unique
+  name        String
+  address     String?  // Solana address
+  decimals    Int      @default(9)
+  totalSupply Float?
+  coingeckoId String?  // CoinGecko ID for API calls
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relationships
+  marketData MarketData[]
+  favorites  Favorite[]
+  portfolios Portfolio[]
+  priceAlerts PriceAlert[]
+  watchlistTokens WatchlistToken[]
+  
+  @@map("tokens")
+}
+
+// Real-time Market Data from CoinGecko
+model MarketData {
+  id        String   @id @default(cuid())
+  tokenId   String
+  token     Token   @relation(fields: [tokenId], references: [id])
+  
+  // Price & Volume
+  price     Float
+  priceChange24h Float?
+  priceChange7d Float?
+  priceChange30d Float?
+  marketCap Float?
+  volume24h Float?
+  circulatingSupply Float?
+  
+  // Social Metrics (LunarCrush)
+  socialScore Float?
+  communityScore Float?
+  developerScore Float?
+  socialVolume Float?
+  socialDominance Float?
+  
+  // Additional Metrics
+  ath Float?
+  athChangePercentage Float?
+  atl Float?
+  atlChangePercentage Float?
+  
+  timestamp DateTime @default(now())
+  
+  @@index([tokenId, timestamp])
+  @@map("market_data")
+}
+
+// ========================================
+// USER FEATURES
+// ========================================
+
+// User Watchlists
+model Watchlist {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  name   String
+  isDefault Boolean @default(false)
+  watchlistTokens WatchlistToken[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("watchlists")
+}
+
+// Junction table for Watchlist <-> Token many-to-many
+model WatchlistToken {
+  id          String @id @default(cuid())
+  watchlistId String
+  watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+  tokenId     String
+  token       Token @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+  addedAt     DateTime @default(now())
+  
+  @@unique([watchlistId, tokenId])
+  @@map("watchlist_tokens")
+}
+
+// User Favorites
+model Favorite {
+  id       String @id @default(cuid())
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+  tokenId  String
+  token    Token  @relation(fields: [tokenId], references: [id])
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, tokenId])
+  @@map("favorites")
+}
+
+// Search History
+model SearchHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  query     String
+  resultType String? // "token", "news", "analytics"
+  timestamp DateTime @default(now())
+  
+  @@index([userId, timestamp])
+  @@map("search_history")
+}
+
+// User Portfolios
+model Portfolio {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  name      String
+  balance   Float
+  tokenId   String
+  token     Token    @relation(fields: [tokenId], references: [id])
+  purchasePrice Float?
+  purchaseDate DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("portfolios")
+}
+
+// ========================================
+// PRICE ALERTS & NOTIFICATIONS
+// ========================================
+
+model PriceAlert {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  tokenId   String
+  token     Token    @relation(fields: [tokenId], references: [id])
+  
+  // Alert Conditions
+  targetPrice Float
+  condition   String // "above", "below"
+  isActive    Boolean @default(true)
+  isTriggered Boolean @default(false)
+  
+  // Notification
+  notificationSent Boolean @default(false)
+  triggeredAt DateTime?
+  createdAt DateTime @default(now())
+  
+  @@map("price_alerts")
+}
+
+// ========================================
+// API KEYS & RATE LIMITING
+// ========================================
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  name      String
+  key       String   @unique
+  permissions String[] // ["read", "write", "admin"]
+  isActive  Boolean  @default(true)
+  lastUsed  DateTime?
+  createdAt DateTime @default(now())
+  
+  @@map("api_keys")
+}
+
+// ========================================
+// ANALYTICS & TRACKING
+// ========================================
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  userId    String?
+  eventType String   // "page_view", "api_call", "search", "favorite"
+  eventData Json?    // Additional event data
+  userAgent String?
+  ipAddress String?
+  timestamp DateTime @default(now())
+  
+  @@index([eventType, timestamp])
+  @@map("analytics_events")
+}
+
+// ========================================
+// NEWS & CONTENT
+// ========================================
+
+model NewsArticle {
+  id          String   @id @default(cuid())
+  title       String
+  content     String?
+  summary     String?
+  url         String   @unique
+  source      String
+  publishedAt DateTime?
+  sentiment   String?  // "positive", "negative", "neutral"
+  relevanceScore Float?
+  createdAt   DateTime @default(now())
+  
+  @@index([publishedAt, sentiment])
+  @@map("news_articles")
+}
+
+// ========================================
+// CACHE & PERFORMANCE
+// ========================================
+
+model CacheEntry {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   // JSON string
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  @@index([expiresAt])
+  @@map("cache_entries")
+}

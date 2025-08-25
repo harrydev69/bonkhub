@@ -1,91 +1,95 @@
-import { NextResponse } from "next/server"
-
-const mockEcosystemData = [
-  {
-    rank: 1,
-    name: "Bonk",
-    symbol: "BONK",
-    price: 0.000034,
-    change24h: 15.7,
-    marketCap: 2340000000,
-    volume24h: 145000000,
-  },
-  {
-    rank: 2,
-    name: "Useless",
-    symbol: "USELESS",
-    price: 0.000000234,
-    change24h: 23.4,
-    marketCap: 45000000,
-    volume24h: 2300000,
-  },
-  {
-    rank: 3,
-    name: "Hosico",
-    symbol: "HOSICO",
-    price: 0.000006,
-    change24h: -8.2,
-    marketCap: 12000000,
-    volume24h: 890000,
-  },
-  {
-    rank: 4,
-    name: "Samoyedcoin",
-    symbol: "SAMO",
-    price: 0.0234,
-    change24h: 12.1,
-    marketCap: 78000000,
-    volume24h: 4500000,
-  },
-  { rank: 5, name: "Cope", symbol: "COPE", price: 0.0456, change24h: -5.7, marketCap: 34000000, volume24h: 1200000 },
-  { rank: 6, name: "Rope", symbol: "ROPE", price: 0.000123, change24h: 18.9, marketCap: 23000000, volume24h: 890000 },
-  {
-    rank: 7,
-    name: "Cheems",
-    symbol: "CHEEMS",
-    price: 0.00789,
-    change24h: 7.3,
-    marketCap: 56000000,
-    volume24h: 2100000,
-  },
-  {
-    rank: 8,
-    name: "Doge Killer",
-    symbol: "LEASH",
-    price: 234.56,
-    change24h: -3.4,
-    marketCap: 89000000,
-    volume24h: 3400000,
-  },
-  { rank: 9, name: "FLOKI", symbol: "FLOKI", price: 0.000234, change24h: 9.8, marketCap: 67000000, volume24h: 2800000 },
-  {
-    rank: 10,
-    name: "Shiba Predator",
-    symbol: "QOM",
-    price: 0.00000089,
-    change24h: 14.2,
-    marketCap: 15000000,
-    volume24h: 670000,
-  },
-]
+// app/api/ecosystem/route.ts
+import { NextResponse } from 'next/server';
+import { CoinGecko } from '@/lib/services/coingecko';
 
 export async function GET() {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 300))
+    const d = await CoinGecko.coin('bonk');
 
-    const updatedData = mockEcosystemData.map((token) => ({
-      ...token,
-      price: token.price * (1 + (Math.random() - 0.5) * 0.015),
-      change24h: token.change24h + (Math.random() - 0.5) * 1.5,
-      lastUpdated: new Date().toISOString(),
-    }))
+    const md = d.market_data || {};
+    const ath = md.ath || {};
+    const atl = md.atl || {};
+    const ath_change_pct = md.ath_change_percentage || {};
+    const atl_change_pct = md.atl_change_percentage || {};
+    const ath_date = md.ath_date || {};
+    const atl_date = md.atl_date || {};
 
-    return NextResponse.json({
-      success: true,
-      data: updatedData,
-      timestamp: new Date().toISOString(),
-    })
-  } catch (error) {
-    return NextResponse.json({ success: false, error: "Failed to fetch ecosystem data" }, { status: 500 })
+    const item = {
+      // Identity
+      id: d.id,
+      symbol: (d.symbol || '').toUpperCase(),
+      name: d.name,
+      image: d.image?.small || d.image?.thumb || d.image?.large || '',
+      cg_rank: d.coingecko_rank ?? null,
+      cg_score: d.coingecko_score ?? null,
+
+      // Prices
+      price_usd: md.current_price?.usd ?? null,
+      price_php: md.current_price?.php ?? null,
+
+      // % changes
+      change_1h: md.price_change_percentage_1h_in_currency?.usd ?? null,
+      change_24h: md.price_change_percentage_24h ?? null,
+      change_7d: md.price_change_percentage_7d_in_currency?.usd ?? null,
+      change_14d: md.price_change_percentage_14d_in_currency?.usd ?? null,
+      change_30d: md.price_change_percentage_30d_in_currency?.usd ?? null,
+      change_60d: md.price_change_percentage_60d_in_currency?.usd ?? null,
+      change_200d: md.price_change_percentage_200d_in_currency?.usd ?? null,
+      change_1y: md.price_change_percentage_1y_in_currency?.usd ?? null,
+
+      // Market stats
+      market_cap: md.market_cap?.usd ?? null,
+      market_cap_rank: d.market_cap_rank ?? null,
+      fdv: md.fully_diluted_valuation?.usd ?? null,
+      volume_24h: md.total_volume?.usd ?? null,
+      circulating_supply: md.circulating_supply ?? null,
+      total_supply: md.total_supply ?? null,
+      max_supply: md.max_supply ?? null,
+
+      // ATH/ATL blocks (USD)
+      ath_usd: ath.usd ?? null,
+      ath_change_pct_usd: ath_change_pct.usd ?? null,
+      ath_date_usd: ath_date.usd ?? null,
+      atl_usd: atl.usd ?? null,
+      atl_change_pct_usd: atl_change_pct.usd ?? null,
+      atl_date_usd: atl_date.usd ?? null,
+
+      // Sparkline (7d)
+      sparkline_7d: md.sparkline_7d?.price ?? [],
+
+      // Contracts / Links
+      sol_mint: d.platforms?.solana ?? 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+      links: {
+        homepage: d.links?.homepage?.[0] || null,
+        whitepaper: d.links?.whitepaper || null,
+        twitter: d.links?.twitter_screen_name ? `https://x.com/${d.links.twitter_screen_name}` : null,
+        telegram: d.links?.telegram_channel_identifier ? `https://t.me/${d.links.telegram_channel_identifier}` : null,
+        discord: d.links?.chat_url?.find((u: string) => u?.includes('discord')) || null,
+        github: d.links?.repos_url?.github?.[0] || null,
+      },
+
+      // Community / Dev
+      community: {
+        twitter_followers: d.community_data?.twitter_followers ?? null,
+        reddit_subscribers: d.community_data?.reddit_subscribers ?? null,
+        telegram_channel_user_count: d.community_data?.telegram_channel_user_count ?? null,
+      },
+      developer: {
+        stars: d.developer_data?.stars ?? null,
+        forks: d.developer_data?.forks ?? null,
+        subscribers: d.developer_data?.subscribers ?? null,
+        total_issues: d.developer_data?.total_issues ?? null,
+        closed_issues: d.developer_data?.closed_issues ?? null,
+        pull_requests_merged: d.developer_data?.pull_requests_merged ?? null,
+        commit_count_4_weeks: d.developer_data?.commit_count_4_weeks ?? null,
+      },
+
+      last_updated: d.last_updated ?? null,
+    };
+
+    return NextResponse.json({ items: [item], vs: 'usd' }, { status: 200 });
+  } catch (e: any) {
+    console.error('Error in /api/ecosystem:', e?.message || e);
+    return NextResponse.json({ items: [], vs: 'usd' }, { status: 200 });
   }
 }
