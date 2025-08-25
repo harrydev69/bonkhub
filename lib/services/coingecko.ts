@@ -70,4 +70,24 @@ export const CoinGecko = {
     developer_data: 'true',
     sparkline: 'true',
   }),
+
+  // EXACT CG "price performance" data (1h,24h,7d,14d,30d,1y)
+  coinsMarkets: (params: {
+    vs_currency: string;          // e.g. 'usd'
+    ids: string;                  // e.g. 'bonk'
+    price_change_percentage?: string;  // '1h,24h,7d,14d,30d,1y'
+    per_page?: number;
+    page?: number;
+    sparkline?: string;
+    locale?: string;
+  }) => request(`coins/markets`, params),
+
+  // Live trading pairs and exchanges data
+  tickers: (id: string, params?: {
+    exchange_ids?: string;
+    include_exchange_logo?: string;
+    page?: number;
+    order?: string;
+    depth?: string;
+  }) => request(`coins/${id}/tickers`, params),
 };

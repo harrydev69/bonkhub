@@ -6,6 +6,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 import { BONKNewsFeed } from "./bonk-news-feed"
 import { TrendingUp, ArrowUpRight, ArrowDownRight, AlertCircle, ChevronDown, Copy, ExternalLink } from "lucide-react"
+import { useBonkPerformance } from '@/hooks/useBonkPerformance'
+import { useBonkTickers } from '@/hooks/useBonkTickers'
 
 // Types for our API responses
 type OverviewData = {
@@ -41,6 +43,8 @@ export function ComprehensiveBONKDashboard() {
   const [overview, setOverview] = useState<OverviewData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const perf = useBonkPerformance('usd')
+  const { data: tickersData, loading: tickersLoading } = useBonkTickers(1, 'volume_desc')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -116,6 +120,10 @@ export function ComprehensiveBONKDashboard() {
     return num.toFixed(2)
   }
 
+  const formatExactValue = (num: number) => {
+    return `$${num.toLocaleString()}`
+  }
+
   const formatPercentage = (pct: number) => {
     const isPositive = pct >= 0
     return (
@@ -150,101 +158,36 @@ export function ComprehensiveBONKDashboard() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-6 gap-6">
-              <div className="text-center">
-                <div className="text-gray-400 text-sm mb-2">1h</div>
-                <div className="flex flex-col items-center space-y-1">
-                  {overview.changePct.h1 >= 0 ? (
-                    <ArrowUpRight className="h-4 w-4 text-green-400" />
-                  ) : (
-                    <ArrowDownRight className="h-4 w-4 text-red-400" />
-                  )}
-                  <span
-                    className={`font-bold text-lg ${overview.changePct.h1 >= 0 ? "text-green-400" : "text-red-400"}`}
-                  >
-                    {Math.abs(overview.changePct.h1).toFixed(1)}%
-                  </span>
+              {[
+                { label: '1h', value: perf?.changes['1h'] },
+                { label: '24h', value: perf?.changes['24h'] },
+                { label: '7d', value: perf?.changes['7d'] },
+                { label: '14d', value: perf?.changes['14d'] },
+                { label: '30d', value: perf?.changes['30d'] },
+                { label: '1y', value: perf?.changes['1y'] }
+              ].map(({ label, value }) => (
+                <div key={label} className="text-center">
+                  <div className="text-gray-400 text-sm mb-2">{label}</div>
+                  <div className="flex flex-col items-center space-y-1">
+                    {value != null ? (
+                      <>
+                        {value >= 0 ? (
+                          <ArrowUpRight className="h-4 w-4 text-green-400" />
+                        ) : (
+                          <ArrowDownRight className="h-4 w-4 text-red-400" />
+                        )}
+                        <span
+                          className={`font-bold text-lg ${value >= 0 ? "text-green-400" : "text-red-400"}`}
+                        >
+                          {Math.abs(value).toFixed(1)}%
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-gray-500 text-sm">—</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-
-              <div className="text-center">
-                <div className="text-gray-400 text-sm mb-2">24h</div>
-                <div className="flex flex-col items-center space-y-1">
-                  {overview.changePct.h24 >= 0 ? (
-                    <ArrowUpRight className="h-4 w-4 text-green-400" />
-                  ) : (
-                    <ArrowDownRight className="h-4 w-4 text-red-400" />
-                  )}
-                  <span
-                    className={`font-bold text-lg ${overview.changePct.h24 >= 0 ? "text-green-400" : "text-red-400"}`}
-                  >
-                    {Math.abs(overview.changePct.h24).toFixed(1)}%
-                  </span>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <div className="text-gray-400 text-sm mb-2">7d</div>
-                <div className="flex flex-col items-center space-y-1">
-                  {overview.changePct.d7 >= 0 ? (
-                    <ArrowUpRight className="h-4 w-4 text-green-400" />
-                  ) : (
-                    <ArrowDownRight className="h-4 w-4 text-red-400" />
-                  )}
-                  <span
-                    className={`font-bold text-lg ${overview.changePct.d7 >= 0 ? "text-green-400" : "text-red-400"}`}
-                  >
-                    {Math.abs(overview.changePct.d7).toFixed(1)}%
-                  </span>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <div className="text-gray-400 text-sm mb-2">14d</div>
-                <div className="flex flex-col items-center space-y-1">
-                  {overview.changePct.d7 >= 0 ? (
-                    <ArrowUpRight className="h-4 w-4 text-green-400" />
-                  ) : (
-                    <ArrowDownRight className="h-4 w-4 text-red-400" />
-                  )}
-                  <span
-                    className={`font-bold text-lg ${overview.changePct.d7 >= 0 ? "text-green-400" : "text-red-400"}`}
-                  >
-                    {Math.abs(overview.changePct.d7).toFixed(1)}%
-                  </span>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <div className="text-gray-400 text-sm mb-2">30d</div>
-                <div className="flex flex-col items-center space-y-1">
-                  {overview.changePct.d30 >= 0 ? (
-                    <ArrowUpRight className="h-4 w-4 text-green-400" />
-                  ) : (
-                    <ArrowDownRight className="h-4 w-4 text-red-400" />
-                  )}
-                  <span
-                    className={`font-bold text-lg ${overview.changePct.d30 >= 0 ? "text-green-400" : "text-red-400"}`}
-                  >
-                    {Math.abs(overview.changePct.d30).toFixed(1)}%
-                  </span>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <div className="text-gray-400 text-sm mb-2">1y</div>
-                <div className="flex flex-col items-center space-y-1">
-                  {overview.changePct.y1 >= 0 ? (
-                    <ArrowUpRight className="h-4 w-4 text-green-400" />
-                  ) : (
-                    <ArrowDownRight className="h-4 w-4 text-red-400" />
-                  )}
-                  <span
-                    className={`font-bold text-lg ${overview.changePct.y1 >= 0 ? "text-green-400" : "text-red-400"}`}
-                  >
-                    {Math.abs(overview.changePct.y1).toFixed(1)}%
-                  </span>
-                </div>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -445,6 +388,89 @@ export function ComprehensiveBONKDashboard() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Where to Trade BONK Card */}
+        <Card className="bg-gray-900 border-orange-500/20 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">
+          <CardHeader>
+            <CardTitle className="text-orange-500">Where to Trade BONK</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {/* Top Exchanges */}
+              <div className="grid grid-cols-4 gap-3 text-xs">
+                <div className="text-gray-400 font-medium">Exchange</div>
+                <div className="text-gray-400 font-medium">Pair</div>
+                <div className="text-gray-400 font-medium">24h Volume</div>
+                <div className="text-gray-400 font-medium">Trust Score</div>
+              </div>
+              
+              {/* Exchange Rows */}
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {tickersLoading ? (
+                  // Loading skeleton
+                  [...Array(5)].map((_, i) => (
+                    <div key={i} className="grid grid-cols-4 gap-3 p-2 bg-gray-800/30 rounded animate-pulse">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-gray-600 rounded-full"></div>
+                        <div className="h-4 w-20 bg-gray-700 rounded"></div>
+                      </div>
+                      <div className="h-4 w-16 bg-gray-700 rounded"></div>
+                      <div className="h-4 w-16 bg-gray-700 rounded"></div>
+                      <div className="flex space-x-1">
+                        {[...Array(10)].map((_, j) => (
+                          <div key={j} className="w-2 h-2 bg-gray-600 rounded-full"></div>
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                ) : tickersData?.tickers?.slice(0, 5).map((ticker, i) => (
+                  <a
+                    key={i}
+                    href={ticker.trade_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="grid grid-cols-4 gap-3 p-2 bg-gray-800/30 rounded hover:bg-gray-800/50 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <div className={`w-3 h-3 rounded-full ${
+                        ticker.market.name.toLowerCase().includes('binance') ? 'bg-green-500' :
+                        ticker.market.name.toLowerCase().includes('coinbase') ? 'bg-blue-500' :
+                        ticker.market.name.toLowerCase().includes('okx') ? 'bg-purple-500' :
+                        ticker.market.name.toLowerCase().includes('gate') ? 'bg-orange-500' :
+                        ticker.market.name.toLowerCase().includes('htx') ? 'bg-red-500' :
+                        'bg-gray-500'
+                      }`}></div>
+                      <span className="text-white font-medium">{ticker.market.name}</span>
+                    </div>
+                    <span className="text-blue-400">{ticker.base}/{ticker.target}</span>
+                    <span className="text-white">${(ticker.converted_volume.usd / 1000000).toFixed(1)}M</span>
+                    <div className="flex space-x-1">
+                      {[...Array(10)].map((_, j) => (
+                        <div key={j} className={`w-2 h-2 rounded-full ${
+                          ticker.trust_score === 'green' && j < 10 ? 'bg-green-500' :
+                          ticker.trust_score === 'yellow' && j < 7 ? 'bg-yellow-500' :
+                          ticker.trust_score === 'red' && j < 4 ? 'bg-red-500' :
+                          'bg-gray-600'
+                        }`}></div>
+                      ))}
+                    </div>
+                  </a>
+                ))}
+                
+              </div>
+              
+                                {/* View All Button */}
+                  <div className="text-center pt-2">
+                    <a
+                      href="/trading-pairs"
+                      className="inline-block text-orange-400 hover:text-orange-300 text-sm font-medium transition-colors hover:scale-105 transform"
+                    >
+                      View All Trading Pairs →
+                    </a>
+                  </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Sidebar */}
@@ -497,11 +523,11 @@ export function ComprehensiveBONKDashboard() {
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-400">Market Cap</span>
-                <span className="text-white font-medium">${formatNumber(overview?.marketCap || 1706257459)}</span>
+                <span className="text-white font-medium">{formatExactValue(overview?.marketCap || 1706257459)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Fully Diluted Valuation</span>
-                <span className="text-white font-medium">${formatNumber(overview?.fdv || 1939337583)}</span>
+                <span className="text-white font-medium">{formatExactValue(overview?.fdv || 1939337583)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">24 Hour Trading Vol</span>
@@ -532,8 +558,13 @@ export function ComprehensiveBONKDashboard() {
             <div className="flex justify-between items-center">
               <span className="text-gray-400">Contract</span>
               <div className="flex items-center space-x-2">
-                <span className="text-white font-mono">DezXA...pPB263</span>
-                <Copy className="h-4 w-4 text-gray-400 hover:text-orange-400 cursor-pointer" />
+                <span className="text-white font-mono" title="DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263">
+                  DezXA...pPB263
+                </span>
+                <Copy 
+                  className="h-4 w-4 text-gray-400 hover:text-orange-400 cursor-pointer" 
+                  onClick={() => navigator.clipboard.writeText('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263')}
+                />
               </div>
             </div>
             <div className="flex justify-between items-center">
@@ -550,23 +581,47 @@ export function ComprehensiveBONKDashboard() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-400">Explorers</span>
-              <div className="flex items-center space-x-2">
-                <span className="text-blue-400">Solscan</span>
-                <ChevronDown className="h-4 w-4 text-gray-400" />
-              </div>
+              <a
+                href="https://solscan.io/token/DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 flex items-center space-x-1"
+              >
+                <span>Solscan</span>
+                <ExternalLink className="h-3 w-3" />
+              </a>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-400">Wallets</span>
-              <div className="flex items-center space-x-2">
-                <span className="text-blue-400">Phantom</span>
-                <ChevronDown className="h-4 w-4 text-gray-400" />
-              </div>
+              <a
+                href="https://phantom.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 flex items-center space-x-1"
+              >
+                <span>Phantom</span>
+                <ExternalLink className="h-3 w-3" />
+              </a>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-400">Community</span>
               <div className="flex space-x-2">
-                <span className="bg-gray-800 px-2 py-1 rounded text-white text-xs">X Twitter</span>
-                <span className="bg-gray-800 px-2 py-1 rounded text-white text-xs">Discord</span>
+                <a
+                  href="https://twitter.com/bonk_inu"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-gray-800 px-2 py-1 rounded text-white text-xs hover:bg-gray-700 transition-colors"
+                >
+                  X Twitter
+                </a>
+                <a
+                  href="https://discord.gg/bonk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-gray-800 px-2 py-1 rounded text-white text-xs hover:bg-gray-700 transition-colors"
+                >
+                  Discord
+                </a>
               </div>
             </div>
             <div className="flex justify-between items-center">
@@ -584,27 +639,24 @@ export function ComprehensiveBONKDashboard() {
               <span className="text-gray-400">API ID</span>
               <div className="flex items-center space-x-2">
                 <span className="text-white font-mono">bonk</span>
-                <Copy className="h-4 w-4 text-gray-400 hover:text-orange-400 cursor-pointer" />
+                <Copy 
+                  className="h-4 w-4 text-gray-400 hover:text-orange-400 cursor-pointer" 
+                  onClick={() => navigator.clipboard.writeText('bonk')}
+                />
               </div>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-400">Chains</span>
-              <div className="flex items-center space-x-2">
-                <span className="text-white">Ethereum Ecosystem</span>
-                <span className="text-gray-400 text-xs">6 more</span>
-                <ChevronDown className="h-4 w-4 text-gray-400" />
-              </div>
+              <span className="text-white">Solana</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-400">Categories</span>
-              <div className="flex items-center space-x-2">
-                <span className="text-white">Meme</span>
-                <span className="text-gray-400 text-xs">7 more</span>
-                <ChevronDown className="h-4 w-4 text-gray-400" />
-              </div>
+              <span className="text-white">Meme</span>
             </div>
           </CardContent>
         </Card>
+
+
 
         {/* Holders Card */}
         <Card className="bg-gray-900 border-orange-500/20 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">
@@ -656,18 +708,18 @@ export function ComprehensiveBONKDashboard() {
           <CardContent className="space-y-4 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-400">24h Range</span>
-              <span className="text-white">$0.00002206 - $0.00002318</span>
+              <span className="text-white">$0.0000218 - $0.00002326</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">7d Range</span>
-              <span className="text-white">$0.00002162 - $0.00002550</span>
+              <span className="text-white">$0.00002081 - $0.0000238</span>
             </div>
             <div className="space-y-1">
               <div className="flex justify-between">
                 <span className="text-gray-400">All-Time High</span>
                 <div className="text-right">
                   <div className="text-white">$0.00005825</div>
-                  <div className="text-red-400 text-xs">↘ 62.8%</div>
+                  <div className="text-red-400 text-xs">↘ 62.5%</div>
                 </div>
               </div>
               <div className="text-gray-500 text-xs text-right">Nov 20, 2024 (9 months)</div>
@@ -676,8 +728,8 @@ export function ComprehensiveBONKDashboard() {
               <div className="flex justify-between">
                 <span className="text-gray-400">All-Time Low</span>
                 <div className="text-right">
-                  <div className="text-white">$0.00000078</div>
-                  <div className="text-green-400 text-xs">↗ 25062.2%</div>
+                  <div className="text-white">$0.00000008614</div>
+                  <div className="text-green-400 text-xs">↗ 25276.6%</div>
                 </div>
               </div>
               <div className="text-gray-500 text-xs text-right">Dec 29, 2022 (over 2 years)</div>
