@@ -1,32 +1,43 @@
-import { NextResponse } from "next/server"
+import { NextResponse } from "next/server";
+import { getCoinInsights } from "@/lib/lunarcrush";
+import { cached } from "@/lib/server-cache";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET() {
   try {
-    // Mock sentiment snapshot data
-    const insights = {
-      keywords: [
-        { word: "bonk", count: 1250 },
-        { word: "moon", count: 890 },
-        { word: "hodl", count: 670 },
-        { word: "dip", count: 450 },
-        { word: "pump", count: 380 },
-        { word: "solana", count: 320 },
-        { word: "meme", count: 280 },
-        { word: "diamond", count: 210 },
-        { word: "hands", count: 180 },
-        { word: "bullish", count: 150 },
-      ],
-      sentiment: {
-        pos: 450,
-        neg: 120,
-        neu: 230,
-      },
-      totalPosts: 800,
-    }
+    const insights = await cached("insights:BONK", 60_000, async () => {
+      let lastErr: unknown;
+      for (let i = 0; i < 3; i++) {
+        try {
+          return await getCoinInsights("bonk");
+        } catch (e: any) {
+          lastErr = e;
+          const msg = String(e?.message ?? e);
+          if (msg.includes("429")) {
+            await new Promise((r) => setTimeout(r, 800 * (i + 1)));
+            continue;
+          }
+          break;
+        }
+      }
+      if (lastErr) throw lastErr;
+      return await getCoinInsights("bonk");
+    });
 
-    return NextResponse.json({ insights })
-  } catch (error) {
-    console.error("Error fetching sentiment snapshot:", error)
-    return NextResponse.json({ error: "Failed to fetch sentiment data" }, { status: 500 })
+    return NextResponse.json(
+      { insights },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=5, s-maxage=60, stale-while-revalidate=120",
+        },
+      }
+    );
+  } catch (err: any) {
+    console.error("GET /api/sentiment/bonk/snapshot error:", err);
+    const message = String(err?.message ?? "Snapshot failed");
+    const status = /429/.test(message) ? 503 : 500;
+    return NextResponse.json({ error: message }, { status });
   }
 }

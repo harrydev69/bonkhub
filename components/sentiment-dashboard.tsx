@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -8,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TrendingUp, Heart, MessageCircle, Users, Zap } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { EngagementTrendChart, type ChartData } from "./engagement-trend-chart"
+import { SocialFeed } from "./social-feed"
+import InfluencerList from "./influencer-list"
 
 /* -------------------------------
  Types
@@ -31,6 +34,7 @@ type InfluencerRow = {
   followers: number
   sentiment: "bullish" | "bearish" | "neutral"
   impact: number // 0..100-ish
+  avatar?: string
 }
 
 type TimeseriesPoint = {
@@ -38,6 +42,7 @@ type TimeseriesPoint = {
   sentiment?: number
   social_volume?: number
   social_volume_24h?: number
+  social_volume_48h?: number
   social_score?: number
   galaxy_score?: number
   ts?: string | number
@@ -51,6 +56,12 @@ type FeedItem = {
 }
 
 type Influencer = {
+  creator_id?: string
+  creator_name?: string
+  creator_avatar?: string
+  creator_followers?: number
+  creator_rank?: number
+  interactions_24h?: number
   handle?: string
   username?: string
   name?: string
@@ -77,85 +88,53 @@ export default function SentimentDashboard({
   refreshMs?: number
   points?: number
 }) {
-  const [loading, setLoading] = useState(true)
-  const [insights, setInsights] = useState<Insights | null>(null)
-  const [timeseries, setTimeseries] = useState<TimeseriesPoint[]>([])
-  const [influencers, setInfluencers] = useState<Influencer[]>([])
-  const [error, setError] = useState<string | null>(null)
+  const {
+    data: insights,
+    isLoading: insightsLoading,
+    error: insightsError,
+  } = useQuery<Insights>({
+    queryKey: ["sentimentSnapshot"],
+    queryFn: async () => {
+      const res = await fetch("/api/sentiment/bonk/snapshot")
+      if (!res.ok) throw new Error("Failed to fetch snapshot")
+      const data = await res.json()
+      return data.insights
+    },
+    refetchInterval: refreshMs,
+  })
 
-  // jitter + visibility-aware refresh
-  const timerRef = useRef<number | null>(null)
-  const startedRef = useRef(false)
-  const jitter = 350 + Math.floor(Math.random() * 450)
+  const {
+    data: timeseries,
+    isLoading: timeseriesLoading,
+    error: timeseriesError,
+  } = useQuery<TimeseriesPoint[]>({
+    queryKey: ["sentimentTimeseries", points],
+    queryFn: async () => {
+      const res = await fetch(`/api/sentiment/bonk/timeseries?interval=hour&points=${points}`)
+      if (!res.ok) throw new Error("Failed to fetch timeseries")
+      const data = await res.json()
+      return data.timeseries
+    },
+    refetchInterval: refreshMs,
+  })
 
-  useEffect(() => {
-    const ac = new AbortController()
+  const {
+    data: influencers,
+    isLoading: influencersLoading,
+    error: influencersError,
+  } = useQuery<Influencer[]>({
+    queryKey: ["sentimentInfluencers"],
+    queryFn: async () => {
+      const res = await fetch("/api/influencers/bonk?limit=12")
+      if (!res.ok) throw new Error("Failed to fetch influencers")
+      const data = await res.json()
+      return data.influencers
+    },
+    refetchInterval: refreshMs,
+  })
 
-    const load = async (signal?: AbortSignal) => {
-      try {
-        setError(null)
-        const [snapRes, tsRes, inflRes] = await Promise.all([
-          fetch("/api/sentiment/bonk/snapshot", { cache: "no-store", signal }),
-          fetch(`/api/sentiment/bonk/timeseries?interval=hour&points=${points}`, { cache: "no-store", signal }),
-          fetch("/api/influencers/bonk?limit=12", { cache: "no-store", signal }),
-        ])
-
-        // Try to parse JSON even if one failed (best-effort UI)
-        const [snapJson, tsJson, inflJson] = await Promise.all([
-          snapRes.json().catch(() => ({})),
-          tsRes.json().catch(() => ({})),
-          inflRes.json().catch(() => ({})),
-        ])
-
-        console.log("API responses:", { snapJson, tsJson, inflJson })
-
-        setInsights(
-          (snapJson?.insights ?? {
-            keywords: [],
-            sentiment: { pos: 0, neg: 0, neu: 0 },
-            totalPosts: 0,
-          }) as Insights,
-        )
-        setTimeseries(Array.isArray(tsJson?.timeseries) ? tsJson.timeseries : [])
-        setInfluencers(Array.isArray(inflJson?.influencers) ? inflJson.influencers : [])
-      } catch (e: any) {
-        setError(String(e?.message ?? e))
-        setInsights({ keywords: [], sentiment: { pos: 0, neg: 0, neu: 0 }, totalPosts: 0 })
-        setTimeseries([])
-        setInfluencers([])
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    const kickOff = () => {
-      window.setTimeout(() => load(ac.signal), jitter)
-      const tick = async () => {
-        if (document.visibilityState === "visible") await load()
-        timerRef.current = window.setTimeout(tick, refreshMs) as unknown as number
-      }
-      timerRef.current = window.setTimeout(tick, refreshMs) as unknown as number
-    }
-
-    if (!startedRef.current) {
-      startedRef.current = true
-      kickOff()
-    }
-
-    const onVis = () => {
-      if (document.visibilityState === "visible") {
-        void load()
-      }
-    }
-    document.addEventListener("visibilitychange", onVis)
-
-    return () => {
-      ac.abort()
-      if (timerRef.current) window.clearTimeout(timerRef.current)
-      document.removeEventListener("visibilitychange", onVis)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshMs, points, jitter])
+  const loading = insightsLoading || timeseriesLoading || influencersLoading
+  const error = insightsError || timeseriesError || influencersError
 
   /* -------------------------------
    Helpers
@@ -213,48 +192,40 @@ export default function SentimentDashboard({
   // influencers
   const influencerRows: InfluencerRow[] = useMemo(
     () =>
-      influencers
+      (influencers || [])
         .map((i, idx) => {
-          const handle = (i.handle || i.username || i.name || "").toString()
+          const handle = (i.creator_name || i.handle || i.username || i.name || "").toString()
           const name = handle.startsWith("@") ? handle : handle ? `@${handle}` : i.display_name || `Influencer_${idx}`
-          const followers = Number(i.followers ?? i.followers_count ?? 0)
-          const impact = Number(i.engagement ?? i.engagement_score ?? i.score ?? 0)
+          const followers = Number(i.creator_followers ?? i.followers ?? i.followers_count ?? 0)
+          const impact = Number(i.interactions_24h ?? i.engagement ?? i.engagement_score ?? i.score ?? 0)
           const sNum = typeof i.sentiment === "number" ? i.sentiment : 0
           const sentiment = labelFromSentiment(sNum)
-          return { name, followers, impact, sentiment }
+          return { name, followers, impact, sentiment, avatar: i.creator_avatar }
         })
         .sort((a, b) => (b.impact || 0) - (a.impact || 0))
         .slice(0, 8),
     [influencers],
   )
 
-  // Mock keywords data
-  const keywordRows: KeywordRow[] = [
-    { word: "bonk", count: 1250, sentiment: "positive" },
-    { word: "moon", count: 890, sentiment: "positive" },
-    { word: "hodl", count: 670, sentiment: "neutral" },
-    { word: "dip", count: 450, sentiment: "negative" },
-    { word: "pump", count: 380, sentiment: "positive" },
-    { word: "solana", count: 320, sentiment: "neutral" },
-    { word: "meme", count: 280, sentiment: "positive" },
-    { word: "diamond", count: 210, sentiment: "positive" },
-  ]
+  const keywordRows: KeywordRow[] = useMemo(() => {
+    const fromInsights = (insights?.keywords ?? [])
+      .slice(0, 30)
+      .map((k) => ({ word: k.word.replace(/^#/, ""), count: k.count, sentiment: "neutral" as const }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10)
 
-  // Mock chart data
-  const chartData: ChartData[] = [
-    { hour: "12 AM", engagement: 1200, sentiment: 0.65 },
-    { hour: "1 AM", engagement: 980, sentiment: 0.58 },
-    { hour: "2 AM", engagement: 750, sentiment: 0.62 },
-    { hour: "3 AM", engagement: 650, sentiment: 0.55 },
-    { hour: "4 AM", engagement: 580, sentiment: 0.48 },
-    { hour: "5 AM", engagement: 720, sentiment: 0.52 },
-    { hour: "6 AM", engagement: 890, sentiment: 0.68 },
-    { hour: "7 AM", engagement: 1100, sentiment: 0.72 },
-    { hour: "8 AM", engagement: 1350, sentiment: 0.78 },
-    { hour: "9 AM", engagement: 1580, sentiment: 0.82 },
-    { hour: "10 AM", engagement: 1720, sentiment: 0.85 },
-    { hour: "11 AM", engagement: 1650, sentiment: 0.79 },
-  ]
+    return fromInsights.length ? fromInsights : [{ word: "bonk", count: 0, sentiment: "neutral" }]
+  }, [insights])
+
+  const chartData: ChartData[] = useMemo(() => {
+    if (!Array.isArray(timeseries)) return []
+
+    return timeseries.map((point) => ({
+      hour: new Date(point.ts || 0).toLocaleTimeString("en-US", { hour: "numeric", hour12: true }),
+      engagement: Math.round(point.social_score || 0),
+      sentiment: Math.round((point.average_sentiment || point.sentiment || 0) * 100) / 100,
+    }))
+  }, [timeseries])
 
   /* -------------------------------
    UI
@@ -363,41 +334,8 @@ export default function SentimentDashboard({
         {/* Overview */}
         <TabsContent value="overview" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="bg-gray-900 border-gray-700">
-              <CardHeader>
-                <CardTitle className="text-white">Sentiment Distribution</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-green-400">Bullish</span>
-                    <span className="text-white">{insights?.sentiment?.pos || 0}</span>
-                  </div>
-                  <Progress
-                    value={((insights?.sentiment?.pos || 0) / (insights?.totalPosts || 1)) * 100}
-                    className="bg-gray-800"
-                  />
-
-                  <div className="flex justify-between items-center">
-                    <span className="text-red-400">Bearish</span>
-                    <span className="text-white">{insights?.sentiment?.neg || 0}</span>
-                  </div>
-                  <Progress
-                    value={((insights?.sentiment?.neg || 0) / (insights?.totalPosts || 1)) * 100}
-                    className="bg-gray-800"
-                  />
-
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Neutral</span>
-                    <span className="text-white">{insights?.sentiment?.neu || 0}</span>
-                  </div>
-                  <Progress
-                    value={((insights?.sentiment?.neu || 0) / (insights?.totalPosts || 1)) * 100}
-                    className="bg-gray-800"
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            <InfluencerList limit={25} />
+            <SocialFeed />
           </div>
         </TabsContent>
 
@@ -455,8 +393,12 @@ export default function SentimentDashboard({
                     className="flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-[#ff6b35] rounded-full flex items-center justify-center">
-                        <Users className="h-5 w-5 text-black" />
+                      <div className="w-10 h-10 bg-[#ff6b35] rounded-full flex items-center justify-center overflow-hidden">
+                        {influencer.avatar ? (
+                          <img src={influencer.avatar} alt={influencer.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <Users className="h-5 w-5 text-black" />
+                        )}
                       </div>
                       <div>
                         <div className="text-white font-medium">{influencer.name}</div>
@@ -472,7 +414,7 @@ export default function SentimentDashboard({
                       >
                         {influencer.sentiment}
                       </Badge>
-                      <div className="text-gray-400 text-sm mt-1">Impact: {Math.round(influencer.impact)}%</div>
+                      <div className="text-gray-400 text-sm mt-1">Impact: {influencer.impact.toLocaleString()}</div>
                     </div>
                   </div>
                 ))}
@@ -492,7 +434,7 @@ export default function SentimentDashboard({
 
       {error && (
         <div className="text-red-400 text-sm bg-red-900/20 p-3 rounded-lg border border-red-800">
-          Failed to update some data: {error}
+          Failed to update some data: {error.message}
         </div>
       )}
     </div>

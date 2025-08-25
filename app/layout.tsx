@@ -1,6 +1,7 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Manrope } from "next/font/google"
+import { QueryProvider } from "@/components/query-provider";
 import "./globals.css"
 
 const geist = Geist({
@@ -28,7 +29,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${geist.variable} ${manrope.variable} dark`}>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <QueryProvider>
+          {children}
+        </QueryProvider>
+      </body>
     </html>
   )
 }
