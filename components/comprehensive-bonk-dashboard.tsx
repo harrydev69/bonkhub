@@ -8,6 +8,7 @@ import { BONKNewsFeed } from "./bonk-news-feed"
 import { TrendingUp, ArrowUpRight, ArrowDownRight, AlertCircle, ChevronDown, Copy, ExternalLink } from "lucide-react"
 import { useBonkPerformance } from '@/hooks/useBonkPerformance'
 import { useBonkTickers } from '@/hooks/useBonkTickers'
+import { useBonkHolders } from '@/hooks/useBonkHolders'
 
 // Types for our API responses
 type OverviewData = {
@@ -45,6 +46,7 @@ export function ComprehensiveBONKDashboard() {
   const [error, setError] = useState<string | null>(null)
   const perf = useBonkPerformance('usd')
   const { data: tickersData, loading: tickersLoading } = useBonkTickers(1, 'volume_desc')
+  const { data: holdersData, loading: holdersLoading } = useBonkHolders()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -664,39 +666,144 @@ export function ComprehensiveBONKDashboard() {
             <CardTitle className="text-orange-500">Holders</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="text-center">
-              <div className="text-gray-400 text-sm mb-2">Total Holders</div>
-              <div className="text-4xl font-bold text-orange-500">974.8K</div>
-            </div>
+            {holdersLoading ? (
+              <div className="space-y-6">
+                <div className="text-center">
+                  <div className="text-gray-400 text-sm mb-2">Total Holders</div>
+                  <div className="h-12 bg-gray-800 rounded animate-pulse"></div>
+                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="text-center p-3 bg-gray-800/50 rounded-lg">
+                      <div className="text-gray-400 text-xs mb-1">Loading...</div>
+                      <div className="h-6 bg-gray-700 rounded animate-pulse mb-1"></div>
+                      <div className="h-4 bg-gray-700 rounded animate-pulse"></div>
+                    </div>
+                  ))}
+                </div>
+                <div className="text-center p-3 bg-gray-800/50 rounded-lg">
+                  <div className="text-gray-400 text-xs mb-1">Loading...</div>
+                  <div className="h-6 bg-gray-700 rounded animate-pulse mb-1"></div>
+                  <div className="h-4 bg-gray-700 rounded animate-pulse"></div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="text-center">
+                  <div className="text-gray-400 text-sm mb-2">Total Holders</div>
+                  <div className="text-4xl font-bold text-orange-500">
+                    {holdersData?.breakdowns?.total_holders ? 
+                      (holdersData.breakdowns.total_holders / 1000).toFixed(1) + 'K' : 
+                      '974.8K'
+                    }
+                  </div>
+                </div>
 
-            <div className="grid grid-cols-2 gap-6">
-              <div className="text-center p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800/70 transition-colors">
-                <div className="text-gray-400 text-xs mb-1">4 Hours</div>
-                <div className="text-red-400 font-bold text-lg">-138</div>
-                <div className="text-red-400 text-xs">-0.01%</div>
-              </div>
-              <div className="text-center p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800/70 transition-colors">
-                <div className="text-gray-400 text-xs mb-1">12 Hours</div>
-                <div className="text-red-400 font-bold text-lg">-216</div>
-                <div className="text-red-400 text-xs">-0.02%</div>
-              </div>
-              <div className="text-center p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800/70 transition-colors">
-                <div className="text-gray-400 text-xs mb-1">1 Day</div>
-                <div className="text-red-400 font-bold text-lg">-1394</div>
-                <div className="text-red-400 text-xs">-0.14%</div>
-              </div>
-              <div className="text-center p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800/70 transition-colors">
-                <div className="text-gray-400 text-xs mb-1">3 Days</div>
-                <div className="text-red-400 font-bold text-lg">-1039</div>
-                <div className="text-red-400 text-xs">-0.11%</div>
-              </div>
-            </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="text-center p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800/70 transition-colors">
+                    <div className="text-gray-400 text-xs mb-1">4 Hours</div>
+                    <div className={`font-bold text-lg ${
+                      (holdersData?.deltas?.['4hours'] || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {holdersData?.deltas?.['4hours'] ? 
+                        (holdersData.deltas['4hours'] >= 0 ? '+' : '') + holdersData.deltas['4hours'] : 
+                        '-138'
+                      }
+                    </div>
+                    <div className={`text-xs ${
+                      (holdersData?.deltas?.['4hours'] || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {holdersData?.deltas?.['4hours'] ? 
+                        (holdersData.deltas['4hours'] >= 0 ? '+' : '') + 
+                        ((holdersData.deltas['4hours'] / (holdersData.breakdowns?.total_holders || 1)) * 100).toFixed(2) + '%' : 
+                        '-0.01%'
+                      }
+                    </div>
+                  </div>
+                  <div className="text-center p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800/70 transition-colors">
+                    <div className="text-gray-400 text-xs mb-1">12 Hours</div>
+                    <div className={`font-bold text-lg ${
+                      (holdersData?.deltas?.['12hours'] || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {holdersData?.deltas?.['12hours'] ? 
+                        (holdersData.deltas['12hours'] >= 0 ? '+' : '') + holdersData.deltas['12hours'] : 
+                        '-216'
+                      }
+                    </div>
+                    <div className={`text-xs ${
+                      (holdersData?.deltas?.['12hours'] || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {holdersData?.deltas?.['12hours'] ? 
+                        (holdersData.deltas['12hours'] >= 0 ? '+' : '') + 
+                        ((holdersData.deltas['12hours'] / (holdersData.breakdowns?.total_holders || 1)) * 100).toFixed(2) + '%' : 
+                        '-0.02%'
+                      }
+                    </div>
+                  </div>
+                  <div className="text-center p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800/70 transition-colors">
+                    <div className="text-gray-400 text-xs mb-1">1 Day</div>
+                    <div className={`font-bold text-lg ${
+                      (holdersData?.deltas['1day'] || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {holdersData?.deltas?.['1day'] ? 
+                        (holdersData.deltas['1day'] >= 0 ? '+' : '') + holdersData.deltas['1day'] : 
+                        '-1394'
+                      }
+                    </div>
+                    <div className={`text-xs ${
+                      (holdersData?.deltas['1day'] || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {holdersData?.deltas?.['1day'] ? 
+                        (holdersData.deltas['1day'] >= 0 ? '+' : '') + 
+                        ((holdersData.deltas['1day'] / (holdersData.breakdowns?.total_holders || 1)) * 100).toFixed(2) + '%' : 
+                        '-0.14%'
+                      }
+                    </div>
+                  </div>
+                  <div className="text-center p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800/70 transition-colors">
+                    <div className="text-gray-400 text-xs mb-1">3 Days</div>
+                    <div className={`font-bold text-lg ${
+                      (holdersData?.deltas['3days'] || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {holdersData?.deltas?.['3days'] ? 
+                        (holdersData.deltas['3days'] >= 0 ? '+' : '') + holdersData.deltas['3days'] : 
+                        '-1039'
+                      }
+                    </div>
+                    <div className={`text-xs ${
+                      (holdersData?.deltas['3days'] || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {holdersData?.deltas?.['3days'] ? 
+                        (holdersData.deltas['3days'] >= 0 ? '+' : '') + 
+                        ((holdersData.deltas['3days'] / (holdersData.breakdowns?.total_holders || 1)) * 100).toFixed(2) + '%' : 
+                        '-0.11%'
+                      }
+                    </div>
+                  </div>
+                </div>
 
-            <div className="text-center p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800/70 transition-colors">
-              <div className="text-gray-400 text-xs mb-1">7 Days</div>
-              <div className="text-red-400 font-bold text-lg">-129</div>
-              <div className="text-red-400 text-xs">-0.01%</div>
-            </div>
+                <div className="text-center p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800/70 transition-colors">
+                  <div className="text-gray-400 text-xs mb-1">7 Days</div>
+                  <div className={`font-bold text-lg ${
+                    (holdersData?.deltas['7days'] || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+                  }`}>
+                    {holdersData?.deltas?.['7days'] ? 
+                      (holdersData.deltas['7days'] >= 0 ? '+' : '') + holdersData.deltas['7days'] : 
+                      '-129'
+                    }
+                  </div>
+                  <div className={`text-xs ${
+                    (holdersData?.deltas['7days'] || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+                  }`}>
+                    {holdersData?.deltas?.['7days'] ? 
+                      (holdersData.deltas['7days'] >= 0 ? '+' : '') + 
+                      ((holdersData.deltas['7days'] / (holdersData.breakdowns?.total_holders || 1)) * 100).toFixed(2) + '%' : 
+                      '-0.01%'
+                    }
+                  </div>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
 
