@@ -1,59 +1,85 @@
 import { NextResponse } from 'next/server';
-import { HolderScan } from '@/lib/services/holderscan';
+import { fetchComprehensiveHoldersData, RateLimiter, testApiConnection } from '@/lib/services/holderscan';
+
+// Initialize rate limiter
+const rateLimiter = new RateLimiter();
 
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
-const BONK_CONTRACT_ADDRESS = 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263';
-
 export async function GET() {
   try {
-    // Fetch both holder deltas and breakdowns
-    const [deltas, breakdowns] = await Promise.all([
-      HolderScan.getHolderDeltas(BONK_CONTRACT_ADDRESS),
-      HolderScan.getHolderBreakdowns(BONK_CONTRACT_ADDRESS),
-    ]);
-
-    const payload = {
-      deltas,
-      breakdowns,
-      last_updated: new Date().toISOString(),
-    };
-
-    return NextResponse.json(payload, { status: 200 });
-  } catch (error: any) {
-    console.error('Error fetching holder data:', error);
+    console.log('🔄 Holders API route called');
     
-    // Return fallback data if API fails
-    return NextResponse.json({
-      deltas: {
-        '1hour': 0,
-        '2hours': 0,
-        '4hours': 0,
-        '12hours': 0,
-        '1day': 0,
-        '3days': 0,
-        '7days': 0,
-        '14days': 0,
-        '30days': 0,
-      },
-      breakdowns: {
-        total_holders: 0,
-        holders_over_10_usd: 0,
-        holders_over_100_usd: 0,
-        holders_over_1000_usd: 0,
-        holders_over_10000_usd: 0,
-        holders_over_100k_usd: 0,
-        holders_over_1m_usd: 0,
-        categories: {
-          shrimp: 0,
-          crab: 0,
-          fish: 0,
-          dolphin: 0,
-          whale: 0,
+    // Check rate limit
+    if (!(await rateLimiter.checkRateLimit())) {
+      console.log('⚠️ Rate limit exceeded');
+      return NextResponse.json(
+        { 
+          error: 'Rate limit exceeded. Please try again later.',
+          remainingRequests: rateLimiter.getRemainingRequests(),
+          timeUntilReset: rateLimiter.getTimeUntilReset()
         },
+        { status: 429 }
+      );
+    }
+
+    // Test API connection first
+    console.log('🔍 Testing Holderscan API connection...');
+    const isConnected = await testApiConnection();
+    
+    if (!isConnected) {
+      console.log('❌ Holderscan API connection failed');
+      return NextResponse.json(
+        { 
+          error: 'Unable to connect to Holderscan API. Please check your internet connection and API key.',
+          suggestion: 'Try refreshing the page or check if the Holderscan service is available.'
+        },
+        { status: 503 }
+      );
+    }
+
+    console.log('✅ Holderscan API connection successful, fetching data...');
+
+    // Fetch data from Holderscan API
+    const response = await fetchComprehensiveHoldersData();
+    
+    if (response.error) {
+      console.error('❌ Holderscan API error:', response.error);
+      return NextResponse.json(
+        { 
+          error: response.error,
+          suggestion: 'The API request failed. This might be due to network issues or API service problems.'
+        },
+        { status: 500 }
+      );
+    }
+
+    if (!response.data) {
+      console.error('❌ No data received from Holderscan API');
+      return NextResponse.json(
+        { 
+          error: 'No data received from Holderscan API',
+          suggestion: 'The API returned an empty response. Please try again later.'
+        },
+        { status: 500 }
+      );
+    }
+
+    console.log('✅ Successfully fetched comprehensive holders data');
+    
+    // Return the comprehensive data
+    return NextResponse.json(response.data);
+    
+  } catch (error) {
+    console.error('❌ Error in holders API route:', error);
+    return NextResponse.json(
+      { 
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        suggestion: 'Please try again later or contact support if the problem persists.'
       },
-      last_updated: new Date().toISOString(),
-    }, { status: 200 });
+      { status: 500 }
+    );
   }
 }

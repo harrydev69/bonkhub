@@ -233,20 +233,20 @@ export default function EnhancedMarketsDashboard() {
   const [filterTargetToken, setFilterTargetToken] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-
+  
   // Fetch data with error handling
   const fetchMarketsData = async () => {
     try {
       setLoading(true);
       setError(null);
-
+      
       const response = await fetch("/api/bonk/markets/enhanced", {
         cache: "no-store",
         headers: {
           "Cache-Control": "no-cache",
         },
       });
-
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -266,7 +266,7 @@ export default function EnhancedMarketsDashboard() {
 
   useEffect(() => {
     fetchMarketsData();
-
+    
     // Refresh data every 5 minutes
     const interval = setInterval(fetchMarketsData, 5 * 60 * 1000);
     return () => clearInterval(interval);
@@ -451,7 +451,7 @@ export default function EnhancedMarketsDashboard() {
   // New helper function to format trading pairs
   const formatTradingPair = (pair: string) => {
     if (!pair) return "N/A";
-
+    
     // If it's a simple pair like "BONK/USDT", return as is
     if (pair.includes("/") && pair.split("/").length === 2) {
       const [base, target] = pair.split("/");
@@ -464,14 +464,14 @@ export default function EnhancedMarketsDashboard() {
         ? target.substring(0, 4) + "..." + target.substring(target.length - 4)
         : target;
       
-      return `${shortBase}/${shortTarget}`;
-    }
+        return `${shortBase}/${shortTarget}`;
+      }
 
     // If it's a single long string (no slash), truncate it to first 4 + last 4
     if (pair.length > 12) {
       return pair.substring(0, 4) + "..." + pair.substring(pair.length - 4);
     }
-
+    
     return pair;
   };
 
@@ -517,7 +517,7 @@ export default function EnhancedMarketsDashboard() {
 
   const sortedVenues = [...filteredVenues].sort((a, b) => {
     let aValue: any, bValue: any;
-
+    
     switch (sortBy) {
       case "volume":
         aValue = a.volume24h;
@@ -543,7 +543,7 @@ export default function EnhancedMarketsDashboard() {
         aValue = a.volume24h;
         bValue = b.volume24h;
     }
-
+    
     if (sortOrder === "asc") {
       return aValue > bValue ? 1 : -1;
     } else {
@@ -759,7 +759,7 @@ export default function EnhancedMarketsDashboard() {
                   <div className="text-center">
                     <div className="text-2xl font-bold text-white">
                       {summary.averageFundingRate.toFixed(4)}%
-                    </div>
+            </div>
                     <div className="text-gray-400 text-sm">
                       {summary.averageFundingRate > 0 ? 'Longs pay shorts' : 'Shorts pay longs'}
                     </div>
@@ -767,8 +767,8 @@ export default function EnhancedMarketsDashboard() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-gray-900 border-gray-700">
-                <CardHeader>
+            <Card className="bg-gray-900 border-gray-700">
+              <CardHeader>
                   <CardTitle className="text-white">Liquidation Risk</CardTitle>
                   <CardDescription className="text-gray-400">Market risk assessment</CardDescription>
                 </CardHeader>
@@ -816,49 +816,49 @@ export default function EnhancedMarketsDashboard() {
               {/* Filter Buttons */}
               <div className="px-6 pb-4">
                 <div className="flex flex-wrap gap-2">
-                  <Button 
+                <Button 
                     variant={marketTypeFilter === 'all' ? 'default' : 'outline'} 
-                    size="sm"
+                  size="sm"
                     onClick={() => setMarketTypeFilter('all')}
                     className="bg-orange-600 hover:bg-orange-700 text-white"
-                  >
-                    All
-                  </Button>
-                  <Button 
+                >
+                  All
+                </Button>
+                <Button 
                     variant={marketTypeFilter === 'cex' ? 'default' : 'outline'} 
-                    size="sm"
+                  size="sm"
                     onClick={() => setMarketTypeFilter('cex')}
-                  >
-                    CEX
-                  </Button>
-                  <Button 
+                >
+                  CEX
+                </Button>
+                <Button 
                     variant={marketTypeFilter === 'dex' ? 'default' : 'outline'} 
-                    size="sm"
+                  size="sm"
                     onClick={() => setMarketTypeFilter('dex')}
-                  >
-                    DEX
-                  </Button>
-                  <Button 
+                >
+                  DEX
+                </Button>
+                <Button 
                     variant={marketTypeFilter === 'spot' ? 'default' : 'outline'} 
-                    size="sm"
+                  size="sm"
                     onClick={() => setMarketTypeFilter('spot')}
-                  >
-                    Spot
-                  </Button>
-                  <Button 
+                >
+                  Spot
+                </Button>
+                <Button 
                     variant={marketTypeFilter === 'perpetual' ? 'default' : 'outline'} 
-                    size="sm"
+                  size="sm"
                     onClick={() => setMarketTypeFilter('perpetual')}
-                  >
-                    Perpetuals
-                  </Button>
-                  <Button 
+                >
+                  Perpetuals
+                </Button>
+                <Button 
                     variant={marketTypeFilter === 'futures' ? 'default' : 'outline'} 
-                    size="sm"
+                  size="sm"
                     onClick={() => setMarketTypeFilter('futures')}
-                  >
-                    Futures
-                  </Button>
+                >
+                  Futures
+                </Button>
                 </div>
               </div>
 
@@ -868,8 +868,8 @@ export default function EnhancedMarketsDashboard() {
                   <div className="text-green-400 text-sm">
                     Trustless Sol-EVM swaps via 1inch. Best rates! Sponsored.
                   </div>
+                  </div>
                 </div>
-              </div>
 
               {/* Markets Table */}
               <CardContent className="px-6">
@@ -1024,15 +1024,15 @@ export default function EnhancedMarketsDashboard() {
                         const pageNum = i + 1;
                         if (pageNum <= totalPages) {
                           return (
-                                                         <Button
-                               key={pageNum}
-                               variant={pageNum === currentPage ? 'default' : 'outline'}
-                               size="sm"
-                               onClick={() => setCurrentPage(pageNum)}
-                               className={pageNum === currentPage ? 'bg-orange-600 hover:bg-orange-700' : 'border-gray-600 text-gray-300 hover:bg-gray-700'}
-                             >
-                               {pageNum}
-                             </Button>
+                            <Button
+                              key={pageNum}
+                              variant={pageNum === currentPage ? 'default' : 'outline'}
+                              size="sm"
+                              onClick={() => setCurrentPage(pageNum)}
+                              className={pageNum === currentPage ? 'bg-orange-600 hover:bg-orange-700' : 'border-gray-600 text-gray-300 hover:bg-gray-700'}
+                            >
+                              {pageNum}
+                            </Button>
                           );
                         }
                         return null;
@@ -1197,7 +1197,7 @@ export default function EnhancedMarketsDashboard() {
                   Detailed view of all BONK trading venues with metrics
                 </CardDescription>
               </CardHeader>
-
+              
               {/* Quick Stats */}
               <div className="px-6 pb-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -1535,15 +1535,15 @@ export default function EnhancedMarketsDashboard() {
                   <div className="text-center p-3 bg-gray-800 rounded-lg">
                     <div className="text-white font-semibold">
                       {metadata.totalRecords}
-                    </div>
+                  </div>
                     <div className="text-gray-400">Total Records</div>
                   </div>
                   <div className="text-center p-3 bg-gray-800 rounded-lg">
                     <div className="text-white font-semibold">
                       {metadata.uniqueExchanges}
-                    </div>
-                    <div className="text-gray-400">Exchanges</div>
                   </div>
+                    <div className="text-gray-400">Exchanges</div>
+                </div>
                   <div className="text-center p-3 bg-gray-800 rounded-lg">
                     <div className="text-white font-semibold">
                       {metadata.uniquePairs}
@@ -1573,7 +1573,7 @@ export default function EnhancedMarketsDashboard() {
                   <div className="flex items-center justify-between p-2 bg-red-900/20 rounded-lg">
                     <span className="text-red-400">Anomaly Pairs</span>
                     <Badge variant="destructive">{metadata.anomalyPairs}</Badge>
-                  </div>
+                          </div>
                   <div className="flex items-center justify-between p-2 bg-yellow-900/20 rounded-lg">
                     <span className="text-yellow-400">Stale Pairs</span>
                     <Badge variant="secondary">{metadata.stalePairs}</Badge>
@@ -1607,7 +1607,7 @@ export default function EnhancedMarketsDashboard() {
                               <span className="text-green-400">
                                 {formatPercentage(exchange.spread)}
                               </span>
-                            </div>
+                          </div>
                           ),
                         )}
                       </div>
@@ -1629,7 +1629,7 @@ export default function EnhancedMarketsDashboard() {
                               <span className="text-red-400">
                                 {formatPercentage(exchange.spread)}
                               </span>
-                            </div>
+                          </div>
                           ),
                         )}
                       </div>
