@@ -184,3 +184,31 @@ export async function getComprehensiveAssetData(symbol: string) {
     timestamp: now
   };
 }
+
+/**
+ * Fetch detailed creator profile information including topic influence and metrics.
+ * This provides comprehensive data about a specific creator's impact and reach.
+ *
+ * @param network Social network (e.g., "twitter", "youtube")
+ * @param creatorId Creator's unique identifier (e.g., "theunipcs")
+ */
+export async function getCreatorProfile(network: string, creatorId: string) {
+  const n = String(network).toLowerCase();
+  const id = String(creatorId).toLowerCase();
+  return await fetchJson(`/public/creator/${n}/${id}/v1`);
+}
+
+/**
+ * Fetch creator time series data for historical analysis and trend visualization.
+ * This provides hourly metrics over a configurable time period.
+ *
+ * @param network Social network (e.g., "twitter", "youtube")
+ * @param creatorId Creator's unique identifier (e.g., "theunipcs")
+ * @param interval Time interval ("1w" for 1 week, "1m" for 1 month)
+ */
+export async function getCreatorTimeSeries(network: string, creatorId: string, interval: string = "1w") {
+  const n = String(network).toLowerCase();
+  const id = String(creatorId).toLowerCase();
+  const params = new URLSearchParams({ interval });
+  return await fetchJson(`/public/creator/${n}/${id}/time-series/v1?${params.toString()}`);
+}

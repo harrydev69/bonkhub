@@ -489,7 +489,59 @@ export default function SentimentDashboard({
         {/* Overview */}
         <TabsContent value="overview" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <InfluencerList limit={25} />
+            <div className="space-y-4">
+              <Card className="bg-gray-900 border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-white">Top Influencers</CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Most impactful BONK voices (click to view detailed profiles)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {influencerRows.map((influencer, index) => (
+                      <div
+                        key={influencer.name}
+                        className="flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer group"
+                        onClick={() => {
+                          // Navigate to creator profile page
+                          const creatorId = influencer.name.replace('@', '');
+                          window.open(`/creator/${creatorId}`, '_blank');
+                        }}
+                        title={`Click to view ${influencer.name.replace('@', '')}'s detailed profile`}
+                      >
+                        <div className="flex items-center space-x-3">
+                          {influencer.avatar ? (
+                            <img 
+                              src={influencer.avatar} 
+                              alt={influencer.name}
+                              className="w-8 h-8 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center w-8 h-8 bg-[#ff6b35] rounded-full text-black font-bold text-sm">
+                              #{index + 1}
+                            </div>
+                          )}
+                          <div>
+                            <div className="text-white font-medium">{influencer.name.replace('@', '')}</div>
+                            <div className="text-gray-400 text-sm">{influencer.followers.toLocaleString()} followers</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <Badge
+                            variant={getSentimentBadge(influencer.sentiment)}
+                            className={influencer.sentiment === "bullish" ? "bg-[#ff6b35] text-black" : ""}
+                          >
+                            {influencer.sentiment}
+                          </Badge>
+                          <div className="text-[#ff6b35] font-semibold">{influencer.impact.toLocaleString()}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
             <SocialFeed />
           </div>
         </TabsContent>
@@ -584,7 +636,13 @@ export default function SentimentDashboard({
                   {filteredAndSortedInfluencers.map((influencer, index) => (
                     <div
                       key={influencer.name}
-                      className="flex items-center justify-between p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors border border-gray-700"
+                      className="flex items-center justify-between p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors border border-gray-700 cursor-pointer group"
+                      onClick={() => {
+                        // Navigate to creator profile page
+                        const creatorId = influencer.name.replace('@', '');
+                        window.open(`/creator/${creatorId}`, '_blank');
+                      }}
+                      title={`Click to view ${influencer.name.replace('@', '')}'s detailed profile`}
                     >
                       <div className="flex items-center space-x-4">
                         {/* Rank */}
@@ -638,13 +696,18 @@ export default function SentimentDashboard({
                             rel="noopener noreferrer"
                             className="w-6 h-6 text-gray-400 hover:text-[#ff6b35] transition-colors cursor-pointer"
                             title={`Visit ${influencer.name.replace('@', '')}'s profile`}
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                             </svg>
                           </a>
                         ) : (
-                          <div className="w-6 h-6 text-gray-500 cursor-not-allowed" title="No profile link available">
+                          <div 
+                            className="w-6 h-6 text-gray-500 cursor-not-allowed" 
+                            title="No profile link available"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                             </svg>
