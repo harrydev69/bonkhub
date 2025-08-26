@@ -212,3 +212,41 @@ export async function getCreatorTimeSeries(network: string, creatorId: string, i
   const params = new URLSearchParams({ interval });
   return await fetchJson(`/public/creator/${n}/${id}/time-series/v1?${params.toString()}`);
 }
+
+/**
+ * Get topic news from LunarCrush API
+ * @param topic - The topic to fetch news for (e.g., 'bonk', 'solana')
+ * @returns Promise with news data
+ */
+export async function getTopicNews(topic: string) {
+  try {
+    console.log('🚀 Calling LunarCrush API for topic:', topic)
+    console.log('🔑 API Base:', process.env.LUNARCRUSH_API_BASE)
+    console.log('🔑 API Key exists:', !!process.env.LUNARCRUSH_API_KEY)
+    
+    const response = await fetch(
+      `${process.env.LUNARCRUSH_API_BASE}/public/topic/${topic}/news/v1`,
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.LUNARCRUSH_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        next: { revalidate: 43200 }, // Cache for 12 hours (43200 seconds)
+      }
+    );
+
+    console.log('📡 LunarCrush response status:', response.status)
+    console.log('📡 LunarCrush response headers:', Object.fromEntries(response.headers.entries()))
+
+    if (!response.ok) {
+      throw new Error(`LunarCrush API error: ${response.status}`)
+    }
+
+    const data = await response.json();
+    console.log('📰 LunarCrush response data:', JSON.stringify(data, null, 2))
+    return data;
+  } catch (error) {
+    console.error('❌ Error fetching topic news:', error)
+    throw error
+  }
+}

@@ -634,8 +634,8 @@ export default function SentimentDashboard({
                 {/* Influencers List */}
                 <div className="space-y-3">
                   {filteredAndSortedInfluencers.map((influencer, index) => (
-                    <div
-                      key={influencer.name}
+                  <div
+                    key={influencer.name}
                       className="flex items-center justify-between p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors border border-gray-700 cursor-pointer group"
                       onClick={() => {
                         // Navigate to creator profile page
@@ -652,12 +652,12 @@ export default function SentimentDashboard({
                         
                         {/* Avatar */}
                         <div className="w-12 h-12 bg-[#ff6b35] rounded-full flex items-center justify-center overflow-hidden">
-                          {influencer.avatar ? (
-                            <img src={influencer.avatar} alt={influencer.name} className="w-full h-full object-cover" />
-                          ) : (
+                        {influencer.avatar ? (
+                          <img src={influencer.avatar} alt={influencer.name} className="w-full h-full object-cover" />
+                        ) : (
                             <Users className="h-6 w-6 text-black" />
-                          )}
-                        </div>
+                        )}
+                      </div>
                         
                         {/* Info */}
                         <div className="space-y-1">
@@ -669,12 +669,12 @@ export default function SentimentDashboard({
                       {/* Metrics */}
                       <div className="flex items-center space-x-6">
                         {/* Sentiment */}
-                        <Badge
-                          variant={getSentimentBadge(influencer.sentiment)}
-                          className={influencer.sentiment === "bullish" ? "bg-[#ff6b35] text-black" : ""}
-                        >
-                          {influencer.sentiment}
-                        </Badge>
+                      <Badge
+                        variant={getSentimentBadge(influencer.sentiment)}
+                        className={influencer.sentiment === "bullish" ? "bg-[#ff6b35] text-black" : ""}
+                      >
+                        {influencer.sentiment}
+                      </Badge>
                         
                         {/* Impact */}
                         <div className="text-right">
@@ -713,9 +713,9 @@ export default function SentimentDashboard({
                             </svg>
                           </div>
                         )}
-                      </div>
                     </div>
-                  ))}
+                  </div>
+                ))}
                   
                   {filteredAndSortedInfluencers.length === 0 && (
                     <div className="text-gray-400 text-center py-8">
