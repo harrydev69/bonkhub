@@ -3,7 +3,6 @@ import { PornhubHeader } from "@/components/pornhub-header"
 import { SupplyChart } from "@/components/supply-chart"
 import { VolumeHeatmap } from "@/components/volume-heatmap"
 import { SentimentTrendAnalysis } from "@/components/sentiment-trend-analysis"
-import { MindshareRadarComparison } from "@/components/mindshare-radar-comparison"
 import { SocialMentionWordCloud } from "@/components/social-mention-word-cloud"
 import { WhaleMovementTracker } from "@/components/whale-movement-tracker"
 
@@ -23,9 +22,6 @@ export default function AnalyticsPage() {
 
           {/* Sentiment Trend Analysis */}
           <SentimentTrendAnalysis />
-
-          {/* Mindshare Radar Comparison */}
-          <MindshareRadarComparison />
 
           {/* Social Mention Word Cloud */}
           <SocialMentionWordCloud />

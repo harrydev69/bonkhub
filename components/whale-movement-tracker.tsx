@@ -149,43 +149,36 @@ export function WhaleMovementTracker() {
   const netFlow = totalBuyVolume - totalSellVolume
 
   return (
-    <Card className="bg-gray-900 border-gray-700">
+    <Card className="group bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:border-[#ff6b35] hover:shadow-lg hover:shadow-[#ff6b35]/20 transition-all duration-500">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle className="text-white flex items-center gap-2">
-            <span className="text-orange-500">🐋</span>
+          <CardTitle className="text-[#ff6b35] text-2xl font-bold flex items-center gap-2 group-hover:text-white transition-colors duration-300">
+            <span className="text-orange-500 group-hover:scale-110 transition-transform duration-300">🐋</span>
             Whale Movement Tracker
           </CardTitle>
-          <p className="text-gray-400 text-sm">Monitor large BONK transactions and their market impact</p>
+          <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors duration-300">Monitor large BONK transactions and their market impact</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="border-blue-500 text-blue-400">
-            All Types
-          </Badge>
-          <Badge variant="outline" className="border-green-500 text-green-400">
-            Live Tracking
-          </Badge>
-        </div>
+
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Summary Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-orange-500">$9.6M</div>
-            <div className="text-sm text-gray-400">Total Volume</div>
-            <div className="text-xs text-gray-500">24 Hours</div>
+          <div className="group/item text-center p-4 bg-gradient-to-br from-orange-500/10 to-orange-400/5 rounded-lg border border-orange-500/20 hover:border-orange-400/40 hover:bg-orange-500/20 transition-all duration-300 cursor-pointer">
+            <div className="text-3xl font-bold text-orange-500 group-hover/item:text-white transition-colors duration-300">$9.6M</div>
+            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Total Volume</div>
+            <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors duration-300">24 Hours</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-400">${totalBuyVolume.toFixed(1)}M</div>
-            <div className="text-sm text-gray-400">Buy Volume</div>
+          <div className="group/item text-center p-4 bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg border border-green-500/20 hover:border-green-400/40 hover:bg-green-500/20 transition-all duration-300 cursor-pointer">
+            <div className="text-3xl font-bold text-green-400 group-hover/item:text-white transition-colors duration-300">${totalBuyVolume.toFixed(1)}M</div>
+            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Buy Volume</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-red-400">${totalSellVolume.toFixed(1)}M</div>
-            <div className="text-sm text-gray-400">Sell Volume</div>
+          <div className="group/item text-center p-4 bg-gradient-to-br from-red-500/10 to-red-400/5 rounded-lg border border-red-500/20 hover:border-red-400/40 hover:bg-red-500/20 transition-all duration-300 cursor-pointer">
+            <div className="text-3xl font-bold text-red-400 group-hover/item:text-white transition-colors duration-300">${totalSellVolume.toFixed(1)}M</div>
+            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Sell Volume</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-white">13</div>
-            <div className="text-sm text-gray-400">High Impact</div>
+          <div className="group/item text-center p-4 bg-gradient-to-br from-gray-700/10 to-gray-600/5 rounded-lg border border-gray-600/20 hover:border-gray-500/40 hover:bg-gray-600/20 transition-all duration-300 cursor-pointer">
+            <div className="text-3xl font-bold text-white group-hover/item:text-[#ff6b35] transition-colors duration-300">13</div>
+            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">High Impact</div>
           </div>
         </div>
 
@@ -208,14 +201,7 @@ export function WhaleMovementTracker() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-white">Recent Large Transactions</h3>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-gray-600 hover:border-orange-500 hover:bg-orange-500/10 bg-transparent"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export Whale Data
-            </Button>
+
           </div>
 
           <div className="space-y-2">

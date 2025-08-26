@@ -277,52 +277,45 @@ export function SocialMentionWordCloud() {
   }
 
   return (
-    <Card className="bg-gray-900 border-gray-700">
+    <Card className="group bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:border-[#ff6b35] hover:shadow-lg hover:shadow-[#ff6b35]/20 transition-all duration-500">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle className="text-white flex items-center gap-2">
-            <span className="text-orange-500">☁️</span>
+          <CardTitle className="text-[#ff6b35] text-2xl font-bold flex items-center gap-2 group-hover:text-white transition-colors duration-300">
+            <span className="text-orange-500 group-hover:scale-110 transition-transform duration-300">☁️</span>
             Social Mention Word Cloud
           </CardTitle>
-          <p className="text-gray-400 text-sm">Trending topics and sentiment from social media mentions</p>
+          <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors duration-300">Trending topics and sentiment from social media mentions</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="border-blue-500 text-blue-400">
-            All Platforms
-          </Badge>
-          <Badge variant="outline" className="border-green-500 text-green-400">
-            {timeRange}
-          </Badge>
-        </div>
+
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Enhanced Summary Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-orange-500">{filteredAndSortedData.length}</div>
-            <div className="text-sm text-gray-400">Trending Topics</div>
-            <div className="text-xs text-gray-500">Filtered & Sorted</div>
+          <div className="group/item text-center p-4 bg-gradient-to-br from-orange-500/10 to-orange-400/5 rounded-lg border border-orange-500/20 hover:border-orange-400/40 hover:bg-orange-500/20 transition-all duration-300 cursor-pointer">
+            <div className="text-3xl font-bold text-orange-500 group-hover/item:text-white transition-colors duration-300">{filteredAndSortedData.length}</div>
+            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Trending Topics</div>
+            <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors duration-300">Filtered & Sorted</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-400">
+          <div className="group/item text-center p-4 bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg border border-green-500/20 hover:border-green-400/40 hover:bg-green-500/20 transition-all duration-300 cursor-pointer">
+            <div className="text-3xl font-bold text-green-400 group-hover/item:text-white transition-colors duration-300">
               {Math.round((filteredAndSortedData.filter(w => w.sentiment === "positive").length / Math.max(filteredAndSortedData.length, 1)) * 100)}%
             </div>
-            <div className="text-sm text-gray-400">Positive Topics</div>
-            <div className="text-xs text-gray-500">Based on analysis</div>
+            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Positive Topics</div>
+            <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors duration-300">Based on analysis</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-400">
+          <div className="group/item text-center p-4 bg-gradient-to-br from-blue-500/10 to-blue-400/5 rounded-lg border border-blue-500/20 hover:border-blue-400/40 hover:bg-blue-500/20 transition-all duration-300 cursor-pointer">
+            <div className="text-3xl font-bold text-blue-400 group-hover/item:text-white transition-colors duration-300">
               {Math.round(filteredAndSortedData.reduce((sum, w) => sum + w.influenceScore, 0) / Math.max(filteredAndSortedData.length, 1))}
             </div>
-            <div className="text-sm text-gray-400">Avg Influence</div>
-            <div className="text-xs text-gray-500">0-100 scale</div>
+            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Avg Influence</div>
+            <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors duration-300">0-100 scale</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-purple-400">
+          <div className="group/item text-center p-4 bg-gradient-to-br from-purple-500/10 to-purple-400/5 rounded-lg border border-purple-500/20 hover:border-purple-400/40 hover:bg-purple-500/20 transition-all duration-300 cursor-pointer">
+            <div className="text-3xl font-bold text-purple-400 group-hover/item:text-white transition-colors duration-300">
               {topicData?.data.interactions_24h.toLocaleString() || '0'}
             </div>
-            <div className="text-sm text-gray-400">24h Interactions</div>
-            <div className="text-xs text-gray-500">Total engagement</div>
+            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">24h Interactions</div>
+            <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors duration-300">Total engagement</div>
           </div>
         </div>
 
