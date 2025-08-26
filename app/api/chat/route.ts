@@ -1,71 +1,202 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { z } from "zod"
+
+const chatMessageSchema = z.object({
+  role: z.enum(["system", "user", "assistant"]),
+  content: z.string(),
+})
+
+const chatRequestSchema = z.object({
+  messages: z.array(chatMessageSchema),
+  stream: z.boolean().optional(),
+  context: z.object({
+    price: z.string(),
+    change24h: z.string(),
+    volume24h: z.string(),
+    sentiment: z.string(),
+  }).optional(),
+})
+
+const jatevoRequestSchema = z.object({
+  model: z.string(),
+  messages: z.array(chatMessageSchema),
+  stream: z.boolean().optional(),
+  stop: z.array(z.string()).optional(),
+  stream_options: z.object({
+    include_usage: z.boolean(),
+    continuous_usage_stats: z.boolean(),
+  }).optional(),
+  top_p: z.number().optional(),
+  max_tokens: z.number().optional(),
+  temperature: z.number().optional(),
+  presence_penalty: z.number().optional(),
+  frequency_penalty: z.number().optional(),
+})
 
 export async function POST(request: NextRequest) {
   try {
-    const { messages, stream, context } = await request.json()
+    const body = await request.json()
+    const validated = chatRequestSchema.parse(body)
+    const { messages, stream = false, context } = validated
 
-    // Mock AI response for now - you can integrate with your preferred AI service
-    const mockResponse = {
-      choices: [
-        {
-          message: {
-            content: `I'm analyzing the BONK ecosystem data. Based on the current context:
-          
-• Price: ${context?.price || "$0.000000"}
-• 24h Change: ${context?.change24h || "+0.00%"}
-• Volume: ${context?.volume24h || "$0"}
-• Sentiment: ${context?.sentiment || "neutral"}
+    // Fetch BONK ecosystem data from internal APIs
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+      : 'http://localhost:3000'
 
-How can I help you with BONK analytics today? I can provide insights on price movements, market sentiment, trading patterns, and ecosystem developments.`,
-          },
-        },
-      ],
+    const [chartRes, marketsRes, overviewRes] = await Promise.allSettled([
+      fetch(`${baseUrl}/api/bonk/chart?tf=24h`),
+      fetch(`${baseUrl}/api/bonk/markets/enhanced`),
+      fetch(`${baseUrl}/api/bonk/overview`)
+    ])
+
+    // Parse responses safely
+    let chartData = null
+    let marketsData = null
+    let overviewData = null
+
+    if (chartRes.status === 'fulfilled' && chartRes.value.ok) {
+      chartData = await chartRes.value.json()
+    }
+
+    if (marketsRes.status === 'fulfilled' && marketsRes.value.ok) {
+      marketsData = await marketsRes.value.json()
+    }
+
+    if (overviewRes.status === 'fulfilled' && overviewRes.value.ok) {
+      overviewData = await overviewRes.value.json()
+    }
+
+    // Build comprehensive ecosystem context
+    const ecosystemContext = {
+      price: overviewData?.price || chartData?.currentPrice || context?.price || 'N/A',
+      change24h: overviewData?.change24h || context?.change24h || 'N/A',
+      volume24h: overviewData?.volume24h || chartData?.currentVolume || context?.volume24h || 'N/A',
+      marketCap: overviewData?.marketCap || chartData?.currentMarketCap || 'N/A',
+      rank: overviewData?.rank || 'N/A',
+      // Additional chart data
+      chartChangePercent: chartData?.summary?.changePercent || 'N/A',
+      highestPrice: chartData?.summary?.highestPrice || 'N/A',
+      lowestPrice: chartData?.summary?.lowestPrice || 'N/A',
+      totalChartVolume: chartData?.summary?.totalVolume || 'N/A',
+      // Markets data
+      totalVenues: marketsData?.summary?.totalVenues || 'N/A',
+      totalMarketsVolume: marketsData?.summary?.totalVolume || 'N/A',
+      averageSpread: marketsData?.summary?.averageSpread || 'N/A',
+      uniqueExchanges: marketsData?.summary?.uniqueExchanges || 'N/A',
+      averagePrice: marketsData?.summary?.averagePrice || 'N/A',
+      // Overview additional data
+      circulatingSupply: overviewData?.circulatingSupply || 'N/A',
+      totalSupply: overviewData?.totalSupply || 'N/A',
+      maxSupply: overviewData?.maxSupply || 'N/A',
+      ath: overviewData?.ath || {},
+      atl: overviewData?.atl || {},
+      // Performance data
+      performance: overviewData?.changePct || {},
+      sentiment: context?.sentiment || 'N/A'
+    }
+
+    // Add context as system message
+    const enhancedMessages = [...messages]
+    const systemMessage = {
+      role: "system" as const,
+      content: `You are BONK AI Assistant. Here is the current BONK ecosystem data:
+
+**Price & Market Data:**
+- Current Price: $${ecosystemContext.price}
+- 24h Change: ${ecosystemContext.change24h}%
+- 24h Volume: $${ecosystemContext.volume24h?.toLocaleString()}
+- Market Cap: $${ecosystemContext.marketCap?.toLocaleString()}
+- Market Cap Rank: ${ecosystemContext.rank}
+
+**Chart Analytics (24h):**
+- Price Change %: ${ecosystemContext.chartChangePercent}%
+- Highest Price: $${ecosystemContext.highestPrice}
+- Lowest Price: $${ecosystemContext.lowestPrice}
+- Total Volume: $${ecosystemContext.totalChartVolume?.toLocaleString()}
+
+**Markets Overview:**
+- Total Trading Venues: ${ecosystemContext.totalVenues}
+- Total Markets Volume: $${ecosystemContext.totalMarketsVolume?.toLocaleString()}
+- Average Spread: ${ecosystemContext.averageSpread}%
+- Unique Exchanges: ${ecosystemContext.uniqueExchanges}
+- Average Price Across Markets: $${ecosystemContext.averagePrice}
+
+**Supply Information:**
+- Circulating Supply: ${ecosystemContext.circulatingSupply?.toLocaleString()}
+- Total Supply: ${ecosystemContext.totalSupply?.toLocaleString()}
+- Max Supply: ${ecosystemContext.maxSupply?.toLocaleString()}
+
+**Historical Data:**
+- All-Time High: $${ecosystemContext.ath?.price} (${ecosystemContext.ath?.changePct}% from ATH)
+- All-Time Low: $${ecosystemContext.atl?.price} (${ecosystemContext.atl?.changePct}% from ATL)
+
+**Performance Changes:**
+- 1h: ${ecosystemContext.performance?.h1}%
+- 7d: ${ecosystemContext.performance?.d7}%
+- 30d: ${ecosystemContext.performance?.d30}%
+- 1y: ${ecosystemContext.performance?.y1}%
+
+**Sentiment:** ${ecosystemContext.sentiment}
+
+Provide insights about BONK prices, sentiment, trading volume, market data, and ecosystem developments. Be helpful and accurate. Use the provided data to give context-aware responses.`,
+    }
+    enhancedMessages.unshift(systemMessage)
+
+    const jatevoPayload = {
+      model: "moonshotai/kimi-k2-instruct",
+      messages: enhancedMessages,
+      stream,
+      stop: [],
+      stream_options: stream ? {
+        include_usage: true,
+        continuous_usage_stats: true,
+      } : undefined,
+      top_p: 1,
+      max_tokens: 1000,
+      temperature: 1,
+      presence_penalty: 0,
+      frequency_penalty: 0,
+    }
+
+    const apiKey = process.env.JATEVO_API_KEY
+    if (!apiKey) {
+      throw new Error("JATEVO_API_KEY environment variable is not set")
+    }
+
+    const jatevoResponse = await fetch("https://inference.jatevo.id/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(jatevoPayload),
+    })
+
+    if (!jatevoResponse.ok) {
+      const errorText = await jatevoResponse.text()
+      throw new Error(`Jatevo API error: ${jatevoResponse.status} ${errorText}`)
     }
 
     if (stream) {
-      // Return streaming response
-      const encoder = new TextEncoder()
-      const stream = new ReadableStream({
-        start(controller) {
-          const content = mockResponse.choices[0].message.content
-          const words = content.split(" ")
-
-          let index = 0
-          const interval = setInterval(() => {
-            if (index < words.length) {
-              const chunk = {
-                choices: [
-                  {
-                    delta: {
-                      content: words[index] + " ",
-                    },
-                  },
-                ],
-              }
-
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify(chunk)}\n\n`))
-              index++
-            } else {
-              controller.enqueue(encoder.encode("data: [DONE]\n\n"))
-              controller.close()
-              clearInterval(interval)
-            }
-          }, 50)
-        },
-      })
-
-      return new Response(stream, {
+      // Forward the streaming response directly from Jatevo
+      return new Response(jatevoResponse.body, {
         headers: {
           "Content-Type": "text/event-stream",
           "Cache-Control": "no-cache",
-          Connection: "keep-alive",
+          "Connection": "keep-alive",
         },
       })
     }
 
-    return NextResponse.json(mockResponse)
+    // Return non-streaming response
+    const data = await jatevoResponse.json()
+    return NextResponse.json(data)
   } catch (error) {
     console.error("Chat API error:", error)
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: "Invalid request format", details: error.errors }, { status: 400 })
+    }
     return NextResponse.json({ error: "Failed to process chat request" }, { status: 500 })
   }
 }

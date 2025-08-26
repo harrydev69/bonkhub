@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Send, Bot, User, TrendingUp, DollarSign, BarChart3, MessageSquare } from "lucide-react"
+import { Streamdown } from 'streamdown';
 
 interface Message {
   id: string
@@ -23,11 +24,11 @@ function stripThink(s: string) {
   let out = ""
   let inThink = false
   for (const seg of s.split(/(<\/?think>)/g)) {
-    if (seg === "<Thinking>") {
+    if (seg === "<thinking>") {
       inThink = true
       continue
     }
-    if (seg === "</Thinking>") {
+    if (seg === "</thinking>") {
       inThink = false
       continue
     }
@@ -109,12 +110,7 @@ export function ChatInterface() {
         body: JSON.stringify({
           stream: true,
           messages: history,
-          context: {
-            price: "$0.000000",
-            change24h: "+0.00%",
-            volume24h: "$0",
-            sentiment: "neutral",
-          },
+          context: undefined, // Remove hardcoded context - route fetches real data now
         }),
         signal: abortRef.current.signal,
       })
@@ -251,7 +247,7 @@ export function ChatInterface() {
                         : "bg-gray-800 text-white border border-gray-700"
                     }`}
                   >
-                    <p className="text-sm">{message.content}</p>
+                    <Streamdown className="text-sm">{message.content}</Streamdown>
                   </div>
                   <span className="text-xs text-gray-500 mt-1">{message.timestamp.toLocaleTimeString()}</span>
                 </div>
