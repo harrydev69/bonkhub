@@ -6,10 +6,36 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Download, RefreshCw } from "lucide-react"
 
+// Type definitions
+interface HourData {
+  hour: string
+  volume: number
+  intensity: number
+}
+
+interface DayData {
+  day: string
+  hours: HourData[]
+}
+
+interface SummaryData {
+  totalVolume: number
+  averagePerHour: number
+  peakHour: string
+  dataRange: string
+  updateFrequency: string
+}
+
 export function VolumeHeatmap() {
   const [isLoading, setIsLoading] = useState(false)
-  const [heatmapData, setHeatmapData] = useState<any[]>([])
-  const [summary, setSummary] = useState<any>({})
+  const [heatmapData, setHeatmapData] = useState<DayData[]>([])
+  const [summary, setSummary] = useState<SummaryData>({
+    totalVolume: 0,
+    averagePerHour: 0,
+    peakHour: "",
+    dataRange: "",
+    updateFrequency: ""
+  })
   const [lastUpdated, setLastUpdated] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
 
@@ -51,7 +77,7 @@ export function VolumeHeatmap() {
   }
 
   // Generate fallback data for initial state and errors
-  const generateFallbackData = () => {
+  const generateFallbackData = (): { heatmap: DayData[], summary: SummaryData } => {
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, "0"))
 
@@ -126,14 +152,14 @@ export function VolumeHeatmap() {
   }
 
   return (
-    <Card className="group bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:border-[#ff6b35] hover:shadow-lg hover:shadow-[#ff6b35]/20 transition-all duration-500">
+    <Card className="group bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle className="text-[#ff6b35] text-2xl font-bold flex items-center gap-2 group-hover:text-white transition-colors duration-300">
-            <span className="text-orange-500 group-hover:scale-110 transition-transform duration-300">📊</span>
+          <CardTitle className="text-[#ff6b35] text-2xl font-bold flex items-center gap-2 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
+            <span className="text-orange-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]">📊</span>
             Volume Heatmap
           </CardTitle>
-                     <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors duration-300">
+                     <p className="text-gray-400 text-sm transition-all duration-500 group-hover:text-gray-300">
              Real-time BONK trading volume • Last updated: {lastUpdated ? new Date(lastUpdated).toLocaleString() : '...'}
            </p>
         </div>
@@ -142,40 +168,40 @@ export function VolumeHeatmap() {
       <CardContent className="space-y-6">
         {/* Summary Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="group/item text-center p-4 bg-gradient-to-br from-orange-500/10 to-orange-400/5 rounded-lg border border-orange-500/20 hover:border-orange-400/40 hover:bg-orange-500/20 transition-all duration-300 cursor-pointer">
-            <div className="text-3xl font-bold text-orange-500 group-hover/item:text-white transition-colors duration-300">
+          <div className="group/item text-center p-4 bg-gradient-to-br from-orange-500/10 to-orange-400/5 rounded-lg border border-orange-500/20 hover:border-orange-500/40 hover:bg-orange-500/20 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+            <div className="text-3xl font-bold text-orange-500 transition-all duration-500 group-hover/item:text-white group-hover/item:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
               ${isLoading ? '...' : (summary.totalVolume / 1e9).toFixed(2)}B
             </div>
-            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Total Volume</div>
-            <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors duration-300">168 hours of data</div>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">Total Volume</div>
+            <div className="text-xs text-gray-500 transition-all duration-500 group-hover/item:text-gray-400">168 hours of data</div>
           </div>
-          <div className="group/item text-center p-4 bg-gradient-to-br from-gray-700/10 to-gray-600/5 rounded-lg border border-gray-600/20 hover:border-gray-500/40 hover:bg-gray-600/20 transition-all duration-300 cursor-pointer">
-            <div className="text-3xl font-bold text-white group-hover/item:text-[#ff6b35] transition-colors duration-300">
+          <div className="group/item text-center p-4 bg-gradient-to-br from-gray-700/10 to-gray-600/5 rounded-lg border border-gray-600/20 hover:border-gray-500/40 hover:bg-gray-600/20 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+            <div className="text-3xl font-bold text-white transition-all duration-500 group-hover/item:text-orange-400 group-hover/item:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
               ${isLoading ? '...' : (summary.averagePerHour / 1e6).toFixed(2)}M
             </div>
-            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Average/Hour</div>
-            <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors duration-300">Across 7 days</div>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">Average/Hour</div>
+            <div className="text-xs text-gray-500 transition-all duration-500 group-hover/item:text-gray-400">Across 7 days</div>
           </div>
-          <div className="group/item text-center p-4 bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg border border-green-500/20 hover:border-green-400/40 hover:bg-green-500/20 transition-all duration-300 cursor-pointer">
-            <div className="text-3xl font-bold text-green-400 group-hover/item:text-white transition-colors duration-300">
+          <div className="group/item text-center p-4 bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg border border-green-500/20 hover:border-green-500/40 hover:bg-green-500/20 hover:scale-105 hover:shadow-[0_0_8px_rgba(34,197,94,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+            <div className="text-3xl font-bold text-green-400 transition-all duration-500 group-hover/item:text-white group-hover/item:drop-shadow-[0_0_4px_rgba(34,197,94,0.6)]">
               {isLoading ? '...' : summary.peakHour}
             </div>
-            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Peak Hour</div>
-            <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors duration-300">Highest average volume</div>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">Peak Hour</div>
+            <div className="text-xs text-gray-500 transition-all duration-500 group-hover/item:text-gray-400">Highest average volume</div>
           </div>
-          <div className="group/item text-center p-4 bg-gradient-to-br from-blue-500/10 to-blue-400/5 rounded-lg border border-blue-500/20 hover:border-blue-400/40 hover:bg-blue-500/20 transition-all duration-300 cursor-pointer">
-            <div className="text-3xl font-bold text-blue-400 group-hover/item:text-white transition-colors duration-300">
+          <div className="group/item text-center p-4 bg-gradient-to-br from-blue-500/10 to-blue-400/5 rounded-lg border border-blue-500/20 hover:border-blue-500/40 hover:bg-blue-500/20 hover:scale-105 hover:shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+            <div className="text-3xl font-bold text-blue-400 transition-all duration-500 group-hover/item:text-white group-hover/item:drop-shadow-[0_0_4px_rgba(59,130,246,0.6)]">
               {isLoading ? '...' : summary.dataRange}
             </div>
-            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Data Range</div>
-                         <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors duration-300">Every 30 minutes</div>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">Data Range</div>
+                         <div className="text-xs text-gray-500 transition-all duration-500 group-hover/item:text-gray-400">Every 30 minutes</div>
           </div>
         </div>
 
         {/* Heatmap */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Volume Intensity by Time (UTC)</h3>
-                     <div className="text-xs text-gray-400">Updates every 30 minutes</div>
+        <div className="space-y-4 group/heatmap">
+          <h3 className="text-lg font-semibold text-white transition-all duration-500 group-hover/heatmap:text-orange-400 group-hover/heatmap:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">Volume Intensity by Time (UTC)</h3>
+                     <div className="text-xs text-gray-400 transition-all duration-500 group-hover/heatmap:text-gray-300">Updates every 30 minutes</div>
 
           {/* Hour labels */}
           <div className="flex">
@@ -216,7 +242,7 @@ export function VolumeHeatmap() {
                     {dayData.hours.map((hourData) => (
                       <div
                         key={`${dayData.day}-${hourData.hour}`}
-                        className={`h-4 rounded-sm ${getIntensityColor(hourData.intensity)} hover:ring-1 hover:ring-orange-500 cursor-pointer transition-all`}
+                        className={`h-4 rounded-sm ${getIntensityColor(hourData.intensity)} hover:ring-2 hover:ring-orange-500 hover:scale-110 hover:shadow-[0_0_4px_rgba(255,107,53,0.4)] cursor-pointer transition-all duration-500 transform-gpu`}
                         title={`${dayData.day} ${hourData.hour}:00 - $${(hourData.volume / 1e6).toFixed(2)}M - ${getIntensityLabel(hourData.intensity)}`}
                       />
                     ))}
@@ -227,14 +253,14 @@ export function VolumeHeatmap() {
           </div>
 
           {/* Legend */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between group/legend">
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-400">Volume Intensity:</span>
+              <span className="text-sm text-gray-400 transition-all duration-500 group-hover/legend:text-gray-300">Volume Intensity:</span>
               <div className="flex items-center gap-2">
                 {[1, 2, 3, 4, 5].map((intensity) => (
-                  <div key={intensity} className="flex items-center gap-1">
-                    <div className={`w-3 h-3 rounded-sm ${getIntensityColor(intensity)}`} />
-                    <span className="text-xs text-gray-400">{getIntensityLabel(intensity)}</span>
+                  <div key={intensity} className="flex items-center gap-1 group/intensity">
+                    <div className={`w-3 h-3 rounded-sm ${getIntensityColor(intensity)} transition-all duration-500 group-hover/intensity:scale-125 group-hover/intensity:shadow-[0_0_3px_rgba(255,107,53,0.4)]`} />
+                    <span className="text-xs text-gray-400 transition-all duration-500 group-hover/intensity:text-gray-300">{getIntensityLabel(intensity)}</span>
                   </div>
                 ))}
               </div>
@@ -243,8 +269,8 @@ export function VolumeHeatmap() {
           </div>
 
           {/* Intensity Thresholds */}
-          <div className="bg-gradient-to-br from-gray-800/50 to-gray-700/30 rounded-lg p-4 border border-gray-600/30 group-hover:border-[#ff6b35]/30 transition-all duration-300">
-            <h4 className="text-sm font-semibold text-white mb-3 group-hover:text-[#ff6b35] transition-colors duration-300">Intensity Thresholds (Dynamic)</h4>
+          <div className="bg-gradient-to-br from-gray-800/50 to-gray-700/30 rounded-lg p-4 border border-gray-600/30 hover:border-orange-500/50 hover:bg-gray-800/70 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu group/thresholds">
+            <h4 className="text-sm font-semibold text-white mb-3 transition-all duration-500 group-hover/thresholds:text-orange-400 group-hover/thresholds:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">Intensity Thresholds (Dynamic)</h4>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                              {[
                  { label: "Very Low", level: "Intensity 1", value: "<$5M", color: "from-gray-700/20 to-gray-600/10" },
@@ -253,10 +279,10 @@ export function VolumeHeatmap() {
                  { label: "High", level: "Intensity 4", value: "$25M-$50M", color: "from-orange-500/20 to-orange-400/10" },
                  { label: "Very High", level: "Intensity 5", value: "$50M+", color: "from-red-500/20 to-red-400/10" },
                ].map((threshold) => (
-                <div key={threshold.label} className={`group/item text-center p-3 bg-gradient-to-br ${threshold.color} rounded-lg border border-gray-600/20 hover:border-[#ff6b35]/40 hover:bg-[#ff6b35]/10 transition-all duration-300 cursor-pointer`}>
-                  <div className="text-sm font-semibold text-orange-500 group-hover/item:text-white transition-colors duration-300">{threshold.label}</div>
-                  <div className="text-xs text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">{threshold.level}</div>
-                  <div className="text-sm text-white group-hover/item:text-[#ff6b35] transition-colors duration-300">{threshold.value}</div>
+                <div key={threshold.label} className={`group/item text-center p-3 bg-gradient-to-br ${threshold.color} rounded-lg border border-gray-600/20 hover:border-orange-500/50 hover:bg-orange-500/20 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu cursor-pointer`}>
+                  <div className="text-sm font-semibold text-orange-500 transition-all duration-500 group-hover/item:text-white group-hover/item:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">{threshold.label}</div>
+                  <div className="text-xs text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">{threshold.level}</div>
+                  <div className="text-sm text-white transition-all duration-500 group-hover/item:text-orange-400 group-hover/item:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">{threshold.value}</div>
                 </div>
               ))}
             </div>

@@ -112,48 +112,48 @@ export function NewsDashboard() {
     <div className="space-y-8">
       {/* News Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">
+        <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer group">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Total Articles</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-gray-400 text-sm transition-all duration-500 group-hover:text-gray-300">Total Articles</p>
+                <p className="text-2xl font-bold text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
                   {loading ? '...' : newsStats.totalArticles}
                 </p>
               </div>
-              <Newspaper className="h-8 w-8 text-orange-500" />
+              <Newspaper className="h-8 w-8 text-orange-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">
+        <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer group">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Today's Articles</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-gray-400 text-sm transition-all duration-500 group-hover:text-gray-300">Today's Articles</p>
+                <p className="text-2xl font-bold text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
                   {loading ? '...' : newsStats.todayArticles}
                 </p>
-                <p className="text-blue-400 text-xs">Update every 30 minutes</p>
+                <p className="text-blue-400 text-xs transition-all duration-500 group-hover:text-blue-300">Update every 30 minutes</p>
               </div>
-              <Clock className="h-8 w-8 text-orange-500" />
+              <Clock className="h-8 w-8 text-orange-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">
+        <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer group">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Positive News</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-gray-400 text-sm transition-all duration-500 group-hover:text-gray-300">Positive News</p>
+                <p className="text-2xl font-bold text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
                   {loading ? '...' : newsStats.positiveNews}
                 </p>
-                <p className="text-green-400 text-xs">
+                <p className="text-green-400 text-xs transition-all duration-500 group-hover:text-green-300">
                   {loading ? '...' : `${Math.round((newsStats.positiveNews / Math.max(newsStats.totalArticles, 1)) * 100)}% positive sentiment`}
                 </p>
               </div>
-              <TrendingUp className="h-8 w-8 text-orange-500" />
+              <TrendingUp className="h-8 w-8 text-orange-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
             </div>
           </CardContent>
         </Card>
@@ -175,10 +175,10 @@ export function NewsDashboard() {
       </Card> */}
 
       {/* Search and Filters */}
-      <Card className="bg-gray-900 border-gray-800">
+      <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer group">
         <CardHeader>
-          <CardTitle className="text-white flex items-center space-x-2">
-            <Filter className="h-5 w-5 text-orange-500" />
+          <CardTitle className="text-white flex items-center space-x-2 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
+            <Filter className="h-5 w-5 text-orange-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
             <span>News Filters</span>
           </CardTitle>
         </CardHeader>
@@ -191,7 +191,7 @@ export function NewsDashboard() {
                   placeholder="Search news articles..."
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className="pl-10 bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-orange-500"
+                  className="pl-10 bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-orange-500 hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500"
                 />
               </div>
             </div>
@@ -206,12 +206,12 @@ export function NewsDashboard() {
                 onClick={() => handleCategoryChange(category.id)}
                 className={
                   selectedCategory === category.id
-                    ? "bg-orange-600 hover:bg-orange-700 text-white"
-                    : "border-gray-700 text-gray-300 hover:border-orange-500 hover:text-orange-400"
+                    ? "bg-orange-600 hover:bg-orange-700 text-white hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.4)] transition-all duration-500 transform-gpu"
+                    : "border-gray-700 text-gray-300 hover:border-orange-500 hover:text-orange-400 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu"
                 }
               >
                 {category.label}
-                <Badge variant="secondary" className="ml-2 bg-gray-700 text-gray-300">
+                <Badge variant="secondary" className="ml-2 bg-gray-700 text-gray-300 transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_0_3px_rgba(255,107,53,0.5)]">
                   {category.count}
                 </Badge>
               </Button>

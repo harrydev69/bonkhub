@@ -152,11 +152,11 @@ export function ComprehensiveBONKDashboard() {
 
 
         {/* Price Performance Timeline */}
-        <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">
+        <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-[#ff6b35]/30 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer group">
           <CardHeader>
-            <CardTitle className="text-white flex items-center space-x-2">
-              <TrendingUp className="h-5 w-5 text-orange-500" />
-              <span>Price Performance</span>
+            <CardTitle className="text-white flex items-center space-x-2 transition-all duration-500 group-hover:text-orange-400">
+              <TrendingUp className="h-5 w-5 text-orange-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 transform-gpu" />
+              <span className="transition-all duration-500 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">Price Performance</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -169,8 +169,8 @@ export function ComprehensiveBONKDashboard() {
                 { label: '30d', value: perf?.changes['30d'] },
                 { label: '1y', value: perf?.changes['1y'] }
               ].map(({ label, value }) => (
-                <div key={label} className="text-center">
-                  <div className="text-gray-400 text-sm mb-2">{label}</div>
+                <div key={label} className="text-center transition-all duration-500 hover:scale-105 transform-gpu group/item">
+                  <div className="text-gray-400 text-sm mb-2 transition-all duration-500 group-hover/item:text-gray-300">{label}</div>
                   <div className="flex flex-col items-center space-y-1">
                     {value != null ? (
                       <>
@@ -199,9 +199,9 @@ export function ComprehensiveBONKDashboard() {
         <BONKNewsFeed />
 
         {/* About BONK - FAQ Style */}
-        <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">
+        <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-[#ff6b35]/30 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer group">
           <CardHeader>
-            <CardTitle className="text-white">About BONK</CardTitle>
+            <CardTitle className="text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">About BONK</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* FAQ Items with Dropdowns */}
@@ -209,7 +209,7 @@ export function ComprehensiveBONKDashboard() {
             {/* What is Bonk? */}
             <div className="border-b border-gray-800 pb-4">
               <button
-                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-colors"
+                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-all duration-500 hover:scale-[1.02] transform-gpu group/faq"
                 onClick={() => {
                   const content = document.getElementById("about-1")
                   const icon = document.getElementById("icon-1")
@@ -219,8 +219,8 @@ export function ComprehensiveBONKDashboard() {
                   }
                 }}
               >
-                <span className="font-medium">What is Bonk?</span>
-                <ChevronDown id="icon-1" className="h-5 w-5 transition-transform" />
+                <span className="font-medium transition-all duration-500 group-hover/faq:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">What is Bonk?</span>
+                <ChevronDown id="icon-1" className="h-5 w-5 transition-all duration-500 group-hover/faq:scale-110 transform-gpu" />
               </button>
               <div id="about-1" className="hidden mt-3 text-gray-400">
                 Bonk is the first Solana dog coin for the people, by the people with 50% of the total supply airdropped
@@ -232,7 +232,7 @@ export function ComprehensiveBONKDashboard() {
             {/* Where can you buy Bonk? */}
             <div className="border-b border-gray-800 pb-4">
               <button
-                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-colors"
+                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-all duration-500 hover:scale-[1.02] transform-gpu group/faq"
                 onClick={() => {
                   const content = document.getElementById("about-2")
                   const icon = document.getElementById("icon-2")
@@ -242,8 +242,8 @@ export function ComprehensiveBONKDashboard() {
                   }
                 }}
               >
-                <span className="font-medium">Where can you buy Bonk?</span>
-                <ChevronDown id="icon-2" className="h-5 w-5 transition-transform" />
+                <span className="font-medium transition-all duration-500 group-hover/faq:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">Where can you buy Bonk?</span>
+                <ChevronDown id="icon-2" className="h-5 w-5 transition-all duration-500 group-hover/faq:scale-110 transform-gpu" />
               </button>
               <div id="about-2" className="hidden mt-3 text-gray-400">
                 BONK tokens can be traded on centralized crypto exchanges. The most popular exchange to buy and trade
@@ -255,7 +255,7 @@ export function ComprehensiveBONKDashboard() {
             {/* What is the daily trading volume? */}
             <div className="border-b border-gray-800 pb-4">
               <button
-                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-colors"
+                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-all duration-500 hover:scale-[1.02] transform-gpu group/faq"
                 onClick={() => {
                   const content = document.getElementById("about-3")
                   const icon = document.getElementById("icon-3")
@@ -265,8 +265,8 @@ export function ComprehensiveBONKDashboard() {
                   }
                 }}
               >
-                <span className="font-medium">What is the daily trading volume?</span>
-                <ChevronDown id="icon-3" className="h-5 w-5 transition-transform" />
+                <span className="font-medium transition-all duration-500 group-hover/faq:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">What is the daily trading volume?</span>
+                <ChevronDown id="icon-3" className="h-5 w-5 transition-all duration-500 group-hover/faq:scale-110 transform-gpu" />
               </button>
               <div id="about-3" className="hidden mt-3 text-gray-400">
                 The trading volume of Bonk (BONK) is ${overview?.volume24h?.toLocaleString() || "169,061,565"} in the
@@ -278,7 +278,7 @@ export function ComprehensiveBONKDashboard() {
             {/* What is the market cap? */}
             <div className="border-b border-gray-800 pb-4">
               <button
-                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-colors"
+                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-all duration-500 hover:scale-[1.02] transform-gpu group/faq"
                 onClick={() => {
                   const content = document.getElementById("about-4")
                   const icon = document.getElementById("icon-4")
@@ -288,8 +288,8 @@ export function ComprehensiveBONKDashboard() {
                   }
                 }}
               >
-                <span className="font-medium">What is the market cap?</span>
-                <ChevronDown id="icon-4" className="h-5 w-5 transition-transform" />
+                <span className="font-medium transition-all duration-500 group-hover/faq:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">What is the market cap?</span>
+                <ChevronDown id="icon-4" className="h-5 w-5 transition-all duration-500 group-hover/faq:scale-110 transform-gpu" />
               </button>
               <div id="about-4" className="hidden mt-3 text-gray-400">
                 Market capitalization of Bonk (BONK) is ${overview?.marketCap?.toLocaleString() || "1,678,853,795"} and
@@ -301,7 +301,7 @@ export function ComprehensiveBONKDashboard() {
             {/* How does BONK work on Solana? */}
             <div className="border-b border-gray-800 pb-4">
               <button
-                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-colors"
+                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-all duration-500 hover:scale-[1.02] transform-gpu group/faq"
                 onClick={() => {
                   const content = document.getElementById("about-5")
                   const icon = document.getElementById("icon-5")
@@ -311,8 +311,8 @@ export function ComprehensiveBONKDashboard() {
                   }
                 }}
               >
-                <span className="font-medium">How does BONK work on Solana?</span>
-                <ChevronDown id="icon-5" className="h-5 w-5 transition-transform" />
+                <span className="font-medium transition-all duration-500 group-hover/faq:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">How does BONK work on Solana?</span>
+                <ChevronDown id="icon-5" className="h-5 w-5 transition-all duration-500 group-hover/faq:scale-110 transform-gpu" />
               </button>
               <div id="about-5" className="hidden mt-3 text-gray-400">
                 BONK is built on the Solana blockchain, leveraging its fast transaction speeds and low fees. The token
@@ -324,7 +324,7 @@ export function ComprehensiveBONKDashboard() {
             {/* What makes BONK unique? */}
             <div className="border-b border-gray-800 pb-4">
               <button
-                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-colors"
+                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-all duration-500 hover:scale-[1.02] transform-gpu group/faq"
                 onClick={() => {
                   const content = document.getElementById("about-6")
                   const icon = document.getElementById("icon-6")
@@ -334,8 +334,8 @@ export function ComprehensiveBONKDashboard() {
                   }
                 }}
               >
-                <span className="font-medium">What makes BONK unique?</span>
-                <ChevronDown id="icon-6" className="h-5 w-5 transition-transform" />
+                <span className="font-medium transition-all duration-500 group-hover/faq:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">What makes BONK unique?</span>
+                <ChevronDown id="icon-6" className="h-5 w-5 transition-all duration-500 group-hover/faq:scale-110 transform-gpu" />
               </button>
               <div id="about-6" className="hidden mt-3 text-gray-400">
                 Nearly half of the total supply (50 trillion coins) was distributed among Solana blockchain contributors
@@ -347,7 +347,7 @@ export function ComprehensiveBONKDashboard() {
             {/* Price Performance History */}
             <div className="border-b border-gray-800 pb-4">
               <button
-                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-colors"
+                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-all duration-500 hover:scale-[1.02] transform-gpu group/faq"
                 onClick={() => {
                   const content = document.getElementById("about-7")
                   const icon = document.getElementById("icon-7")
@@ -357,8 +357,8 @@ export function ComprehensiveBONKDashboard() {
                   }
                 }}
               >
-                <span className="font-medium">What is BONK's price performance?</span>
-                <ChevronDown id="icon-7" className="h-5 w-5 transition-transform" />
+                <span className="font-medium transition-all duration-500 group-hover/faq:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">What is BONK's price performance?</span>
+                <ChevronDown id="icon-7" className="h-5 w-5 transition-all duration-500 group-hover/faq:scale-110 transform-gpu" />
               </button>
               <div id="about-7" className="hidden mt-3 text-gray-400">
                 Bonk (BONK) reached an all-time high of $0.00005825 and an all-time low of $0.078614. It's currently
@@ -370,7 +370,7 @@ export function ComprehensiveBONKDashboard() {
             {/* Ecosystem Integrations */}
             <div className="pb-4">
               <button
-                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-colors"
+                className="flex items-center justify-between w-full text-left text-white hover:text-orange-400 transition-all duration-500 hover:scale-[1.02] transform-gpu group/faq"
                 onClick={() => {
                   const content = document.getElementById("about-8")
                   const icon = document.getElementById("icon-8")
@@ -380,8 +380,8 @@ export function ComprehensiveBONKDashboard() {
                   }
                 }}
               >
-                <span className="font-medium">What are BONK's ecosystem integrations?</span>
-                <ChevronDown id="icon-8" className="h-5 w-5 transition-transform" />
+                <span className="font-medium transition-all duration-500 group-hover/faq:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">What are BONK's ecosystem integrations?</span>
+                <ChevronDown id="icon-8" className="h-5 w-5 transition-all duration-500 group-hover/faq:scale-110 transform-gpu" />
               </button>
               <div id="about-8" className="hidden mt-3 text-gray-400">
                 BONK now has over 350 Onchain integrations built by the community across many verticals including
@@ -393,9 +393,9 @@ export function ComprehensiveBONKDashboard() {
         </Card>
 
         {/* Where to Trade BONK Card */}
-        <Card className="bg-gray-900 border-orange-500/20 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">
+        <Card className="bg-gray-900 border-orange-500/20 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer group">
           <CardHeader>
-            <CardTitle className="text-orange-500">Where to Trade BONK</CardTitle>
+            <CardTitle className="text-orange-500 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">Where to Trade BONK</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -432,7 +432,7 @@ export function ComprehensiveBONKDashboard() {
                     href={ticker.trade_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="grid grid-cols-4 gap-3 p-2 bg-gray-800/30 rounded hover:bg-gray-800/50 transition-colors cursor-pointer"
+                    className="grid grid-cols-4 gap-3 p-2 bg-gray-800/30 rounded hover:bg-gray-800/50 hover:scale-[1.02] hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu cursor-pointer group/exchange"
                   >
                     <div className="flex items-center space-x-2">
                       <div className={`w-3 h-3 rounded-full ${
@@ -443,7 +443,7 @@ export function ComprehensiveBONKDashboard() {
                         ticker.market.name.toLowerCase().includes('htx') ? 'bg-red-500' :
                         'bg-gray-500'
                       }`}></div>
-                      <span className="text-white font-medium">{ticker.market.name}</span>
+                      <span className="text-white font-medium transition-all duration-500 group-hover/exchange:text-orange-400 group-hover/exchange:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">{ticker.market.name}</span>
                     </div>
                     <span className="text-blue-400">{ticker.base}/{ticker.target}</span>
                     <span className="text-white">${(ticker.converted_volume.usd / 1000000).toFixed(1)}M</span>
@@ -466,7 +466,7 @@ export function ComprehensiveBONKDashboard() {
                   <div className="text-center pt-2">
                     <a
                       href="/trading-pairs"
-                      className="inline-block text-orange-400 hover:text-orange-300 text-sm font-medium transition-colors hover:scale-105 transform"
+                      className="inline-block text-orange-400 hover:text-orange-300 text-sm font-medium transition-all duration-500 hover:scale-105 hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)] transform-gpu"
                     >
                       View All Trading Pairs →
                     </a>
@@ -479,7 +479,7 @@ export function ComprehensiveBONKDashboard() {
       {/* Sidebar */}
       <div className="w-80 space-y-6">
         {/* BONK Price Card */}
-        <Card className="bg-gray-900 border-orange-500/20 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">
+        <Card className="bg-gray-900 border-orange-500/20 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer group">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
@@ -492,37 +492,37 @@ export function ComprehensiveBONKDashboard() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <CardTitle className="text-white">BONK Price</CardTitle>
+              <CardTitle className="text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">BONK Price</CardTitle>
             </div>
               <span className="text-gray-400 text-sm">#78</span>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Current Price */}
-            <div>
-              <div className="text-2xl font-bold text-white">{formatPrice(overview?.price || 0.00002204)}</div>
+            <div className="group/price">
+              <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/price:text-orange-400 group-hover/price:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">{formatPrice(overview?.price || 0.00002204)}</div>
               <div className="flex items-center space-x-1 mt-1">
                 {(overview?.changePct.h24 || -3.82) >= 0 ? (
-                  <ArrowUpRight className="h-4 w-4 text-green-400" />
+                  <ArrowUpRight className="h-4 w-4 text-green-400 transition-all duration-500 group-hover/price:scale-110 group-hover/price:drop-shadow-[0_0_3px_rgba(34,197,94,0.6)]" />
                 ) : (
-                  <ArrowDownRight className="h-4 w-4 text-red-400" />
+                  <ArrowDownRight className="h-4 w-4 text-red-400 transition-all duration-500 group-hover/price:scale-110 group-hover/price:drop-shadow-[0_0_3px_rgba(239,68,68,0.6)]" />
                 )}
-                <span className="text-red-400 text-sm font-medium">
+                <span className="text-red-400 text-sm font-medium transition-all duration-500 group-hover/price:scale-105 group-hover/price:drop-shadow-[0_0_2px_rgba(239,68,68,0.5)]">
                   {Math.abs(overview?.changePct.h24 || 3.82).toFixed(2)}% (24h)
                 </span>
               </div>
             </div>
 
             {/* Price Range Bar */}
-            <div className="space-y-2">
+            <div className="space-y-2 group/range">
               <div className="flex justify-between text-xs text-gray-400">
-                <span>${(overview?.low24h || 0.00002206).toFixed(8)}</span>
-                <span>24h Range</span>
-                <span>${(overview?.high24h || 0.00002318).toFixed(8)}</span>
+                <span className="transition-all duration-500 group-hover/range:text-gray-300">${(overview?.low24h || 0.00002206).toFixed(8)}</span>
+                <span className="transition-all duration-500 group-hover/range:text-orange-400 group-hover/range:drop-shadow-[0_0_2px_rgba(255,107,53,0.5)]">24h Range</span>
+                <span className="transition-all duration-500 group-hover/range:text-gray-300">${(overview?.high24h || 0.00002318).toFixed(8)}</span>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
+              <div className="w-full bg-gray-700 rounded-full h-2 transition-all duration-500 group-hover/range:bg-gray-600">
                 <div
-                  className="bg-gradient-to-r from-orange-500 to-green-500 h-2 rounded-full"
+                  className="bg-gradient-to-r from-orange-500 to-green-500 h-2 rounded-full transition-all duration-500 group-hover/range:shadow-[0_0_8px_rgba(255,107,53,0.4)]"
                   style={{ width: "65%" }}
                 ></div>
               </div>
@@ -530,62 +530,62 @@ export function ComprehensiveBONKDashboard() {
 
             {/* Market Data */}
             <div className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Market Cap</span>
-                <span className="text-white font-medium">{formatExactValue(overview?.marketCap || 1706257459)}</span>
+              <div className="flex justify-between group/market">
+                <span className="text-gray-400 transition-all duration-500 group-hover/market:text-gray-300">Market Cap</span>
+                <span className="text-white font-medium transition-all duration-500 group-hover/market:text-orange-400 group-hover/market:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">{formatExactValue(overview?.marketCap || 1706257459)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Fully Diluted Valuation</span>
-                <span className="text-white font-medium">{formatExactValue(overview?.fdv || 1939337583)}</span>
+              <div className="flex justify-between group/fdv">
+                <span className="text-gray-400 transition-all duration-500 group-hover/fdv:text-gray-300">Fully Diluted Valuation</span>
+                <span className="text-white font-medium transition-all duration-500 group-hover/fdv:text-orange-400 group-hover/fdv:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">{formatExactValue(overview?.fdv || 1939337583)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">24 Hour Trading Vol</span>
-                <span className="text-white font-medium">${formatNumber(overview?.volume24h || 171331847)}</span>
+              <div className="flex justify-between group/volume">
+                <span className="text-gray-400 transition-all duration-500 group-hover/volume:text-gray-300">24 Hour Trading Vol</span>
+                <span className="text-white font-medium transition-all duration-500 group-hover/volume:text-orange-400 group-hover/volume:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">${formatNumber(overview?.volume24h || 171331847)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Circulating Supply</span>
-                <span className="text-white font-medium">77,419,592,329,436.58</span>
+              <div className="flex justify-between group/circulating">
+                <span className="text-gray-400 transition-all duration-500 group-hover/circulating:text-gray-300">Circulating Supply</span>
+                <span className="text-white font-medium transition-all duration-500 group-hover/circulating:text-orange-400 group-hover/circulating:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">77,419,592,329,436.58</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Total Supply</span>
-                <span className="text-white font-medium">87,995,351,634,222.84</span>
+              <div className="flex justify-between group/total">
+                <span className="text-gray-400 transition-all duration-500 group-hover/total:text-gray-300">Total Supply</span>
+                <span className="text-white font-medium transition-all duration-500 group-hover/total:text-orange-400 group-hover/total:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">87,995,351,634,222.84</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Max Supply</span>
-                <span className="text-white font-medium">87,995,351,634,222.84</span>
+              <div className="flex justify-between group/max">
+                <span className="text-gray-400 transition-all duration-500 group-hover/max:text-gray-300">Max Supply</span>
+                <span className="text-white font-medium transition-all duration-500 group-hover/max:text-orange-400 group-hover/max:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">87,995,351,634,222.84</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Info Card */}
-        <Card className="bg-gray-900 border-orange-500/20 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">
+        <Card className="bg-gray-900 border-orange-500/20 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer group">
           <CardHeader>
-            <CardTitle className="text-orange-500">Info</CardTitle>
+            <CardTitle className="text-orange-500 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">Info</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400">Contract</span>
+            <div className="flex justify-between items-center group/contract">
+              <span className="text-gray-400 transition-all duration-500 group-hover/contract:text-gray-300">Contract</span>
               <div className="flex items-center space-x-2">
-                <span className="text-white font-mono" title="DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263">
+                <span className="text-white font-mono transition-all duration-500 group-hover/contract:text-orange-400 group-hover/contract:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]" title="DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263">
                   DezXA...pPB263
                 </span>
                 <Copy 
-                  className="h-4 w-4 text-gray-400 hover:text-orange-400 cursor-pointer" 
+                  className="h-4 w-4 text-gray-400 hover:text-orange-400 hover:scale-110 transition-all duration-500 cursor-pointer" 
                   onClick={() => navigator.clipboard.writeText('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263')}
                 />
               </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400">Website</span>
+            <div className="flex justify-between items-center group/website">
+              <span className="text-gray-400 transition-all duration-500 group-hover/website:text-gray-300">Website</span>
               <a
                 href="https://bonkcoin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-300 flex items-center space-x-1"
+                className="text-blue-400 hover:text-blue-300 flex items-center space-x-1 transition-all duration-500 group-hover/website:scale-105"
               >
-                <span>bonkcoin.com</span>
-                <ExternalLink className="h-3 w-3" />
+                <span className="transition-all duration-500 group-hover/website:drop-shadow-[0_0_2px_rgba(59,130,246,0.5)]">bonkcoin.com</span>
+                <ExternalLink className="h-3 w-3 transition-all duration-500 group-hover/website:scale-110 group-hover/website:rotate-2" />
               </a>
             </div>
             <div className="flex justify-between items-center">
@@ -612,14 +612,14 @@ export function ComprehensiveBONKDashboard() {
                 <ExternalLink className="h-3 w-3" />
               </a>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400">Community</span>
+            <div className="flex justify-between items-center group/community">
+              <span className="text-gray-400 transition-all duration-500 group-hover/community:text-gray-300">Community</span>
               <div className="flex space-x-2">
                 <a
                   href="https://twitter.com/bonk_inu"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-gray-800 px-2 py-1 rounded text-white text-xs hover:bg-gray-700 transition-colors"
+                  className="bg-gray-800 px-2 py-1 rounded text-white text-xs hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(59,130,246,0.4)] transition-all duration-500 transform-gpu"
                 >
                   X Twitter
                 </a>
@@ -627,7 +627,7 @@ export function ComprehensiveBONKDashboard() {
                   href="https://discord.gg/bonk"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-gray-800 px-2 py-1 rounded text-white text-xs hover:bg-gray-700 transition-colors"
+                  className="bg-gray-800 px-2 py-1 rounded text-white text-xs hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(88,101,242,0.4)] transition-all duration-500 transform-gpu"
                 >
                   Discord
                 </a>
@@ -668,9 +668,9 @@ export function ComprehensiveBONKDashboard() {
 
 
         {/* Holders Card */}
-        <Card className="bg-gray-900 border-orange-500/20 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">
+        <Card className="bg-gray-900 border-orange-500/20 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer group">
           <CardHeader>
-            <CardTitle className="text-orange-500">Holders</CardTitle>
+            <CardTitle className="text-orange-500 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">Holders</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {holdersLoading ? (
@@ -815,38 +815,38 @@ export function ComprehensiveBONKDashboard() {
         </Card>
 
         {/* BONK Historical Price Card */}
-        <Card className="bg-gray-900 border-orange-500/20 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">
+        <Card className="bg-gray-900 border-orange-500/20 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer group">
           <CardHeader>
-            <CardTitle className="text-orange-500">BONK Historical Price</CardTitle>
+            <CardTitle className="text-orange-500 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">BONK Historical Price</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-400">24h Range</span>
-              <span className="text-white">$0.0000218 - $0.00002326</span>
+            <div className="flex justify-between group/item">
+              <span className="text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">24h Range</span>
+              <span className="text-white transition-all duration-500 group-hover/item:text-orange-400 group-hover/item:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">$0.0000218 - $0.00002326</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">7d Range</span>
-              <span className="text-white">$0.00002081 - $0.0000238</span>
+            <div className="flex justify-between group/item">
+              <span className="text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">7d Range</span>
+              <span className="text-white transition-all duration-500 group-hover/item:text-orange-400 group-hover/item:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">$0.00002081 - $0.0000238</span>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1 group/ath">
               <div className="flex justify-between">
-                <span className="text-gray-400">All-Time High</span>
+                <span className="text-gray-400 transition-all duration-500 group-hover/ath:text-gray-300">All-Time High</span>
                 <div className="text-right">
-                  <div className="text-white">$0.00005825</div>
-                  <div className="text-red-400 text-xs">↘ 62.5%</div>
+                  <div className="text-white transition-all duration-500 group-hover/ath:text-orange-400 group-hover/ath:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">$0.00005825</div>
+                  <div className="text-red-400 text-xs transition-all duration-500 group-hover/ath:scale-105 group-hover/ath:drop-shadow-[0_0_2px_rgba(239,68,68,0.6)]">↘ 62.5%</div>
                 </div>
               </div>
-              <div className="text-gray-500 text-xs text-right">Nov 20, 2024 (9 months)</div>
+              <div className="text-gray-500 text-xs text-right transition-all duration-500 group-hover/ath:text-gray-400">Nov 20, 2024 (9 months)</div>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1 group/atl">
               <div className="flex justify-between">
-                <span className="text-gray-400">All-Time Low</span>
+                <span className="text-gray-400 transition-all duration-500 group-hover/atl:text-gray-300">All-Time Low</span>
                 <div className="text-right">
-                  <div className="text-white">$0.00000008614</div>
-                  <div className="text-green-400 text-xs">↗ 25276.6%</div>
+                  <div className="text-white transition-all duration-500 group-hover/atl:text-orange-400 group-hover/atl:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">$0.00000008614</div>
+                  <div className="text-green-400 text-xs transition-all duration-500 group-hover/atl:scale-105 group-hover/atl:drop-shadow-[0_0_2px_rgba(34,197,94,0.6)]">↗ 25276.6%</div>
                 </div>
               </div>
-              <div className="text-gray-500 text-xs text-right">Dec 29, 2022 (over 2 years)</div>
+              <div className="text-gray-500 text-xs text-right transition-all duration-500 group-hover/atl:text-gray-400">Dec 29, 2022 (over 2 years)</div>
             </div>
           </CardContent>
         </Card>

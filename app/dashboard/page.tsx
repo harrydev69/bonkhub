@@ -34,9 +34,11 @@ export default function DashboardPage() {
               ].map((tag) => (
                 <button
                   key={tag}
-                  className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-full text-sm transition-all hover:shadow-[0_0_10px_rgba(255,107,53,0.3)]"
+                  className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-full text-sm transition-all duration-500 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] hover:scale-[1.02] hover:rotate-[0.5deg] transform-gpu group"
                 >
-                  {tag}
+                  <span className="transition-all duration-500 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">
+                    {tag}
+                  </span>
                 </button>
               ))}
             </div>
