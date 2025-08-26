@@ -60,7 +60,7 @@ export function SocialFeed({
   const [currentPage, setCurrentPage] = useState(1)
   const postsPerPage = 7
 
-  // Fetch influencers data to filter posts
+  // Fetch influencers data to filter posts - refresh every 1 hour
   const { data: influencersData } = useQuery({
     queryKey: ["influencers", "bonk", 200], // Use same key as InfluencerList
     queryFn: async () => {
@@ -74,7 +74,8 @@ export function SocialFeed({
       const json = await res.json().catch(() => ({}))
       return json.influencers || []
     },
-    staleTime: Infinity,
+    refetchInterval: 60 * 60 * 1000, // 1 hour
+    staleTime: 55 * 60 * 1000, // Consider stale after 55 minutes
   })
 
   const { data: rawData, isLoading, error } = useQuery({
@@ -98,7 +99,8 @@ export function SocialFeed({
       
       return posts
     },
-    staleTime: Infinity,
+    refetchInterval: 5 * 60 * 1000, // 5 minutes
+    staleTime: 4 * 60 * 1000, // Consider stale after 4 minutes
   })
 
   // Get influencer names for filtering

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
 import { TrendingUp, TrendingDown, Flame, Users, MessageCircle, Share2 } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
 
 // Types
 type Sentiment = "bullish" | "bearish" | "neutral"
@@ -168,36 +169,19 @@ function buildNarratives(feeds: FeedItem[]): Narrative[] {
 }
 
 export function NarrativeTracker() {
-  const [feeds, setFeeds] = useState<FeedItem[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: feeds, isLoading: feedsLoading } = useQuery({
+    queryKey: ["narrativeFeeds"],
+    queryFn: async () => {
+      const res = await fetch("/api/feeds/bonk?limit=200", { cache: "no-store" })
+      if (!res.ok) throw new Error("Failed to fetch feeds")
+      const data = await res.json()
+      return data.feeds || []
+    },
+    refetchInterval: 5 * 60 * 1000, // 5 minutes
+    staleTime: 4 * 60 * 1000, // Consider stale after 4 minutes
+  })
 
-  useEffect(() => {
-    let active = true
-    async function load() {
-      try {
-        const res = await fetch("/api/feeds/bonk?limit=200", { cache: "no-store" })
-        const json: unknown = await res.json().catch(() => ({}))
-        if (!active) return
-        const arr =
-          (json as any)?.feeds && Array.isArray((json as any).feeds)
-            ? ((json as any).feeds as FeedItem[])
-            : (json as any)?.data && Array.isArray((json as any).data)
-              ? ((json as any).data as FeedItem[])
-              : []
-        setFeeds(arr)
-      } catch (e) {
-        console.error("Narrative feeds error:", e)
-      } finally {
-        if (active) setLoading(false)
-      }
-    }
-    load()
-    return () => {
-      active = false
-    }
-  }, [])
-
-  const narratives = useMemo(() => buildNarratives(feeds), [feeds])
+  const narratives = useMemo(() => buildNarratives(feeds || []), [feeds])
   const topNarratives = useMemo(() => [...narratives].sort((a, b) => b.strength - a.strength).slice(0, 3), [narratives])
   const bullishNarratives = useMemo(() => narratives.filter((n) => n.sentiment === "bullish"), [narratives])
   const bearishNarratives = useMemo(() => narratives.filter((n) => n.sentiment === "bearish"), [narratives])
@@ -209,7 +193,7 @@ export function NarrativeTracker() {
     : 0
   const bullishPct = narratives.length ? Math.round((bullishNarratives.length / narratives.length) * 100) : 0
 
-  if (loading) {
+  if (feedsLoading) {
     return (
       <div className="space-y-6">
         <div className="text-center">

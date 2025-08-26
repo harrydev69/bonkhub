@@ -19,6 +19,7 @@ import {
   Activity,
   TrendingDown,
 } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
 
 type SentimentTag = "positive" | "neutral" | "negative"
 
@@ -134,10 +135,11 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
           console.warn("Mindshare refresh error:", e)
         }
       }
-      timer = window.setTimeout(tick, refreshMs)
+      // Use 5 minutes for feeds refresh (most dynamic data)
+      timer = window.setTimeout(tick, 5 * 60 * 1000)
     }
 
-    timer = window.setTimeout(tick, refreshMs)
+    timer = window.setTimeout(tick, 5 * 60 * 1000)
 
     const onVis = () => {
       if (document.visibilityState === "visible") {
@@ -150,7 +152,7 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
       if (timer) window.clearTimeout(timer)
       document.removeEventListener("visibilitychange", onVis)
     }
-  }, [refreshMs])
+  }, [])
 
   // ---------- Optional WebSocket live updates ----------
   useEffect(() => {

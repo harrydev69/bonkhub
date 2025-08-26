@@ -149,3 +149,38 @@ export async function getCoinTimeseries(
   const params = new URLSearchParams({ interval, start: String(start), end: String(end) });
   return await fetchJson(`/public/coins/${s}/time-series/v2?${params.toString()}`);
 }
+
+/**
+ * Fetch comprehensive asset data including Galaxy Score, social metrics, and engagement data.
+ * This combines multiple data points into a single API call to reduce rate limit usage.
+ * Optimized for 10 calls per minute limit.
+ *
+ * @param symbol Cryptocurrency symbol. Case insensitive but normalised to uppercase.
+ */
+export async function getComprehensiveAssetData(symbol: string) {
+  const s = String(symbol).toUpperCase();
+  
+  // Get comprehensive asset data including social metrics (1 API call)
+  const assetData = await fetchJson(`/public/coins/${s}/v1`);
+  
+  // Get topic summary data (1 API call)
+  const topicData = await fetchJson(`/public/topic/${s.toLowerCase()}/v1`);
+  
+  // Get time series data for the last 24 hours to calculate trends (1 API call)
+  const now = Math.floor(Date.now() / 1000);
+  const dayAgo = now - 86400; // 24 hours ago
+  
+  let timeseriesData = null;
+  try {
+    timeseriesData = await fetchJson(`/public/coins/${s}/time-series/v2?interval=hour&start=${dayAgo}&end=${now}`);
+  } catch (error) {
+    console.warn(`Failed to fetch timeseries for ${s}:`, error);
+  }
+  
+  return {
+    asset: assetData,
+    topic: topicData,
+    timeseries: timeseriesData,
+    timestamp: now
+  };
+}

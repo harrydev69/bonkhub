@@ -84,33 +84,25 @@ export default function InfluencerList({ limit = 20 }: { limit?: number }) {
   const [q, setQ] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("impact");
 
-  const {
-    data: rawData,
-    isLoading,
-    error,
-  } = useQuery({
+  const { data: influencers, isLoading, error } = useQuery({
     queryKey: ["influencers", "bonk", limit],
     queryFn: async () => {
       const res = await fetch(`/api/influencers/bonk?limit=${limit}`, {
-        cache: "force-cache", // Cache the response
-      });
+        cache: "force-cache",
+      })
       if (!res.ok) {
-        const body = await res.text().catch(() => "");
-        throw new Error(`influencers ${res.status}: ${body || res.statusText}`);
+        const body = await res.text().catch(() => "")
+        throw new Error(`influencers ${res.status}: ${body || res.statusText}`)
       }
-      const j = await res.json().catch(() => ({}));
-      const arr = toArray(j);
-      // de-dupe by (id || handle || username)
-      const deduped = dedupeByKey(arr, (x, i) =>
-        String(x.creator_id ?? `idx:${i}`)
-      );
-      return deduped;
+      const json = await res.json().catch(() => ({}))
+      return json.influencers || []
     },
-    staleTime: Infinity, // Data is never stale
-  });
+    refetchInterval: 60 * 60 * 1000, // 1 hour
+    staleTime: 55 * 60 * 1000, // Consider stale after 55 minutes
+  })
 
   const rows = useMemo(() => {
-    const mapped = (rawData || []).map((i, idx) => {
+    const mapped = (influencers || []).map((i, idx) => {
       const handle = i.creator_name || `user_${idx}`;
       const normHandle = handle.startsWith("@") ? handle : `@${handle}`;
       const name = i.creator_name || handle.replace(/^@/, "");
@@ -143,7 +135,7 @@ export default function InfluencerList({ limit = 20 }: { limit?: number }) {
     });
 
     return filtered.sort(sorters[sortKey]).slice(0, limit);
-  }, [rawData, q, sortKey, limit]);
+  }, [influencers, q, sortKey, limit]);
 
   return (
     <Card>
