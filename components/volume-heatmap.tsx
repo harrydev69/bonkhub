@@ -14,13 +14,29 @@ export function VolumeHeatmap() {
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, "0"))
 
-    return days.map((day) => ({
+    // Use a stable seed-based approach to avoid hydration mismatches
+    const seed = 12345 // Fixed seed for consistent data
+    let currentSeed = seed
+
+    const seededRandom = () => {
+      currentSeed = (currentSeed * 9301 + 49297) % 233280
+      return currentSeed / 233280
+    }
+
+    return days.map((day, dayIndex) => ({
       day,
-      hours: hours.map((hour) => ({
-        hour,
-        volume: Math.random() * 1000 + 200, // Random volume between 200-1200M
-        intensity: Math.floor(Math.random() * 5) + 1, // 1-5 intensity levels
-      })),
+      hours: hours.map((hour, hourIndex) => {
+        // Use day and hour index to create consistent but varied data
+        const volumeSeed = (dayIndex * 24 + hourIndex) * seed
+        const volume = 200 + (volumeSeed % 800) + (seededRandom() * 200)
+        const intensity = Math.floor((volumeSeed % 5) + 1) // 1-5 intensity levels
+        
+        return {
+          hour,
+          volume: Math.round(volume),
+          intensity,
+        }
+      }),
     }))
   }
 

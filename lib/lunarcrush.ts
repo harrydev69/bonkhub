@@ -250,3 +250,29 @@ export async function getTopicNews(topic: string) {
     throw error
   }
 }
+
+export async function getTopicData(topic: string) {
+  const url = `${API_BASE}/public/topic/${topic}/v1`
+  
+  try {
+    console.log(`🔍 Fetching topic data for: ${topic}`)
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      next: { revalidate: 1800 } // Cache for 30 minutes
+    })
+
+    if (!response.ok) {
+      throw new Error(`LunarCrush API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    console.log(`✅ Topic data fetched successfully for ${topic}`)
+    return data
+  } catch (error) {
+    console.error(`❌ Error fetching topic data for ${topic}:`, error)
+    throw error
+  }
+}
