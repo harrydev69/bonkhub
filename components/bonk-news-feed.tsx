@@ -34,12 +34,12 @@ type BONKNewsResponse = {
 }
 
 interface BONKNewsFeedProps {
-  selectedCategory: string
-  searchQuery: string
+  selectedCategory?: string
+  searchQuery?: string
   articles?: any[] // Add articles prop
 }
 
-export function BONKNewsFeed({ selectedCategory, searchQuery, articles: propArticles }: BONKNewsFeedProps) {
+export function BONKNewsFeed({ selectedCategory = "all", searchQuery = "", articles: propArticles }: BONKNewsFeedProps) {
   const [news, setNews] = useState<BONKNewsArticle[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -60,8 +60,8 @@ export function BONKNewsFeed({ selectedCategory, searchQuery, articles: propArti
 
     console.log('🔍 Filtering Debug:')
     console.log('📰 Total news articles:', actualArticles.length)
-    console.log('🎯 Selected category:', selectedCategory)
-    console.log('🔎 Search query:', searchQuery)
+    console.log('🎯 Selected category:', selectedCategory || 'undefined')
+    console.log('🔎 Search query:', searchQuery || 'undefined')
     console.log('📋 Sample article categories:', actualArticles.slice(0, 3).map(a => ({ 
       title: a.title.substring(0, 30) + '...', 
       category: a.category, 
@@ -69,17 +69,17 @@ export function BONKNewsFeed({ selectedCategory, searchQuery, articles: propArti
     })))
 
     // Filter by category
-    if (selectedCategory !== "all") {
+    if (selectedCategory && selectedCategory !== "all") {
       filtered = filtered.filter(article => {
         const articleSubCategory = article.subCategory || ""
         
         console.log(`🔍 Checking article: "${article.title.substring(0, 30)}..."`)
         console.log(`   Article subcategory: "${articleSubCategory}"`)
-        console.log(`   Selected category: "${selectedCategory}"`)
+        console.log(`   Selected category: "${selectedCategory || 'undefined'}"`)
         
         // Normalize both the selected category and article subcategory for comparison
-        const normalizedSelectedCategory = selectedCategory.toLowerCase().replace(/-/g, ' ')
-        const normalizedArticleSubCategory = articleSubCategory.toLowerCase().trim()
+        const normalizedSelectedCategory = selectedCategory ? selectedCategory.toLowerCase().replace(/-/g, ' ') : ""
+        const normalizedArticleSubCategory = articleSubCategory ? articleSubCategory.toLowerCase().trim() : ""
         
         // If no subcategory, treat as "General"
         if (!normalizedArticleSubCategory) {
@@ -92,7 +92,7 @@ export function BONKNewsFeed({ selectedCategory, searchQuery, articles: propArti
         const exactMatch = normalizedArticleSubCategory === normalizedSelectedCategory
         
         // If no exact match, try matching the normalized category ID
-        const categoryIdMatch = articleSubCategory.toLowerCase().replace(/\s+/g, '-') === selectedCategory
+        const categoryIdMatch = articleSubCategory ? articleSubCategory.toLowerCase().replace(/\s+/g, '-') === selectedCategory : false
         
         const match = exactMatch || categoryIdMatch
         
@@ -107,7 +107,7 @@ export function BONKNewsFeed({ selectedCategory, searchQuery, articles: propArti
     }
 
     // Filter by search query
-    if (searchQuery.trim()) {
+    if (searchQuery && searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter(article =>
         article.title.toLowerCase().includes(query) ||
@@ -122,13 +122,13 @@ export function BONKNewsFeed({ selectedCategory, searchQuery, articles: propArti
     console.log(`📊 Final filtering results:`)
     console.log(`   Total articles: ${actualArticles.length}`)
     console.log(`   Filtered articles: ${filtered.length}`)
-    console.log(`   Selected category: ${selectedCategory}`)
+    console.log(`   Selected category: ${selectedCategory || 'undefined'}`)
     
     return filtered
   }, [actualArticles, selectedCategory, searchQuery])
 
-  // Pagination logic - Smart pagination with latest articles first
-  const articlesPerPage = 20 // Show 20 articles per page for better UX
+  // Pagination logic - Show only 3 latest articles by default for better UX
+  const articlesPerPage = 3 // Show only 3 articles per page for cleaner look
   const totalPages = Math.ceil(filteredNews.length / articlesPerPage)
   const startIndex = (currentPage - 1) * articlesPerPage
   const endIndex = startIndex + articlesPerPage
@@ -291,7 +291,9 @@ export function BONKNewsFeed({ selectedCategory, searchQuery, articles: propArti
             </div>
             <div>
               <h2 className="text-2xl font-bold text-white">BONK News Feed</h2>
-              {/* Removed the descriptive text that showed "X articles in category" */}
+              <p className="text-sm text-gray-400">
+                {filteredNews.length} articles available • Showing {Math.min(articlesPerPage, filteredNews.length)} per page
+              </p>
             </div>
           </div>
           
@@ -336,11 +338,18 @@ export function BONKNewsFeed({ selectedCategory, searchQuery, articles: propArti
         {/* Latest Articles Indicator */}
         {currentPage === 1 && (
           <div className="bg-blue-900/20 border border-blue-800 rounded-lg p-3 mb-4">
-            <div className="flex items-center space-x-2 text-blue-300">
-              <span className="text-sm font-medium">📰 Latest Articles</span>
-              <span className="text-xs text-blue-400">
-                Showing most recent {Math.min(articlesPerPage, filteredNews.length)} articles
-              </span>
+            <div className="flex items-center justify-between text-blue-300">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm font-medium">📰 Latest Articles</span>
+                <span className="text-xs text-blue-400">
+                  Showing most recent {Math.min(articlesPerPage, filteredNews.length)} of {filteredNews.length} articles
+                </span>
+              </div>
+              {filteredNews.length > articlesPerPage && (
+                <span className="text-xs text-blue-400">
+                  {filteredNews.length - articlesPerPage} more articles available
+                </span>
+              )}
             </div>
           </div>
         )}
@@ -428,7 +437,7 @@ export function BONKNewsFeed({ selectedCategory, searchQuery, articles: propArti
           )
         })}
 
-        {/* Pagination Controls */}
+        {/* Article Summary and View More */}
         {filteredNews.length > articlesPerPage && (
           <div className="flex items-center justify-between border-t border-gray-800 pt-6 mt-6 bg-gray-900/50 rounded-lg p-4">
             <div className="text-sm text-gray-400">
@@ -505,10 +514,12 @@ export function BONKNewsFeed({ selectedCategory, searchQuery, articles: propArti
           </div>
         )}
 
+
+
         {filteredNews.length === 0 && !loading && (
           <div className="text-center py-8">
             <p className="text-gray-400 mb-4">
-              {searchQuery.trim() || selectedCategory !== "all" 
+              {(searchQuery && searchQuery.trim()) || (selectedCategory && selectedCategory !== "all")
                 ? "No articles match your current filters." 
                 : "No BONK news available at the moment."}
             </p>
