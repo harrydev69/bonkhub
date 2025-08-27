@@ -2,51 +2,122 @@ import { NextResponse } from "next/server"
 
 export async function GET() {
   try {
-    // This would integrate with CoinGecko API to fetch LetsBonk ecosystem data
-    // const response = await fetch('https://api.coingecko.com/api/v3/coins/categories/letsbonk-fun-ecosystem')
+    const apiKey = process.env.COINGECKO_API_KEY
+    
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "CoinGecko API key not configured" },
+        { status: 500 }
+      )
+    }
 
-    // For now, return mock data structure that matches CoinGecko format
+    const headers = {
+      "x-cg-pro-api-key": apiKey,
+      "Content-Type": "application/json",
+    }
+
+    // Step 1: Get all categories to find letsbonk-fun-ecosystem
+    const categoriesResponse = await fetch(
+      "https://pro-api.coingecko.com/api/v3/coins/categories",
+      { headers }
+    )
+
+    if (!categoriesResponse.ok) {
+      throw new Error(`Categories API error: ${categoriesResponse.status}`)
+    }
+
+    const categories = await categoriesResponse.json()
+    const letsbonkCategory = categories.find(
+      (cat: any) => cat.id === "letsbonk-fun-ecosystem"
+    )
+
+    if (!letsbonkCategory) {
+      throw new Error("LetsBonk.fun ecosystem category not found")
+    }
+
+    // Step 2: Get all tokens in the letsbonk-fun-ecosystem category
+    const marketsResponse = await fetch(
+      `https://pro-api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=letsbonk-fun-ecosystem&order=market_cap_desc&per_page=250&page=1&sparkline=true&price_change_percentage=1h,24h,7d&locale=en`,
+      { headers }
+    )
+
+    if (!marketsResponse.ok) {
+      throw new Error(`Tokens API error: ${marketsResponse.status}`)
+    }
+
+    const tokens = await marketsResponse.json()
+
+    // Step 3: Get detailed metadata for each token (batch request)
+    const detailedTokens = await Promise.all(
+      tokens.slice(0, 50).map(async (token: any) => {
+        try {
+          const detailResponse = await fetch(
+            `https://pro-api.coingecko.com/api/v3/coins/${token.id}`,
+            { headers }
+          )
+          
+          if (detailResponse.ok) {
+            const details = await detailResponse.json()
+            return {
+              ...token,
+              description: details.description?.en || "",
+              links: details.links || {},
+              categories: details.categories || [],
+              community_data: details.community_data || {},
+              developer_data: details.developer_data || {},
+              last_updated: details.last_updated || token.last_updated,
+            }
+          }
+          return token
+        } catch (error) {
+          console.warn(`Failed to fetch details for ${token.id}:`, error)
+          return token
+        }
+      })
+    )
+
+    // Calculate category totals
+    const totalMarketCap = tokens.reduce((sum: number, token: any) => sum + token.market_cap, 0)
+    const totalVolume = tokens.reduce((sum: number, token: any) => sum + token.total_volume, 0)
+    const avgChange24h = tokens.reduce((sum: number, token: any) => sum + token.price_change_percentage_24h, 0) / tokens.length
+
     const ecosystemData = {
-      category: "letsbonk-fun-ecosystem",
-      name: "LetsBONK.fun Ecosystem",
-      market_cap: 1847392847,
-      market_cap_change_24h: 8.7,
-      volume_24h: 84729384,
-      coins: [
-        {
-          id: "bonk",
-          symbol: "bonk",
-          name: "Bonk",
-          image: "https://assets.coingecko.com/coins/images/28600/large/bonk.jpg",
-          current_price: 0.00002204,
-          market_cap: 1706257459,
-          market_cap_rank: 1,
-          fully_diluted_valuation: 1939337583,
-          total_volume: 171331847,
-          high_24h: 0.00002318,
-          low_24h: 0.00002162,
-          price_change_24h: -0.00000088,
-          price_change_percentage_24h: -3.82,
-          market_cap_change_24h: -69257459,
-          market_cap_change_percentage_24h: -3.9,
-          circulating_supply: 77419592329436.58,
-          total_supply: 87995351634222.84,
-          max_supply: 87995351634222.84,
-          ath: 0.00005825,
-          ath_change_percentage: -62.18,
-          ath_date: "2024-11-20T09:00:00.000Z",
-          atl: 0.00000078,
-          atl_change_percentage: 25062.2,
-          atl_date: "2022-12-29T00:00:00.000Z",
-          last_updated: "2025-08-24T19:43:26.000Z",
-        },
-        // Additional tokens would be included here
-      ],
+      category: {
+        id: letsbonkCategory.id,
+        name: letsbonkCategory.name,
+        market_cap: totalMarketCap,
+        market_cap_change_24h: letsbonkCategory.market_cap_change_24h,
+        volume_24h: totalVolume,
+        content: letsbonkCategory.content || "",
+        top_3_coins: letsbonkCategory.top_3_coins || [],
+        market_cap_change_percentage_24h: letsbonkCategory.market_cap_change_percentage_24h,
+        updated_at: letsbonkCategory.updated_at,
+      },
+      tokens: detailedTokens,
+      summary: {
+        totalTokens: tokens.length,
+        totalMarketCap,
+        totalVolume,
+        averageChange24h: avgChange24h,
+        lastUpdated: new Date().toISOString(),
+      },
+      metadata: {
+        dataSource: "CoinGecko Pro API",
+        updateFrequency: "5 minutes",
+        categoryId: "letsbonk-fun-ecosystem",
+        totalTokensFound: tokens.length,
+      }
     }
 
     return NextResponse.json(ecosystemData)
   } catch (error) {
     console.error("Error fetching LetsBonk ecosystem data:", error)
-    return NextResponse.json({ error: "Failed to fetch ecosystem data" }, { status: 500 })
+    return NextResponse.json(
+      { 
+        error: "Failed to fetch ecosystem data",
+        details: error instanceof Error ? error.message : "Unknown error"
+      },
+      { status: 500 }
+    )
   }
 }

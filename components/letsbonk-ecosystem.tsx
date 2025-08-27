@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -16,150 +16,160 @@ import {
   ExternalLink,
   Star,
   Activity,
+  RefreshCw,
+  AlertCircle,
+  ChevronUp,
 } from "lucide-react"
 
 interface Token {
   id: string
-  name: string
   symbol: string
-  rank: number
-  price: number
-  marketCap: number
-  volume24h: number
-  change24h: number
-  change7d: number
-  holders?: number
-  verified: boolean
+  name: string
+  image: string
+  current_price: number
+  market_cap: number
+  market_cap_rank: number
+  total_volume: number
+  price_change_percentage_1h_in_currency?: number
+  price_change_percentage_24h: number
+  price_change_percentage_7d_in_currency?: number
+  circulating_supply: number
+  total_supply: number
+  max_supply: number
+  ath: number
+  ath_change_percentage: number
+  atl: number
+  atl_change_percentage: number
+  last_updated: string
+  description?: string
+  links?: any
+  categories?: string[]
+  community_data?: any
+  developer_data?: any
+  sparkline_in_7d?: {
+    price: number[]
+  }
+}
+
+interface CategoryData {
+  id: string
+  name: string
+  market_cap: number
+  market_cap_change_24h: number
+  volume_24h: number
+  content: string
+  top_3_coins: any[]
+  market_cap_change_percentage_24h: number
+  updated_at: string
+}
+
+interface EcosystemData {
+  category: CategoryData
+  tokens: Token[]
+  summary: {
+    totalTokens: number
+    totalMarketCap: number
+    totalVolume: number
+    averageChange24h: number
+    lastUpdated: string
+  }
+  metadata: {
+    dataSource: string
+    updateFrequency: string
+    categoryId: string
+    totalTokensFound: number
+  }
 }
 
 export function LetsBonkEcosystem() {
-  const [tokens, setTokens] = useState<Token[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [ecosystemData, setEcosystemData] = useState<EcosystemData | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
-  const [sortBy, setSortBy] = useState<"rank" | "marketCap" | "volume" | "change24h">("rank")
+  const [sortBy, setSortBy] = useState<"market_cap" | "total_volume" | "price_change_percentage_1h_in_currency" | "price_change_percentage_24h" | "price_change_percentage_7d_in_currency">("market_cap")
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const router = useRouter()
 
   useEffect(() => {
-    const fetchTokens = async () => {
-      setLoading(true)
+    const fetchData = async () => {
       try {
-        // This would be replaced with actual CoinGecko API call
-        // const response = await fetch('/api/coingecko/letsbonk-ecosystem')
-
-        // Mock data representing actual LetsBonk ecosystem tokens
-        const letsBonkTokens: Token[] = [
-          {
-            id: "bonk",
-            name: "Bonk",
-            symbol: "BONK",
-            rank: 1,
-            price: 0.00002204,
-            marketCap: 1706257459,
-            volume24h: 171331847,
-            change24h: -3.82,
-            change7d: 12.4,
-            holders: 974800,
-            verified: true,
-          },
-          {
-            id: "book-of-meme",
-            name: "Book of Meme",
-            symbol: "BOME",
-            rank: 2,
-            price: 0.008234,
-            marketCap: 567234891,
-            volume24h: 45672341,
-            change24h: 15.67,
-            change7d: -8.23,
-            holders: 234567,
-            verified: true,
-          },
-          {
-            id: "dogwifhat",
-            name: "dogwifhat",
-            symbol: "WIF",
-            rank: 3,
-            price: 1.89,
-            marketCap: 1890234567,
-            volume24h: 89234567,
-            change24h: 7.45,
-            change7d: 23.12,
-            holders: 156789,
-            verified: true,
-          },
-          {
-            id: "popcat",
-            name: "Popcat",
-            symbol: "POPCAT",
-            rank: 4,
-            price: 0.7834,
-            marketCap: 783456789,
-            volume24h: 34567890,
-            change24h: -2.34,
-            change7d: 18.67,
-            holders: 98765,
-            verified: true,
-          },
-          {
-            id: "cat-in-a-dogs-world",
-            name: "Cat in a dogs world",
-            symbol: "MEW",
-            rank: 5,
-            price: 0.004567,
-            marketCap: 456789012,
-            volume24h: 23456789,
-            change24h: 12.89,
-            change7d: -5.67,
-            holders: 87654,
-            verified: true,
-          },
-          // Generate additional tokens to reach 47 total
-          ...Array.from({ length: 42 }, (_, index) => ({
-            id: `letsbonk-token-${index + 6}`,
-            name: `LetsBonk Token ${index + 6}`,
-            symbol: `LB${index + 6}`,
-            rank: index + 6,
-            price: Math.random() * 10,
-            marketCap: Math.random() * 100000000,
-            volume24h: Math.random() * 5000000,
-            change24h: (Math.random() - 0.5) * 30,
-            change7d: (Math.random() - 0.5) * 50,
-            holders: Math.floor(Math.random() * 50000),
-            verified: Math.random() > 0.4,
-          })),
-        ]
-
-        setTimeout(() => {
-          setTokens(letsBonkTokens)
-          setLoading(false)
-        }, 1000)
-      } catch (error) {
-        console.error("Error fetching LetsBonk ecosystem data:", error)
+        setLoading(true)
+        setError(null)
+        
+        const response = await fetch('/api/coingecko/letsbonk-ecosystem')
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        console.log('LetsBonk API Response:', data) // Debug log
+        
+        if (data.error) {
+          throw new Error(data.error)
+        }
+        
+        setEcosystemData(data)
+        // setTokens(data.tokens || []) // This line was removed as per the new_code, as tokens are not directly managed here.
+      } catch (err) {
+        console.error('Error fetching LetsBonk data:', err)
+        setError(err instanceof Error ? err.message : 'Failed to fetch data')
+      } finally {
         setLoading(false)
       }
     }
 
-    fetchTokens()
+    fetchData()
+    
+    // Auto-refresh every 5 minutes (300000ms)
+    const interval = setInterval(fetchData, 300000)
+    
+    return () => clearInterval(interval)
   }, [])
 
-  const filteredTokens = tokens
-    .filter(
-      (token) =>
-        token.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        token.symbol.toLowerCase().includes(searchTerm.toLowerCase()),
+  // Filter and sort tokens
+  const filteredTokens = useMemo(() => {
+    if (!ecosystemData?.tokens) return []
+    
+    let filtered = ecosystemData.tokens.filter(token =>
+      token.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      token.symbol.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .sort((a, b) => {
+    
+    // Sort tokens
+    filtered.sort((a, b) => {
+      let aValue: number, bValue: number
+      
       switch (sortBy) {
-        case "marketCap":
-          return b.marketCap - a.marketCap
-        case "volume":
-          return b.volume24h - a.volume24h
-        case "change24h":
-          return b.change24h - a.change24h
+        case "market_cap":
+          aValue = a.market_cap || 0
+          bValue = b.market_cap || 0
+          break
+        case "total_volume":
+          aValue = a.total_volume || 0
+          bValue = b.total_volume || 0
+          break
+        case "price_change_percentage_1h_in_currency":
+          aValue = a.price_change_percentage_1h_in_currency || 0
+          bValue = b.price_change_percentage_1h_in_currency || 0
+          break
+        case "price_change_percentage_24h":
+          aValue = a.price_change_percentage_24h || 0
+          bValue = b.price_change_percentage_24h || 0
+          break
+        case "price_change_percentage_7d_in_currency":
+          aValue = a.price_change_percentage_7d_in_currency || 0
+          bValue = b.price_change_percentage_7d_in_currency || 0
+          break
         default:
-          return a.rank - b.rank
+          aValue = a.market_cap || 0
+          bValue = b.market_cap || 0
       }
+      
+      return sortOrder === "asc" ? aValue - bValue : bValue - aValue
     })
+    
+    return filtered
+  }, [ecosystemData?.tokens, searchTerm, sortBy, sortOrder])
 
   const formatNumber = (num: number) => {
     if (num >= 1e9) return `$${(num / 1e9).toFixed(2)}B`
@@ -168,249 +178,421 @@ export function LetsBonkEcosystem() {
     return `$${num.toFixed(2)}`
   }
 
+  const formatPrice = (price: number) => {
+    if (price < 0.01) return `$${price.toFixed(8)}`
+    if (price < 1) return `$${price.toFixed(6)}`
+    if (price < 100) return `$${price.toFixed(4)}`
+    return `$${price.toFixed(2)}`
+  }
+
+  const formatPercentage = (num: number | null | undefined) => {
+    if (num === null || num === undefined) return '-'
+    return `${num >= 0 ? '+' : ''}${num.toFixed(2)}%`
+  }
+
+  const handleRefresh = () => {
+    window.location.reload()
+  }
+
   const handleTokenClick = (tokenId: string) => {
     router.push(`/token/${tokenId}`)
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12 max-w-7xl mx-auto px-6">
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-6 mb-8">
+          <div className="flex items-center space-x-3 text-red-400">
+            <AlertCircle className="h-6 w-6" />
+            <span className="font-medium text-lg">Error loading data:</span>
+          </div>
+          <p className="text-red-300 mt-3 text-base">{error}</p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 bg-red-600 hover:bg-red-700 text-white px-6 py-2"
+          >
+            Retry
+          </Button>
+        </div>
+      )}
+
+      {/* Loading State */}
+      {loading && !ecosystemData && (
+        <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-12 mb-8 text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-500 mx-auto mb-6"></div>
+          <p className="text-gray-400 text-lg">Loading ecosystem data...</p>
+        </div>
+      )}
+
       {/* Header */}
-      <div className="text-center space-y-4 group/header transition-all duration-500 hover:scale-[1.01] transform-gpu">
-        <h1 className="text-4xl font-bold text-white transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
-          LetsBonk Ecosystem Overview
+      <div className="text-center space-y-6 group/header transition-all duration-500 hover:scale-[1.01] transform-gpu">
+        <h1 className="text-5xl font-bold text-white transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
+          {ecosystemData?.category?.name || "LetsBonk Ecosystem Overview"}
         </h1>
-        <p className="text-gray-400 text-lg transition-all duration-500 group-hover/header:text-gray-300">
-          Comprehensive analysis of the LetsBonk.fun ecosystem tokens powered by CoinGecko data
+        <p className="text-gray-400 text-xl transition-all duration-500 group-hover/header:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          Comprehensive analysis of the LetsBonk.fun ecosystem tokens with real-time market data and performance metrics
         </p>
       </div>
 
       {/* Ecosystem Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_20px_rgba(255,107,53,0.25)] hover:border-orange-500/50 hover:scale-[1.02] transition-all duration-500 transform-gpu cursor-pointer">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-base font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
               Total Market Cap
             </CardTitle>
-            <DollarSign className="h-4 w-4 text-orange-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+            <DollarSign className="h-5 w-5 text-orange-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/stats:text-orange-400">
-              {formatNumber(1847392847)}
+          <CardContent className="space-y-3">
+            <div className="text-3xl font-bold text-white transition-all duration-500 group-hover/stats:text-orange-400">
+              {ecosystemData ? formatNumber(ecosystemData.summary.totalMarketCap) : "Loading..."}
             </div>
-            <p className="text-xs text-green-500 flex items-center transition-all duration-500 group-hover/stats:text-green-400">
-              <TrendingUp className="h-3 w-3 mr-1 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2" />
-              +8.7% from yesterday
-            </p>
+            <div className={`text-sm flex items-center transition-all duration-500 group-hover/stats:scale-105 ${
+              ecosystemData?.category?.market_cap_change_percentage_24h && ecosystemData.category.market_cap_change_percentage_24h >= 0 ? "text-green-500" : "text-red-500"
+            }`}>
+              {ecosystemData?.category?.market_cap_change_percentage_24h !== undefined ? (
+                <>
+                  {ecosystemData.category.market_cap_change_percentage_24h >= 0 ? (
+                    <TrendingUp className="h-4 w-4 mr-2" />
+                  ) : (
+                    <TrendingDown className="h-4 w-4 mr-2" />
+                  )}
+                  <span className="font-medium">
+                    {formatPercentage(ecosystemData.category.market_cap_change_percentage_24h)} from yesterday
+                  </span>
+                </>
+              ) : (
+                <span className="text-gray-400">Market Cap Trend</span>
+              )}
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
+        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_20px_rgba(255,107,53,0.25)] hover:border-orange-500/50 hover:scale-[1.02] transition-all duration-500 transform-gpu cursor-pointer">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-base font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
               24h Volume
             </CardTitle>
-            <BarChart3 className="h-4 w-4 text-orange-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+            <BarChart3 className="h-5 w-5 text-orange-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/stats:text-orange-400">
-              {formatNumber(84729384)}
+          <CardContent className="space-y-3">
+            <div className="text-3xl font-bold text-white transition-all duration-500 group-hover/stats:text-orange-400">
+              {ecosystemData ? formatNumber(ecosystemData.summary.totalVolume) : "Loading..."}
             </div>
-            <p className="text-xs text-green-500 flex items-center transition-all duration-500 group-hover/stats:text-green-400">
-              <Activity className="h-3 w-3 mr-1 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2" />
-              High activity
-            </p>
+            <div className="text-sm text-green-500 flex items-center transition-all duration-500 group-hover/stats:scale-105">
+              <Activity className="h-4 w-4 mr-2" />
+              <span className="font-medium">Volume Trend</span>
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
+        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_20px_rgba(255,107,53,0.25)] hover:border-orange-500/50 hover:scale-[1.02] transition-all duration-500 transform-gpu cursor-pointer">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-base font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
               Total Tokens
             </CardTitle>
-            <Users className="h-4 w-4 text-orange-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+            <Users className="h-5 w-5 text-orange-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/stats:text-orange-400">
-              47
+          <CardContent className="space-y-3">
+            <div className="text-3xl font-bold text-white transition-all duration-500 group-hover/stats:text-orange-400">
+              {ecosystemData?.summary.totalTokens || "Loading..."}
             </div>
-            <p className="text-xs text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
-              Active tokens
-            </p>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
+              Active tokens in ecosystem
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
+        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_20px_rgba(255,107,53,0.25)] hover:border-orange-500/50 hover:scale-[1.02] transition-all duration-500 transform-gpu cursor-pointer">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-base font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
               Avg 24h Change
             </CardTitle>
-            <TrendingUp className="h-4 w-4 text-orange-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+            <TrendingUp className="h-5 w-5 text-orange-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-500 transition-all duration-500 group-hover/stats:text-green-400">
-              +8.7%
+          <CardContent className="space-y-3">
+            <div className={`text-3xl font-bold transition-all duration-500 group-hover/stats:scale-105 ${
+              ecosystemData?.summary?.averageChange24h && ecosystemData.summary.averageChange24h >= 0 ? "text-green-500" : "text-red-500"
+            }`}>
+              {ecosystemData?.summary?.averageChange24h !== undefined ? formatPercentage(ecosystemData.summary.averageChange24h) : "Loading..."}
             </div>
-            <p className="text-xs text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
               Ecosystem performance
-            </p>
+            </div>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <div className="relative flex-1 max-w-md group/search">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 transition-all duration-500 group-hover/search:text-orange-400 group-hover/search:scale-110" />
-          <Input
-            placeholder="Search tokens..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 bg-gray-900 border-gray-700 text-white focus:border-orange-500 focus:shadow-[0_0_10px_rgba(255,107,53,0.3)] hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500"
-          />
-        </div>
-        <div className="flex gap-2">
-          {(["rank", "marketCap", "volume", "change24h"] as const).map((sort) => (
-            <Button
-              key={sort}
-              variant={sortBy === sort ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSortBy(sort)}
-              className={
-                sortBy === sort
-                  ? "bg-orange-500 hover:bg-orange-600 text-black hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu"
-                  : "border-gray-700 text-gray-300 hover:text-orange-500 hover:border-orange-500 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu"
-              }
-            >
-              {sort === "rank"
-                ? "Rank"
-                : sort === "marketCap"
-                  ? "Market Cap"
-                  : sort === "volume"
-                    ? "Volume"
-                    : "24h Change"}
-            </Button>
-          ))}
-        </div>
       </div>
 
       {/* Tokens Table */}
-      <Card className="group/table bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
-        <CardHeader>
-          <CardTitle className="text-xl text-white flex items-center transition-all duration-500 group-hover/table:text-orange-400">
-            <Star className="h-5 w-5 text-orange-500 mr-2 transition-all duration-500 group-hover/table:scale-110 group-hover/table:rotate-2 group-hover/table:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
-            LetsBonk.fun Ecosystem Tokens
-          </CardTitle>
+      <Card className="group/table bg-gray-900 border-gray-700 hover:shadow-[0_0_20px_rgba(255,107,53,0.25)] hover:border-orange-500/50 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+        <CardHeader className="pb-6">
+          <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
+            <CardTitle className="text-2xl text-white flex items-center transition-all duration-500 group-hover/table:text-orange-400">
+              <Star className="h-6 w-6 text-orange-500 mr-3 transition-all duration-500 group-hover/table:scale-110 group-hover/table:rotate-2 group-hover/table:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+              {ecosystemData?.category?.name || "LetsBonk.fun Ecosystem Tokens"}
+            </CardTitle>
+            
+            <div className="flex items-center gap-4">
+              {/* Search within the card header */}
+              <div className="relative group/search">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 transition-all duration-500 group-hover/search:text-orange-400 group-hover/search:scale-110" />
+                <Input
+                  placeholder="Search tokens..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-12 pr-4 py-3 bg-gray-800 border-gray-600 text-white focus:border-orange-500 focus:shadow-[0_0_15px_rgba(255,107,53,0.3)] hover:border-orange-500/50 hover:shadow-[0_0_10px_rgba(255,107,53,0.2)] transition-all duration-500 w-72 text-base"
+                />
+              </div>
+              
+              {/* Refresh Button */}
+              <Button
+                onClick={handleRefresh}
+                size="default"
+                variant="outline"
+                className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_10px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu px-4 py-3"
+              >
+                <RefreshCw className="h-5 w-5 mr-2" />
+                Refresh
+              </Button>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-6 pb-6">
           {loading ? (
             <div className="space-y-4">
               {Array.from({ length: 10 }, (_, loadingIndex) => (
                 <div
                   key={loadingIndex}
-                  className="group/loading animate-pulse flex items-center space-x-4 p-4 bg-gray-800 rounded-lg hover:bg-gray-750 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer"
+                  className="group/loading animate-pulse flex items-center space-x-8 p-5 bg-gray-800 rounded-lg hover:bg-gray-750 hover:shadow-[0_0_10px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer"
                 >
-                  <div className="w-8 h-8 bg-gray-700 rounded-full transition-all duration-500 group-hover/loading:scale-110 group-hover/loading:shadow-[0_0_4px_rgba(255,107,53,0.2)]"></div>
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-700 rounded w-1/4 transition-all duration-500 group-hover/loading:scale-105 group-hover/loading:shadow-[0_0_2px_rgba(255,107,53,0.1)]"></div>
-                    <div className="h-3 bg-gray-700 rounded w-1/6 transition-all duration-500 group-hover/loading:scale-105 group-hover/loading:shadow-[0_0_2px_rgba(255,107,53,0.1)]"></div>
+                  <div className="w-10 h-10 bg-gray-700 rounded-full transition-all duration-500 group-hover/loading:scale-110 group-hover/loading:shadow-[0_0_8px_rgba(255,107,53,0.3)]" />
+                  <div className="flex-1 space-y-2 min-w-48">
+                    <div className="h-5 bg-gray-700 rounded w-32 transition-all duration-500 group-hover/loading:bg-gray-600" />
+                    <div className="h-4 bg-gray-700 rounded w-20 transition-all duration-500 group-hover/loading:bg-gray-600" />
                   </div>
-                  <div className="w-20 h-4 bg-gray-700 rounded transition-all duration-500 group-hover/loading:scale-105 group-hover/loading:shadow-[0_0_2px_rgba(255,107,53,0.1)]"></div>
-                  <div className="w-16 h-4 bg-gray-700 rounded transition-all duration-500 group-hover/loading:scale-105 group-hover/loading:shadow-[0_0_2px_rgba(255,107,53,0.1)]"></div>
+                  <div className="space-y-2 w-28">
+                    <div className="h-5 bg-gray-700 rounded w-24 transition-all duration-500 group-hover/loading:bg-gray-600" />
+                  </div>
+                  <div className="space-y-2 w-20">
+                    <div className="h-5 bg-gray-700 rounded w-16 transition-all duration-500 group-hover/loading:bg-gray-600" />
+                  </div>
+                  <div className="space-y-2 w-20">
+                    <div className="h-5 bg-gray-700 rounded w-16 transition-all duration-500 group-hover/loading:bg-gray-600" />
+                  </div>
+                  <div className="space-y-2 w-20">
+                    <div className="h-5 bg-gray-700 rounded w-16 transition-all duration-500 group-hover/loading:bg-gray-600" />
+                  </div>
+                  <div className="space-y-2 w-32">
+                    <div className="h-5 bg-gray-700 rounded w-24 transition-all duration-500 group-hover/loading:bg-gray-600" />
+                  </div>
+                  <div className="space-y-2 w-32">
+                    <div className="h-5 bg-gray-700 rounded w-24 transition-all duration-500 group-hover/loading:bg-gray-600" />
+                  </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="space-y-2">
-              {filteredTokens.map((token) => (
-                <div
-                  key={token.id}
-                  onClick={() => handleTokenClick(token.id)}
-                  className="group/token flex items-center justify-between p-4 bg-gray-800 rounded-lg hover:bg-gray-750 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer"
+            <>
+              {/* Table Header */}
+              <div className="flex items-center space-x-8 p-4 bg-gray-800 rounded-lg mb-4 text-sm font-medium text-gray-400 border-b border-gray-700">
+                <div className="flex-1 min-w-48">Coin</div>
+                <div className="text-center w-28">Price</div>
+                <div 
+                  className="text-center w-20 cursor-pointer hover:text-orange-400 transition-all duration-300 flex items-center justify-center space-x-2 group/header"
+                  onClick={() => {
+                    if (sortBy === "price_change_percentage_1h_in_currency") {
+                      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                    } else {
+                      setSortBy("price_change_percentage_1h_in_currency")
+                      setSortOrder("desc")
+                    }
+                  }}
                 >
-                  <div className="flex items-center space-x-4">
-                    <div className="text-gray-400 font-mono text-sm w-8 transition-all duration-500 group-hover/token:text-gray-300">
-                      #{token.rank}
-                    </div>
-                    <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-black font-bold text-sm transition-all duration-500 group-hover/token:scale-110 group-hover/token:shadow-[0_0_8px_rgba(255,107,53,0.4)]">
-                      {token.symbol.slice(0, 2)}
-                    </div>
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-white font-medium hover:text-orange-500 transition-all duration-500 group-hover/token:text-orange-400">
-                          {token.name}
-                        </span>
-                        <span className="text-gray-400 text-sm transition-all duration-500 group-hover/token:text-gray-300">
-                          {token.symbol}
-                        </span>
-                        {token.verified && (
-                          <Badge className="bg-green-500/20 text-green-400 text-xs transition-all duration-500 group-hover/token:scale-105 group-hover/token:shadow-[0_0_4px_rgba(34,197,94,0.3)]">
-                            Verified
-                          </Badge>
-                        )}
-                      </div>
-                      {token.holders && (
-                        <div className="text-xs text-gray-500 transition-all duration-500 group-hover/token:text-gray-400">
-                          {token.holders.toLocaleString()} holders
+                  <span>1h</span>
+                  {sortBy === "price_change_percentage_1h_in_currency" && (
+                    <ChevronUp className={`h-4 w-4 transition-all duration-300 ${
+                      sortOrder === "asc" ? "text-orange-400" : "text-gray-500"
+                    }`} />
+                  )}
+                </div>
+                <div 
+                  className="text-center w-20 cursor-pointer hover:text-orange-400 transition-all duration-300 flex items-center justify-center space-x-2 group/header"
+                  onClick={() => {
+                    if (sortBy === "price_change_percentage_24h") {
+                      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                    } else {
+                      setSortBy("price_change_percentage_24h")
+                      setSortOrder("desc")
+                    }
+                  }}
+                >
+                  <span>24h</span>
+                  {sortBy === "price_change_percentage_24h" && (
+                    <ChevronUp className={`h-4 w-4 transition-all duration-300 ${
+                      sortOrder === "asc" ? "text-orange-400" : "text-gray-500"
+                    }`} />
+                  )}
+                </div>
+                <div 
+                  className="text-center w-20 cursor-pointer hover:text-orange-400 transition-all duration-300 flex items-center justify-center space-x-2 group/header"
+                  onClick={() => {
+                    if (sortBy === "price_change_percentage_7d_in_currency") {
+                      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                    } else {
+                      setSortBy("price_change_percentage_7d_in_currency")
+                      setSortOrder("desc")
+                    }
+                  }}
+                >
+                  <span>7d</span>
+                  {sortBy === "price_change_percentage_7d_in_currency" && (
+                    <ChevronUp className={`h-4 w-4 transition-all duration-300 ${
+                      sortOrder === "asc" ? "text-orange-400" : "text-gray-500"
+                    }`} />
+                  )}
+                </div>
+                <div 
+                  className="text-right w-32 cursor-pointer hover:text-orange-400 transition-all duration-300 flex items-center justify-end space-x-2 group/header"
+                  onClick={() => {
+                    if (sortBy === "total_volume") {
+                      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                    } else {
+                      setSortBy("total_volume")
+                      setSortOrder("desc")
+                    }
+                  }}
+                >
+                  <span>24h Volume</span>
+                  {sortBy === "total_volume" && (
+                    <ChevronUp className={`h-4 w-4 transition-all duration-300 ${
+                      sortOrder === "asc" ? "text-orange-400" : "text-gray-500"
+                    }`} />
+                  )}
+                </div>
+                <div 
+                  className="text-right w-32 cursor-pointer hover:text-orange-400 transition-all duration-300 flex items-center justify-end space-x-2 group/header"
+                  onClick={() => {
+                    if (sortBy === "market_cap") {
+                      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                    } else {
+                      setSortBy("market_cap")
+                      setSortOrder("desc")
+                    }
+                  }}
+                >
+                  <span>Market Cap</span>
+                  {sortBy === "market_cap" && (
+                    <ChevronUp className={`h-4 w-4 transition-all duration-300 ${
+                      sortOrder === "asc" ? "text-orange-400" : "text-gray-500"
+                    }`} />
+                  )}
+                </div>
+              </div>
+              
+              {/* Table Rows */}
+              <div className="space-y-4">
+                {filteredTokens.map((token, index) => (
+                  <div
+                    key={token.id}
+                    onClick={() => handleTokenClick(token.id)}
+                    className="group/token flex items-center space-x-8 p-5 bg-gray-800 rounded-lg hover:bg-gray-750 hover:shadow-[0_0_10px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer border border-transparent hover:border-orange-500/30"
+                  >
+                    {/* Coin Column */}
+                    <div className="flex items-center space-x-4 min-w-0 flex-1 min-w-48">
+                      <div className="relative">
+                        <div className="w-10 h-10 rounded-full overflow-hidden transition-all duration-500 group-hover/token:scale-110 group-hover/token:shadow-[0_0_8px_rgba(255,107,53,0.3)]">
+                          <img
+                            src={token.image}
+                            alt={token.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement
+                              target.src = "/placeholder-logo.svg"
+                            }}
+                          />
                         </div>
+                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full flex items-center justify-center text-xs text-gray-300 font-medium border-2 border-gray-800 transition-all duration-500 group-hover/token:bg-orange-500 group-hover/token:text-black group-hover/token:scale-110">
+                          {token.market_cap_rank || index + 1}
+                        </div>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-medium text-white group-hover/token:text-orange-400 transition-all duration-500 truncate text-base">
+                          {token.name}
+                        </div>
+                        <div className="text-sm text-gray-400 group-hover/token:text-orange-300 transition-all duration-500 uppercase tracking-wide mt-1">
+                          {token.symbol}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Price Column */}
+                    <div className="text-center w-28">
+                      <div className="font-medium text-white group-hover/token:text-orange-400 transition-all duration-500 text-base">
+                        ${token.current_price.toFixed(4)}
+                      </div>
+                    </div>
+                    
+                    {/* 1h Change Column */}
+                    <div className="text-center w-20">
+                      {token.price_change_percentage_1h_in_currency !== null && token.price_change_percentage_1h_in_currency !== undefined ? (
+                        <div className={`font-medium transition-all duration-500 group-hover/token:scale-110 text-base ${
+                          token.price_change_percentage_1h_in_currency >= 0 ? "text-green-500" : "text-red-500"
+                        }`}>
+                          {token.price_change_percentage_1h_in_currency >= 0 ? "▲" : "▼"} {formatPercentage(token.price_change_percentage_1h_in_currency)}
+                        </div>
+                      ) : (
+                        <span className="text-gray-500 text-base">-</span>
                       )}
                     </div>
+                    
+                    {/* 24h Change Column */}
+                    <div className="text-center w-20">
+                      <div className={`font-medium transition-all duration-500 group-hover/token:scale-110 text-base ${
+                        token.price_change_percentage_24h >= 0 ? "text-green-500" : "text-red-500"
+                      }`}>
+                        {token.price_change_percentage_24h >= 0 ? "▲" : "▼"} {formatPercentage(token.price_change_percentage_24h)}
+                      </div>
+                    </div>
+                    
+                    {/* 7d Change Column */}
+                    <div className="text-center w-20">
+                      {token.price_change_percentage_7d_in_currency !== null && token.price_change_percentage_7d_in_currency !== undefined ? (
+                        <div className={`font-medium transition-all duration-500 group-hover/token:scale-110 text-base ${
+                          token.price_change_percentage_7d_in_currency >= 0 ? "text-green-500" : "text-red-500"
+                        }`}>
+                          {token.price_change_percentage_7d_in_currency >= 0 ? "▲" : "▼"} {formatPercentage(token.price_change_percentage_7d_in_currency)}
+                        </div>
+                      ) : (
+                        <span className="text-gray-500 text-base">-</span>
+                      )}
+                    </div>
+                    
+                    {/* 24h Volume Column */}
+                    <div className="text-right w-32">
+                      <div className="font-medium text-white group-hover/token:text-orange-400 transition-all duration-500 text-base">
+                        ${(token.total_volume / 1e6).toFixed(2)}M
+                      </div>
+                    </div>
+                    
+                    {/* Market Cap Column */}
+                    <div className="text-right w-32">
+                      <div className="font-medium text-white group-hover/token:text-orange-400 transition-all duration-500 text-base">
+                        ${(token.market_cap / 1e6).toFixed(2)}M
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="flex items-center space-x-6 text-right">
-                    <div>
-                      <div className="text-white font-medium transition-all duration-500 group-hover/token:text-orange-400">
-                        {formatNumber(token.price)}
-                      </div>
-                      <div
-                        className={`text-sm flex items-center transition-all duration-500 ${
-                          token.change24h >= 0 ? "text-green-500" : "text-red-500"
-                        } group-hover/token:scale-105`}
-                      >
-                        {token.change24h >= 0 ? (
-                          <TrendingUp className="h-3 w-3 mr-1 transition-all duration-500 group-hover/token:scale-110 group-hover/token:rotate-2" />
-                        ) : (
-                          <TrendingDown className="h-3 w-3 mr-1 transition-all duration-500 group-hover/token:scale-110 group-hover/token:rotate-2" />
-                        )}
-                        {Math.abs(token.change24h).toFixed(2)}%
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <div className="text-white text-sm transition-all duration-500 group-hover/token:text-gray-300">
-                        {formatNumber(token.marketCap)}
-                      </div>
-                      <div className="text-gray-400 text-xs transition-all duration-500 group-hover/token:text-gray-500">
-                        Market Cap
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <div className="text-white text-sm transition-all duration-500 group-hover/token:text-gray-300">
-                        {formatNumber(token.volume24h)}
-                      </div>
-                      <div className="text-gray-400 text-xs transition-all duration-500 group-hover/token:text-gray-500">
-                        Volume
-                      </div>
-                    </div>
-
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        window.open(`https://www.coingecko.com/en/coins/${token.id}`, "_blank")
-                      }}
-                      className="opacity-0 group-hover/token:opacity-100 transition-all duration-500 text-orange-500 hover:text-orange-400 hover:bg-orange-500/10 hover:scale-110 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transform-gpu"
-                    >
-                      <ExternalLink className="h-4 w-4 transition-all duration-500 group-hover/token:rotate-2" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
+
+      {/* Data Source Info */}
+      <div className="text-center text-sm text-gray-500">
+        <p>Updates every 5 minutes</p>
+      </div>
     </div>
   )
 }
