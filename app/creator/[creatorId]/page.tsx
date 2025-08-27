@@ -123,7 +123,7 @@ export default function CreatorProfilePage() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
+      <div className="px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="flex items-center space-x-4">
           <Link href="/sentiment" className="text-[#ff6b35] hover:text-[#ff6b35]/80">
             <ArrowLeft className="h-6 w-6" />
@@ -149,7 +149,7 @@ export default function CreatorProfilePage() {
 
   if (error || !profile) {
     return (
-      <div className="space-y-6">
+      <div className="px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="flex items-center space-x-4">
           <Link href="/sentiment" className="text-[#ff6b35] hover:text-[#ff6b35]/80">
             <ArrowLeft className="h-6 w-6" />
@@ -174,7 +174,7 @@ export default function CreatorProfilePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="px-4 sm:px-6 lg:px-8 space-y-6">
       {/* Header with back button and creator info */}
       <div className="flex items-center space-x-4">
         <Link href="/sentiment" className="text-[#ff6b35] hover:text-[#ff6b35]/80 transition-colors">
@@ -206,55 +206,61 @@ export default function CreatorProfilePage() {
 
       {/* Creator Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:border-[#ff6b35] transition-all duration-300 hover:shadow-lg hover:shadow-[#ff6b35]/20">
+        <Card className="group/followers bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:border-[#ff6b35] hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300">Total Followers</CardTitle>
-            <Users className="h-5 w-5 text-[#ff6b35]" />
+            <CardTitle className="text-sm font-medium text-gray-300 transition-all duration-500 group-hover/followers:text-gray-200">
+              Total Followers
+            </CardTitle>
+            <Users className="h-5 w-5 text-[#ff6b35] transition-all duration-500 group-hover/followers:scale-110 group-hover/followers:rotate-2 group-hover/followers:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white">
+            <div className="text-3xl font-bold text-white transition-all duration-500 group-hover/followers:text-orange-400">
               {profile.creator_followers?.toLocaleString() || '0'}
             </div>
-            <p className="text-xs text-gray-400 mt-1">Audience reach</p>
+            <p className="text-xs text-gray-400 mt-1 transition-all duration-500 group-hover/followers:text-gray-300">Audience reach</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:border-[#10b981] transition-all duration-300 hover:shadow-lg hover:shadow-[#10b981]/20">
+        <Card className="group/interactions bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:border-[#10b981] hover:shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300">24h Interactions</CardTitle>
-            <MessageCircle className="h-5 w-5 text-[#10b981]" />
+            <CardTitle className="text-sm font-medium text-gray-300 transition-all duration-500 group-hover/interactions:text-gray-200">
+              24h Interactions
+            </CardTitle>
+            <MessageCircle className="h-5 w-5 text-[#10b981] transition-all duration-500 group-hover/interactions:scale-110 group-hover/interactions:rotate-2 group-hover/interactions:drop-shadow-[0_0_4px_rgba(16,185,129,0.4)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white">
+            <div className="text-3xl font-bold text-white transition-all duration-500 group-hover/interactions:text-green-400">
               {profile.interactions_24h?.toLocaleString() || '0'}
             </div>
-            <p className="text-xs text-gray-400 mt-1">Recent engagement</p>
+            <p className="text-xs text-gray-400 mt-1 transition-all duration-500 group-hover/interactions:text-gray-300">Recent engagement</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:border-[#8b5cf6] transition-all duration-300 hover:shadow-lg hover:shadow-[#8b5cf6]/20">
+        <Card className="group/rank bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:border-[#8b5cf6] hover:shadow-[0_0_15px_rgba(139,92,246,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300">Creator Rank</CardTitle>
-            <TrendingUp className="h-5 w-5 text-[#8b5cf6]" />
+            <CardTitle className="text-sm font-medium text-gray-300 transition-all duration-500 group-hover/rank:text-gray-200">
+              Creator Rank
+            </CardTitle>
+            <TrendingUp className="h-5 w-5 text-[#8b5cf6] transition-all duration-500 group-hover/rank:scale-110 group-hover/rank:rotate-2 group-hover/rank:drop-shadow-[0_0_4px_rgba(139,92,246,0.4)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white">
+            <div className="text-3xl font-bold text-white transition-all duration-500 group-hover/rank:text-purple-400">
               #{profile.creator_rank || 'N/A'}
             </div>
-            <p className="text-xs text-gray-400 mt-1">Global ranking</p>
+            <p className="text-xs text-gray-400 mt-1 transition-all duration-500 group-hover/rank:text-gray-300">Global ranking</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Performance Trends Chart */}
       {chartData.length > 0 ? (
-        <Card className="bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700">
+        <Card className="group/chart bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardHeader>
-            <CardTitle className="text-white flex items-center space-x-2">
-              <TrendingUp className="h-5 w-5 text-[#ff6b35]" />
+            <CardTitle className="text-white flex items-center space-x-2 transition-all duration-500 group-hover/chart:text-orange-400">
+              <TrendingUp className="h-5 w-5 text-[#ff6b35] transition-all duration-500 group-hover/chart:scale-110 group-hover/chart:rotate-2 group-hover/chart:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
               Performance Trends
             </CardTitle>
-            <CardDescription className="text-gray-400">
+            <CardDescription className="text-gray-400 transition-all duration-500 group-hover/chart:text-gray-300">
               Last 30 days of activity and engagement trends
             </CardDescription>
           </CardHeader>
@@ -262,41 +268,41 @@ export default function CreatorProfilePage() {
             <div className="space-y-6">
               {/* Summary Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                  <div className="text-2xl font-bold text-[#FF6B35]">
+                <div className="group/stat text-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:bg-gray-750 hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-105 transition-all duration-500 transform-gpu cursor-pointer">
+                  <div className="text-2xl font-bold text-[#FF6B35] transition-all duration-500 group-hover/stat:text-orange-400">
                     {chartData.length > 0 ? 
                       (chartData[chartData.length - 1]?.followers - chartData[0]?.followers).toLocaleString() : 
                       '0'
                     }
                   </div>
-                  <div className="text-gray-400 text-sm">Follower Growth</div>
+                  <div className="text-gray-400 text-sm transition-all duration-500 group-hover/stat:text-gray-300">Follower Growth</div>
                 </div>
-                <div className="text-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                  <div className="text-2xl font-bold text-[#10B981]">
+                <div className="group/stat text-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:bg-gray-750 hover:border-green-500/50 hover:shadow-[0_0_8px_rgba(16,185,129,0.2)] hover:scale-105 transition-all duration-500 transform-gpu cursor-pointer">
+                  <div className="text-2xl font-bold text-[#10B981] transition-all duration-500 group-hover/stat:text-green-400">
                     {chartData.length > 0 ? 
                       Math.round(chartData.reduce((sum, point) => sum + point.interactions, 0) / chartData.length).toLocaleString() : 
                       '0'
                     }
                   </div>
-                  <div className="text-gray-400 text-sm">Avg Daily Interactions</div>
+                  <div className="text-gray-400 text-sm transition-all duration-500 group-hover/stat:text-gray-300">Avg Daily Interactions</div>
                 </div>
-                <div className="text-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                  <div className="text-2xl font-bold text-[#3B82F6]">
+                <div className="group/stat text-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:bg-gray-750 hover:border-blue-500/50 hover:shadow-[0_0_8px_rgba(59,130,246,0.2)] hover:scale-105 transition-all duration-500 transform-gpu cursor-pointer">
+                  <div className="text-2xl font-bold text-[#3B82F6] transition-all duration-500 group-hover/stat:text-blue-400">
                     {chartData.length > 0 ? 
                       Math.round(chartData.reduce((sum, point) => sum + point.posts, 0) / chartData.length) : 
                       '0'
                     }
                   </div>
-                  <div className="text-gray-400 text-sm">Avg Daily Posts</div>
+                  <div className="text-gray-400 text-sm transition-all duration-500 group-hover/stat:text-gray-300">Avg Daily Posts</div>
                 </div>
-                <div className="text-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                  <div className="text-2xl font-bold text-[#8B5CF6]">
+                <div className="group/stat text-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:bg-gray-750 hover:border-purple-500/50 hover:shadow-[0_0_8px_rgba(139,92,246,0.2)] hover:scale-105 transition-all duration-500 transform-gpu cursor-pointer">
+                  <div className="text-2xl font-bold text-[#8B5CF6] transition-all duration-500 group-hover/stat:text-purple-400">
                     {chartData.length > 0 ? 
                       `#${Math.min(...chartData.map(p => p.rank))}` : 
                       'N/A'
                     }
                   </div>
-                  <div className="text-gray-400 text-sm">Best Rank</div>
+                  <div className="text-gray-400 text-sm transition-all duration-500 group-hover/stat:text-gray-300">Best Rank</div>
                 </div>
               </div>
               
@@ -426,13 +432,13 @@ export default function CreatorProfilePage() {
       )}
 
       {/* Topic Influence */}
-      <Card className="bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700">
+      <Card className="group/topics bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
         <CardHeader>
-          <CardTitle className="text-white flex items-center space-x-2">
-            <Target className="h-5 w-5 text-[#ff6b35]" />
+          <CardTitle className="text-white flex items-center space-x-2 transition-all duration-500 group-hover/topics:text-orange-400">
+            <Target className="h-5 w-5 text-[#ff6b35] transition-all duration-500 group-hover/topics:scale-110 group-hover/topics:rotate-2 group-hover/topics:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
             Topic Influence
           </CardTitle>
-          <CardDescription className="text-gray-400">
+          <CardDescription className="text-gray-400 transition-all duration-500 group-hover/topics:text-gray-300">
             Topics this creator is most influential in
           </CardDescription>
         </CardHeader>
@@ -442,32 +448,38 @@ export default function CreatorProfilePage() {
               profile.topic_influence.slice(0, 10).map((topic, index) => (
                 <div
                   key={topic.topic}
-                  className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition-colors border border-gray-700/50"
+                  className="group/topic flex items-center justify-between p-4 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer border border-gray-700/50"
                 >
                   <div className="flex items-center space-x-4">
-                    <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-[#ff6b35] to-[#ff8c42] rounded-full text-black font-bold text-sm">
+                    <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-[#ff6b35] to-[#ff8c42] rounded-full text-black font-bold text-sm transition-all duration-500 group-hover/topic:scale-110 group-hover/topic:shadow-[0_0_4px_rgba(255,107,53,0.3)]">
                       #{index + 1}
                     </div>
                     <div>
-                      <div className="text-white font-semibold text-lg">{topic.topic}</div>
-                      <div className="text-gray-400 text-sm">
+                      <div className="text-white font-semibold text-lg transition-all duration-500 group-hover/topic:text-orange-400">
+                        {topic.topic}
+                      </div>
+                      <div className="text-gray-400 text-sm transition-all duration-500 group-hover/topic:text-gray-300">
                         {topic.count?.toLocaleString()} mentions • Rank #{topic.rank}
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-[#ff6b35] font-bold text-2xl">
+                    <div className="text-[#ff6b35] font-bold text-2xl transition-all duration-500 group-hover/topic:text-orange-400">
                       {topic.percent?.toFixed(1)}%
                     </div>
-                    <div className="text-gray-400 text-xs">Influence Score</div>
+                    <div className="text-gray-400 text-xs transition-all duration-500 group-hover/topic:text-gray-300">Influence Score</div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-gray-400 text-center py-8">
-                <Activity className="h-12 w-12 mx-auto mb-4 text-gray-600" />
-                <div className="text-lg font-semibold mb-2">No topic influence data available</div>
-                <div className="text-sm">This creator hasn't been analyzed for topic influence yet</div>
+              <div className="text-gray-400 text-center py-8 transition-all duration-500 group-hover/topics:text-gray-300">
+                <Activity className="h-12 w-12 mx-auto mb-4 text-gray-600 transition-all duration-500 group-hover/topics:text-gray-500" />
+                <div className="text-lg font-semibold mb-2 transition-all duration-500 group-hover/topics:text-gray-200">
+                  No topic influence data available
+                </div>
+                <div className="text-sm transition-all duration-500 group-hover/topics:text-gray-400">
+                  This creator hasn't been analyzed for topic influence yet
+                </div>
               </div>
             )}
           </div>

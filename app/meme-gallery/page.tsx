@@ -158,88 +158,107 @@ export default function MemeGalleryPage() {
         <main className="max-w-7xl mx-auto px-4 py-6">
           <div className="space-y-6">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-white">BONK Meme Gallery</h1>
-                <p className="text-gray-400 mt-2">The ultimate collection of BONK memes, created by the community</p>
-              </div>
-              <Button 
-                onClick={() => setUploadModalOpen(true)}
-                className="bg-orange-600 hover:bg-orange-700 text-black font-semibold mt-4 sm:mt-0"
-              >
-                <Upload className="mr-2 h-4 w-4" />
-                Upload Meme
-              </Button>
+            <div className="group/header mb-8 transition-all duration-500 hover:scale-[1.01] transform-gpu">
+              <h1 className="text-4xl font-bold text-white mb-2 transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
+                🎭 BONK Meme Gallery
+              </h1>
+              <p className="text-gray-400 transition-all duration-500 group-hover/header:text-gray-300">
+                Discover, share, and create the best BONK memes from our community
+              </p>
             </div>
 
             {/* Search and Filters */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              {/* Search */}
-              <div className="lg:col-span-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <Input
-                    placeholder="Search memes, tags, creators..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 bg-gray-900 border-gray-700 text-white placeholder-gray-400"
-                  />
+            <Card className="group/search bg-gray-900 border-gray-800 mb-8 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+              <CardHeader>
+                <CardTitle className="text-white transition-all duration-500 group-hover/search:text-orange-400">
+                  Search & Filter Memes
+                </CardTitle>
+                <CardDescription className="text-gray-400 transition-all duration-500 group-hover/search:text-gray-300">
+                  Find the perfect BONK meme for any occasion
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Search Bar */}
+                <div className="flex gap-4">
+                  <div className="flex-1 relative group/input">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 transition-all duration-500 group-hover/input:text-orange-400 group-hover/input:scale-110" />
+                    <Input
+                      placeholder="Search for memes..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10 bg-gray-800 border-gray-700 focus:border-[#ff6b35] text-white hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500"
+                    />
+                  </div>
+                  <Button 
+                    onClick={() => setUploadModalOpen(true)}
+                    className="group/upload bg-[#ff6b35] hover:bg-[#ff6b35]/80 text-white hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu"
+                  >
+                    <Upload className="w-4 h-4 mr-2 transition-all duration-500 group-hover/upload:scale-110 group-hover/upload:rotate-2" />
+                    Upload Meme
+                  </Button>
                 </div>
-              </div>
 
-              {/* Category Filter */}
-              <div>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full p-2 rounded-md bg-gray-900 border border-gray-700 text-white"
-                >
-                  {memeCategories.map(category => (
-                    <option key={category.id} value={category.id}>
-                      {category.name} ({category.count})
-                    </option>
+                {/* Category Filter */}
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-gray-400 transition-all duration-500 group-hover/search:text-gray-300">Category:</span>
+                  <div className="flex gap-2">
+                    {memeCategories.map(category => (
+                      <button
+                        key={category.id}
+                        onClick={() => setSelectedCategory(category.id)}
+                        className={`group/category flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-500 hover:scale-105 hover:shadow-[0_0_4px_rgba(255,107,53,0.2)] transform-gpu ${
+                          selectedCategory === category.id
+                            ? "bg-orange-600 text-white"
+                            : "bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
+                        }`}
+                      >
+                        <category.icon className="w-4 h-4 transition-all duration-500 group-hover/category:scale-110 group-hover/category:rotate-2" />
+                        {category.name}
+                        <span className="text-xs opacity-75">({category.count})</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Popular Tags */}
+                <div className="flex flex-wrap gap-2">
+                  {popularTags.map(tag => (
+                    <button
+                      key={tag}
+                      onClick={() => setSearchQuery(tag)}
+                      className="group/tag px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-full text-sm transition-all duration-500 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transform-gpu"
+                    >
+                      {tag}
+                    </button>
                   ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Popular Tags */}
-            <div className="flex flex-wrap gap-2">
-              {popularTags.map(tag => (
-                <button
-                  key={tag}
-                  onClick={() => setSearchQuery(tag)}
-                  className="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-full text-sm transition-all hover:shadow-[0_0_8px_rgba(255,107,53,0.3)]"
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Main Content Tabs */}
             <Tabs defaultValue="gallery" className="space-y-4">
-              <TabsList className="grid w-full grid-cols-4 bg-gray-800 border-gray-700">
+              <TabsList className="group/tabs grid w-full grid-cols-4 bg-gray-800 border-gray-700 hover:shadow-[0_0_10px_rgba(255,107,53,0.2)] transition-all duration-500">
                 <TabsTrigger
                   value="gallery"
-                  className="text-gray-300 data-[state=active]:bg-orange-600 data-[state=active]:text-white"
+                  className="text-gray-300 data-[state=active]:bg-orange-600 data-[state=active]:text-white transition-all duration-500 hover:scale-105"
                 >
                   Gallery
                 </TabsTrigger>
                 <TabsTrigger
                   value="trending"
-                  className="text-gray-300 data-[state=active]:bg-orange-600 data-[state=active]:text-white"
+                  className="text-gray-300 data-[state=active]:bg-orange-600 data-[state=active]:text-white transition-all duration-500 hover:scale-105"
                 >
                   Trending
                 </TabsTrigger>
                 <TabsTrigger
                   value="creators"
-                  className="text-gray-300 data-[state=active]:bg-orange-600 data-[state=active]:text-white"
+                  className="text-gray-300 data-[state=active]:bg-orange-600 data-[state=active]:text-white transition-all duration-500 hover:scale-105"
                 >
                   Top Creators
                 </TabsTrigger>
                 <TabsTrigger
                   value="collections"
-                  className="text-gray-300 data-[state=active]:bg-orange-600 data-[state=active]:text-white"
+                  className="text-gray-300 data-[state=active]:bg-orange-600 data-[state=active]:text-white transition-all duration-500 hover:scale-105"
                 >
                   Collections
                 </TabsTrigger>
@@ -250,28 +269,28 @@ export default function MemeGalleryPage() {
                 {/* Meme Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredMemes.map(meme => (
-                    <Card key={meme.id} className="bg-gray-900 border-gray-800 overflow-hidden group hover:border-[#ff6b35]/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.3)] transition-all duration-300">
+                    <Card key={meme.id} className="group/meme bg-gray-900 border-gray-800 overflow-hidden hover:border-[#ff6b35]/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
                       {/* Meme Image */}
                       <div className="relative">
-                        <div className="w-full h-64 bg-gray-800 flex items-center justify-center">
-                          <div className="text-center text-gray-400">
-                            <Image className="w-16 h-16 mx-auto mb-2 opacity-50" />
+                        <div className="w-full h-64 bg-gray-800 flex items-center justify-center group-hover/meme:bg-gray-750 transition-all duration-500">
+                          <div className="text-center text-gray-400 transition-all duration-500 group-hover/meme:text-gray-300">
+                            <Image className="w-16 h-16 mx-auto mb-2 opacity-50 transition-all duration-500 group-hover/meme:scale-110 group-hover/meme:opacity-75" />
                             <p className="text-sm">Meme Image</p>
-                            <p className="text-xs text-gray-500">Click to view</p>
+                            <p className="text-xs text-gray-500 transition-all duration-500 group-hover/meme:text-gray-400">Click to view</p>
                           </div>
                         </div>
                         
                         {/* Category Badge */}
                         <div className="absolute top-2 left-2">
-                          <Badge className="bg-orange-600 text-white text-xs">
+                          <Badge className="bg-orange-600 text-white text-xs transition-all duration-500 group-hover/meme:scale-105 group-hover/meme:shadow-[0_0_4px_rgba(255,107,53,0.3)]">
                             {memeCategories.find(c => c.id === meme.category)?.name}
                           </Badge>
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button size="sm" variant="outline" className="h-8 w-8 p-0 bg-gray-900 border-gray-700">
-                            <MoreHorizontal className="h-4 w-4" />
+                        <div className="absolute top-2 right-2 opacity-0 group-hover/meme:opacity-100 transition-all duration-500">
+                          <Button size="sm" variant="outline" className="group/action h-8 w-8 p-0 bg-gray-900 border-gray-700 hover:scale-105 hover:shadow-[0_0_4px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu">
+                            <MoreHorizontal className="h-4 w-4 transition-all duration-500 group-hover/action:scale-110 group-hover/action:rotate-2" />
                           </Button>
                         </div>
                       </div>
@@ -281,14 +300,18 @@ export default function MemeGalleryPage() {
                         <div className="space-y-3">
                           {/* Title and Creator */}
                           <div>
-                            <h3 className="text-white font-medium line-clamp-2 mb-1">{meme.title}</h3>
-                            <p className="text-gray-400 text-sm">by {meme.creator}</p>
+                            <h3 className="text-white font-medium line-clamp-2 mb-1 transition-all duration-500 group-hover/meme:text-orange-400">
+                              {meme.title}
+                            </h3>
+                            <p className="text-gray-400 text-sm transition-all duration-500 group-hover/meme:text-gray-300">
+                              by {meme.creator}
+                            </p>
                           </div>
 
                           {/* Tags */}
                           <div className="flex flex-wrap gap-1">
                             {meme.tags.slice(0, 3).map(tag => (
-                              <Badge key={tag} variant="outline" className="text-xs border-gray-600 text-gray-300">
+                              <Badge key={tag} variant="outline" className="group/tag text-xs border-gray-600 text-gray-300 hover:scale-105 hover:shadow-[0_0_4px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu">
                                 {tag}
                               </Badge>
                             ))}

@@ -83,14 +83,20 @@ export default function FeedPage() {
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="group/header flex items-center justify-between mb-8 transition-all duration-500 hover:scale-[1.01] transform-gpu">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Live BONK Social Feed</h1>
-            <p className="text-gray-400">Real-time social media activity from the BONK ecosystem</p>
+            <h1 className="text-3xl font-bold text-white mb-2 transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
+              Live BONK Social Feed
+            </h1>
+            <p className="text-gray-400 transition-all duration-500 group-hover/header:text-gray-300">
+              Real-time social media activity from the BONK ecosystem
+            </p>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold text-orange-500">{filteredPosts.length}</div>
-            <div className="text-sm text-gray-400">posts</div>
+            <div className="text-2xl font-bold text-orange-500 transition-all duration-500 group-hover/header:text-orange-400">
+              {filteredPosts.length}
+            </div>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/header:text-gray-300">posts</div>
           </div>
         </div>
 
@@ -106,11 +112,11 @@ export default function FeedPage() {
               key={filterOption.key}
               variant={filter === filterOption.key ? "default" : "outline"}
               onClick={() => setFilter(filterOption.key as any)}
-              className={`${
+              className={`group/filter transition-all duration-500 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transform-gpu ${
                 filter === filterOption.key
                   ? "bg-orange-500 text-black hover:bg-orange-600"
                   : "border-gray-700 text-gray-300 hover:border-orange-500 hover:text-orange-500"
-              } transition-all hover:shadow-[0_0_10px_rgba(255,107,53,0.3)]`}
+              }`}
             >
               {filterOption.label}
             </Button>
@@ -120,18 +126,22 @@ export default function FeedPage() {
         {/* Feed */}
         <div className="space-y-6">
           {loading ? (
-            <div className="text-center py-12">
-              <div className="text-gray-400">Loading BONK social feed...</div>
+            <div className="group/loading text-center py-12 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+              <div className="text-gray-400 transition-all duration-500 group-hover/loading:text-gray-300">
+                Loading BONK social feed...
+              </div>
             </div>
           ) : filteredPosts.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-gray-400">No posts found</div>
+            <div className="group/empty text-center py-12 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+              <div className="text-gray-400 transition-all duration-500 group-hover/empty:text-gray-300">
+                No posts found
+              </div>
             </div>
           ) : (
             filteredPosts.map((post) => (
               <div
                 key={post.id}
-                className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-orange-500/30 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all group"
+                className="group/post bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-orange-500/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer"
               >
                 {/* Post Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -139,56 +149,70 @@ export default function FeedPage() {
                     <img
                       src={post.author.avatar || "/placeholder.svg"}
                       alt={post.author.name}
-                      className="w-12 h-12 rounded-full"
+                      className="w-12 h-12 rounded-full transition-all duration-500 group-hover/post:scale-110 group-hover/post:shadow-[0_0_4px_rgba(255,107,53,0.3)]"
                     />
                     <div>
                       <div className="flex items-center space-x-2">
-                        <h3 className="font-semibold text-white">{post.author.name}</h3>
-                        <span className="text-gray-400">@{post.author.username}</span>
-                        <Badge className={`${getSentimentColor(post.sentiment)} border text-xs`}>
+                        <h3 className="font-semibold text-white transition-all duration-500 group-hover/post:text-orange-400">
+                          {post.author.name}
+                        </h3>
+                        <span className="text-gray-400 transition-all duration-500 group-hover/post:text-gray-300">
+                          @{post.author.username}
+                        </span>
+                        <Badge className={`${getSentimentColor(post.sentiment)} border text-xs transition-all duration-500 group-hover/post:scale-105 group-hover/post:shadow-[0_0_4px_rgba(255,107,53,0.2)]`}>
                           <div className="flex items-center space-x-1">
-                            {getSentimentIcon(post.sentiment)}
+                            <div className="transition-all duration-500 group-hover/post:scale-110 group-hover/post:rotate-2">
+                              {getSentimentIcon(post.sentiment)}
+                            </div>
                             <span>{post.sentiment}</span>
                           </div>
                         </Badge>
                       </div>
-                      <div className="text-sm text-gray-500">{post.timestamp}</div>
+                      <div className="text-sm text-gray-500 transition-all duration-500 group-hover/post:text-gray-400">
+                        {post.timestamp}
+                      </div>
                     </div>
                   </div>
                   <a
                     href={post.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-orange-500 transition-colors"
+                    className="group/link text-gray-400 hover:text-orange-500 transition-all duration-500 hover:scale-110 hover:rotate-2"
                   >
-                    <ExternalLink className="w-5 h-5" />
+                    <ExternalLink className="w-5 h-5 transition-all duration-500 group-hover/link:scale-110 group-hover/link:rotate-2" />
                   </a>
                 </div>
 
                 {/* Post Content */}
                 <div className="mb-4">
-                  <p className="text-gray-200 leading-relaxed">{post.content}</p>
+                  <p className="text-gray-200 leading-relaxed transition-all duration-500 group-hover/post:text-gray-100">
+                    {post.content}
+                  </p>
                 </div>
 
                 {/* Engagement Stats */}
                 <div className="flex items-center justify-between text-sm text-gray-400">
                   <div className="flex items-center space-x-6">
-                    <div className="flex items-center space-x-1">
-                      <Heart className="w-4 h-4" />
+                    <div className="flex items-center space-x-1 transition-all duration-500 group-hover/post:text-gray-300">
+                      <Heart className="w-4 h-4 transition-all duration-500 group-hover/post:scale-110 group-hover/post:rotate-2" />
                       <span>{post.engagement.likes}</span>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <Repeat2 className="w-4 h-4" />
+                    <div className="flex items-center space-x-1 transition-all duration-500 group-hover/post:text-gray-300">
+                      <Repeat2 className="w-4 h-4 transition-all duration-500 group-hover/post:scale-110 group-hover/post:rotate-2" />
                       <span>{post.engagement.retweets}</span>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <MessageCircle className="w-4 h-4" />
+                    <div className="flex items-center space-x-1 transition-all duration-500 group-hover/post:text-gray-300">
+                      <MessageCircle className="w-4 h-4 transition-all duration-500 group-hover/post:scale-110 group-hover/post:rotate-2" />
                       <span>{post.engagement.comments}</span>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <span>Followers: {post.engagement.followers.toLocaleString()}</span>
-                    <span>Interactions: {post.engagement.interactions}</span>
+                    <span className="transition-all duration-500 group-hover/post:text-gray-300">
+                      Followers: {post.engagement.followers.toLocaleString()}
+                    </span>
+                    <span className="transition-all duration-500 group-hover/post:text-gray-300">
+                      Interactions: {post.engagement.interactions}
+                    </span>
                   </div>
                 </div>
               </div>

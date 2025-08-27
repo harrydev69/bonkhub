@@ -215,147 +215,164 @@ export function NarrativeTracker() {
 
   return (
     <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Hot narrative data Internationally 🔥</h1>
-
-        {/* Category tags */}
-        <div className="flex flex-wrap justify-center gap-2 mt-6">
-          {[
-            "bonk narrative",
-            "market sentiment",
-            "social trends",
-            "ecosystem buzz",
-            "community vibes",
-            "trading pairs",
-            "defi metrics",
-            "whale activity",
-            "price alerts",
-            "volume analysis",
-            "sentiment data",
-            "ecosystem tokens",
-          ].map((tag) => (
-            <span
-              key={tag}
-              className="px-3 py-1 bg-gray-800 text-gray-300 rounded-full text-sm hover:bg-gray-700 transition-colors cursor-pointer"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
+      {/* Header */}
+      <div className="group/header transition-all duration-500 hover:scale-[1.01] transform-gpu">
+        <h1 className="text-3xl font-bold text-white mb-2 transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
+          BONK Narrative Tracker
+        </h1>
+        <p className="text-gray-400 transition-all duration-500 group-hover/header:text-gray-300">
+          Track and analyze the most influential narratives driving BONK sentiment across social media
+        </p>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Card className="bg-gray-900 border-gray-700 hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] transition-all duration-300">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Dominant Narrative</CardTitle>
+      {/* Overview Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
+              Total Narratives
+            </CardTitle>
+            <Flame className="h-4 w-4 text-orange-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white mb-1">{dominant ? dominant.title : "—"}</div>
-            <p className="text-xs text-gray-500">{dominant ? `${dominant.strength}% strength` : "awaiting data"}</p>
+            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/stats:text-orange-400">
+              {narratives.length}
+            </div>
+            <p className="text-xs text-gray-500 transition-all duration-500 group-hover/stats:text-gray-400">
+              Active narratives
+            </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-gray-700 hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] transition-all duration-300">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Total Mentions</CardTitle>
+        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(34,197,94,0.2)] hover:border-green-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
+              Bullish
+            </CardTitle>
+            <TrendingUp className="h-4 w-4 text-green-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(34,197,94,0.4)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white mb-1">{totalMentions.toLocaleString()}</div>
-            <p className="text-xs text-gray-500">Observed window</p>
+            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/stats:text-green-400">
+              {bullishNarratives.length}
+            </div>
+            <p className="text-xs text-gray-500 transition-all duration-500 group-hover/stats:text-gray-400">
+              Positive narratives
+            </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-gray-700 hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] transition-all duration-300">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Avg Engagement</CardTitle>
+        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(239,68,68,0.2)] hover:border-red-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
+              Bearish
+            </CardTitle>
+            <TrendingDown className="h-4 w-4 text-red-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(239,68,68,0.4)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white mb-1">{avgEngagement}%</div>
-            <p className="text-xs text-gray-500">Per-narrative average</p>
+            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/stats:text-red-400">
+              {bearishNarratives.length}
+            </div>
+            <p className="text-xs text-gray-500 transition-all duration-500 group-hover/stats:text-gray-400">
+              Negative narratives
+            </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-gray-700 hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] transition-all duration-300">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Bullish Sentiment</CardTitle>
+        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(156,163,175,0.2)] hover:border-gray-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
+              Trending
+            </CardTitle>
+            <Flame className="h-4 w-4 text-yellow-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(234,179,8,0.4)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white mb-1">{bullishPct}%</div>
-            <p className="text-xs text-gray-500">Of all narratives</p>
+            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/stats:text-yellow-400">
+              {topNarratives.length}
+            </div>
+            <p className="text-xs text-gray-500 transition-all duration-500 group-hover/stats:text-gray-400">
+              Hot narratives
+            </p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Narrative Analysis */}
-      <Tabs defaultValue="trending" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-gray-900 border-gray-700">
-          <TabsTrigger value="trending" className="data-[state=active]:bg-[#ff6b35] data-[state=active]:text-white">
+      {/* Main Content */}
+      <Tabs defaultValue="trending" className="space-y-4">
+        <TabsList className="group/tabs bg-gray-900 border-gray-700 hover:shadow-[0_0_10px_rgba(255,107,53,0.2)] transition-all duration-500">
+          <TabsTrigger value="trending" className="data-[state=active]:bg-[#ff6b35] data-[state=active]:text-white transition-all duration-500 hover:scale-105">
             Trending
           </TabsTrigger>
-          <TabsTrigger value="bullish" className="data-[state=active]:bg-[#ff6b35] data-[state=active]:text-white">
+          <TabsTrigger value="bullish" className="data-[state=active]:bg-[#ff6b35] data-[state=active]:text-white transition-all duration-500 hover:scale-105">
             Bullish
           </TabsTrigger>
-          <TabsTrigger value="bearish" className="data-[state=active]:bg-[#ff6b35] data-[state=active]:text-white">
+          <TabsTrigger value="bearish" className="data-[state=active]:bg-[#ff6b35] data-[state=active]:text-white transition-all duration-500 hover:scale-105">
             Bearish
           </TabsTrigger>
-          <TabsTrigger value="all" className="data-[state=active]:bg-[#ff6b35] data-[state=active]:text-white">
+          <TabsTrigger value="all" className="data-[state=active]:bg-[#ff6b35] data-[state=active]:text-white transition-all duration-500 hover:scale-105">
             All Narratives
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="trending" className="space-y-4">
-          <Card className="bg-gray-900 border-gray-700">
+          <Card className="group/trending bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
             <CardHeader>
-              <CardTitle className="text-white">Top Trending Narratives</CardTitle>
-              <CardDescription className="text-gray-400">
+              <CardTitle className="text-white transition-all duration-500 group-hover/trending:text-orange-400">
+                Top Trending Narratives
+              </CardTitle>
+              <CardDescription className="text-gray-400 transition-all duration-500 group-hover/trending:text-gray-300">
                 Most influential narratives driving current sentiment
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {topNarratives.map((narrative, index) => (
-                <div key={narrative.id} className="bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition-colors">
+                <div key={narrative.id} className="group/narrative bg-gray-800 rounded-lg p-4 hover:bg-gray-750 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-[#ff6b35] border-[#ff6b35]">
+                      <Badge variant="outline" className="text-[#ff6b35] border-[#ff6b35] transition-all duration-500 group-hover/narrative:scale-105 group-hover/narrative:shadow-[0_0_4px_rgba(255,107,53,0.3)]">
                         #{index + 1}
                       </Badge>
-                      <h3 className="font-semibold text-white">{narrative.title}</h3>
+                      <h3 className="font-semibold text-white transition-all duration-500 group-hover/narrative:text-orange-400">
+                        {narrative.title}
+                      </h3>
                     </div>
-                    <Badge variant={getSentimentBadge(narrative.sentiment)} className="capitalize">
+                    <Badge variant={getSentimentBadge(narrative.sentiment)} className="capitalize transition-all duration-500 group-hover/narrative:scale-105 group-hover/narrative:shadow-[0_0_4px_rgba(255,107,53,0.2)]">
                       {narrative.sentiment}
                     </Badge>
                   </div>
 
-                  <p className="text-gray-400 text-sm mb-3">{narrative.description}</p>
+                  <p className="text-gray-400 text-sm mb-3 transition-all duration-500 group-hover/narrative:text-gray-300">
+                    {narrative.description}
+                  </p>
 
                   <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                    <span className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/narrative:text-gray-400">
+                      <Users className="h-4 w-4 transition-all duration-500 group-hover/narrative:scale-110 group-hover/narrative:rotate-2" />
                       {narrative.mentions.toLocaleString()} mentions
                     </span>
-                    <span className="flex items-center gap-1">
-                      <MessageCircle className="h-4 w-4" />
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/narrative:text-gray-400">
+                      <MessageCircle className="h-4 w-4 transition-all duration-500 group-hover/narrative:scale-110 group-hover/narrative:rotate-2" />
                       {narrative.engagement}% engagement
                     </span>
-                    <span className="flex items-center gap-1">
-                      {getTrendIcon(narrative.trend)}
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/narrative:text-gray-400">
+                      <div className="transition-all duration-500 group-hover/narrative:scale-110 group-hover/narrative:rotate-2">
+                        {getTrendIcon(narrative.trend)}
+                      </div>
                       {narrative.timeframe}
                     </span>
                   </div>
 
                   <div className="mb-3">
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-400">Narrative Strength</span>
-                      <span className="text-white">{narrative.strength}%</span>
+                      <span className="text-gray-400 transition-all duration-500 group-hover/narrative:text-gray-300">Narrative Strength</span>
+                      <span className="text-white transition-all duration-500 group-hover/narrative:text-orange-400">{narrative.strength}%</span>
                     </div>
-                    <Progress value={narrative.strength} className="h-2 bg-gray-700" />
+                    <Progress value={narrative.strength} className="h-2 bg-gray-700 transition-all duration-500 group-hover/narrative:shadow-[0_0_6px_rgba(255,107,53,0.25)]" />
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex flex-wrap gap-1">
                       {narrative.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
+                        <Badge key={tag} variant="secondary" className="text-xs transition-all duration-500 group-hover/narrative:scale-105 group-hover/narrative:shadow-[0_0_4px_rgba(255,107,53,0.2)]">
                           #{tag}
                         </Badge>
                       ))}
@@ -363,9 +380,9 @@ export function NarrativeTracker() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-[#ff6b35] hover:text-[#ff6b35] hover:bg-[#ff6b35]/10"
+                      className="group/share text-[#ff6b35] hover:text-[#ff6b35] hover:bg-[#ff6b35]/10 hover:scale-105 hover:shadow-[0_0_4px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu"
                     >
-                      <Share2 className="h-4 w-4 mr-1" />
+                      <Share2 className="h-4 w-4 mr-1 transition-all duration-500 group-hover/share:scale-110 group-hover/share:rotate-2" />
                       Share
                     </Button>
                   </div>
@@ -373,7 +390,11 @@ export function NarrativeTracker() {
                   {index < topNarratives.length - 1 && <hr className="border-gray-700 mt-4" />}
                 </div>
               ))}
-              {!topNarratives.length && <p className="text-gray-500 text-center py-8">No trending narratives yet.</p>}
+              {!topNarratives.length && (
+                <div className="group/empty text-gray-500 text-center py-8 hover:text-gray-400 transition-all duration-500">
+                  No trending narratives yet.
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -383,36 +404,42 @@ export function NarrativeTracker() {
             {bullishNarratives.map((narrative) => (
               <Card
                 key={narrative.id}
-                className="bg-gray-900 border-gray-700 hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] transition-all duration-300"
+                className="group/narrative bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer"
               >
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-white text-lg">{narrative.title}</CardTitle>
-                    <Badge variant={getSentimentBadge(narrative.sentiment)} className="capitalize">
+                    <CardTitle className="text-white text-lg transition-all duration-500 group-hover/narrative:text-orange-400">
+                      {narrative.title}
+                    </CardTitle>
+                    <Badge variant={getSentimentBadge(narrative.sentiment)} className="capitalize transition-all duration-500 group-hover/narrative:scale-105 group-hover/narrative:shadow-[0_0_4px_rgba(255,107,53,0.2)]">
                       {narrative.sentiment}
                     </Badge>
                   </div>
-                  <CardDescription className="text-gray-400">{narrative.description}</CardDescription>
+                  <CardDescription className="text-gray-400 transition-all duration-500 group-hover/narrative:text-gray-300">
+                    {narrative.description}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <span className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/narrative:text-gray-400">
+                      <Users className="h-4 w-4 transition-all duration-500 group-hover/narrative:scale-110 group-hover/narrative:rotate-2" />
                       {narrative.mentions.toLocaleString()} mentions
                     </span>
-                    <span className="flex items-center gap-1">
-                      <MessageCircle className="h-4 w-4" />
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/narrative:text-gray-400">
+                      <MessageCircle className="h-4 w-4 transition-all duration-500 group-hover/narrative:scale-110 group-hover/narrative:rotate-2" />
                       {narrative.engagement}% engagement
                     </span>
-                    <span className="flex items-center gap-1">
-                      {getTrendIcon(narrative.trend)}
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/narrative:text-gray-400">
+                      <div className="transition-all duration-500 group-hover/narrative:scale-110 group-hover/narrative:rotate-2">
+                        {getTrendIcon(narrative.trend)}
+                      </div>
                       {narrative.timeframe}
                     </span>
                   </div>
 
                   <div className="flex flex-wrap gap-1 mb-3">
                     {narrative.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-xs">
+                      <Badge key={tag} variant="secondary" className="text-xs transition-all duration-500 group-hover/narrative:scale-105 group-hover/narrative:shadow-[0_0_4px_rgba(255,107,53,0.2)]">
                         #{tag}
                       </Badge>
                     ))}
@@ -420,16 +447,18 @@ export function NarrativeTracker() {
 
                   <div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-400">Strength</span>
-                      <span className="text-white">{narrative.strength}%</span>
+                      <span className="text-gray-400 transition-all duration-500 group-hover/narrative:text-gray-300">Strength</span>
+                      <span className="text-white transition-all duration-500 group-hover/narrative:text-orange-400">{narrative.strength}%</span>
                     </div>
-                    <Progress value={narrative.strength} className="h-2 bg-gray-700" />
+                    <Progress value={narrative.strength} className="h-2 bg-gray-700 transition-all duration-500 group-hover/narrative:shadow-[0_0_6px_rgba(255,107,53,0.25)]" />
                   </div>
                 </CardContent>
               </Card>
             ))}
             {!bullishNarratives.length && (
-              <p className="text-gray-500 text-center py-8 col-span-full">No bullish narratives yet.</p>
+              <div className="group/empty text-gray-500 text-center py-8 col-span-full hover:text-gray-400 transition-all duration-500">
+                No bullish narratives yet.
+              </div>
             )}
           </div>
         </TabsContent>
@@ -439,36 +468,42 @@ export function NarrativeTracker() {
             {bearishNarratives.map((narrative) => (
               <Card
                 key={narrative.id}
-                className="bg-gray-900 border-gray-700 hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] transition-all duration-300"
+                className="group/narrative bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer"
               >
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-white text-lg">{narrative.title}</CardTitle>
-                    <Badge variant={getSentimentBadge(narrative.sentiment)} className="capitalize">
+                    <CardTitle className="text-white text-lg transition-all duration-500 group-hover/narrative:text-orange-400">
+                      {narrative.title}
+                    </CardTitle>
+                    <Badge variant={getSentimentBadge(narrative.sentiment)} className="capitalize transition-all duration-500 group-hover/narrative:scale-105 group-hover/narrative:shadow-[0_0_4px_rgba(255,107,53,0.2)]">
                       {narrative.sentiment}
                     </Badge>
                   </div>
-                  <CardDescription className="text-gray-400">{narrative.description}</CardDescription>
+                  <CardDescription className="text-gray-400 transition-all duration-500 group-hover/narrative:text-gray-300">
+                    {narrative.description}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <span className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/narrative:text-gray-400">
+                      <Users className="h-4 w-4 transition-all duration-500 group-hover/narrative:scale-110 group-hover/narrative:rotate-2" />
                       {narrative.mentions.toLocaleString()} mentions
                     </span>
-                    <span className="flex items-center gap-1">
-                      <MessageCircle className="h-4 w-4" />
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/narrative:text-gray-400">
+                      <MessageCircle className="h-4 w-4 transition-all duration-500 group-hover/narrative:scale-110 group-hover/narrative:rotate-2" />
                       {narrative.engagement}% engagement
                     </span>
-                    <span className="flex items-center gap-1">
-                      {getTrendIcon(narrative.trend)}
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/narrative:text-gray-400">
+                      <div className="transition-all duration-500 group-hover/narrative:scale-110 group-hover/narrative:rotate-2">
+                        {getTrendIcon(narrative.trend)}
+                      </div>
                       {narrative.timeframe}
                     </span>
                   </div>
 
                   <div className="flex flex-wrap gap-1 mb-3">
                     {narrative.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-xs">
+                      <Badge key={tag} variant="secondary" className="text-xs transition-all duration-500 group-hover/narrative:scale-105 group-hover/narrative:shadow-[0_0_4px_rgba(255,107,53,0.2)]">
                         #{tag}
                       </Badge>
                     ))}
@@ -476,16 +511,18 @@ export function NarrativeTracker() {
 
                   <div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-400">Strength</span>
-                      <span className="text-white">{narrative.strength}%</span>
+                      <span className="text-gray-400 transition-all duration-500 group-hover/narrative:text-gray-300">Strength</span>
+                      <span className="text-white transition-all duration-500 group-hover/narrative:text-orange-400">{narrative.strength}%</span>
                     </div>
-                    <Progress value={narrative.strength} className="h-2 bg-gray-700" />
+                    <Progress value={narrative.strength} className="h-2 bg-gray-700 transition-all duration-500 group-hover/narrative:shadow-[0_0_6px_rgba(255,107,53,0.25)]" />
                   </div>
                 </CardContent>
               </Card>
             ))}
             {!bearishNarratives.length && (
-              <p className="text-gray-500 text-center py-8 col-span-full">No bearish narratives yet.</p>
+              <div className="group/empty text-gray-500 text-center py-8 col-span-full hover:text-gray-400 transition-all duration-500">
+                No bearish narratives yet.
+              </div>
             )}
           </div>
         </TabsContent>
@@ -495,36 +532,42 @@ export function NarrativeTracker() {
             {narratives.map((narrative) => (
               <Card
                 key={narrative.id}
-                className="bg-gray-900 border-gray-700 hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] transition-all duration-300"
+                className="group/narrative bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer"
               >
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-white text-lg">{narrative.title}</CardTitle>
-                    <Badge variant={getSentimentBadge(narrative.sentiment)} className="capitalize">
+                    <CardTitle className="text-white text-lg transition-all duration-500 group-hover/narrative:text-orange-400">
+                      {narrative.title}
+                    </CardTitle>
+                    <Badge variant={getSentimentBadge(narrative.sentiment)} className="capitalize transition-all duration-500 group-hover/narrative:scale-105 group-hover/narrative:shadow-[0_0_4px_rgba(255,107,53,0.2)]">
                       {narrative.sentiment}
                     </Badge>
                   </div>
-                  <CardDescription className="text-gray-400">{narrative.description}</CardDescription>
+                  <CardDescription className="text-gray-400 transition-all duration-500 group-hover/narrative:text-gray-300">
+                    {narrative.description}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <span className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/narrative:text-gray-400">
+                      <Users className="h-4 w-4 transition-all duration-500 group-hover/narrative:scale-110 group-hover/narrative:rotate-2" />
                       {narrative.mentions.toLocaleString()} mentions
                     </span>
-                    <span className="flex items-center gap-1">
-                      <MessageCircle className="h-4 w-4" />
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/narrative:text-gray-400">
+                      <MessageCircle className="h-4 w-4 transition-all duration-500 group-hover/narrative:scale-110 group-hover/narrative:rotate-2" />
                       {narrative.engagement}% engagement
                     </span>
-                    <span className="flex items-center gap-1">
-                      {getTrendIcon(narrative.trend)}
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/narrative:text-gray-400">
+                      <div className="transition-all duration-500 group-hover/narrative:scale-110 group-hover/narrative:rotate-2">
+                        {getTrendIcon(narrative.trend)}
+                      </div>
                       {narrative.timeframe}
                     </span>
                   </div>
 
                   <div className="flex flex-wrap gap-1 mb-3">
                     {narrative.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-xs">
+                      <Badge key={tag} variant="secondary" className="text-xs transition-all duration-500 group-hover/narrative:scale-105 group-hover/narrative:shadow-[0_0_4px_rgba(255,107,53,0.2)]">
                         #{tag}
                       </Badge>
                     ))}
@@ -532,15 +575,19 @@ export function NarrativeTracker() {
 
                   <div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-400">Strength</span>
-                      <span className="text-white">{narrative.strength}%</span>
+                      <span className="text-gray-400 transition-all duration-500 group-hover/narrative:text-gray-300">Strength</span>
+                      <span className="text-white transition-all duration-500 group-hover/narrative:text-orange-400">{narrative.strength}%</span>
                     </div>
-                    <Progress value={narrative.strength} className="h-2 bg-gray-700" />
+                    <Progress value={narrative.strength} className="h-2 bg-gray-700 transition-all duration-500 group-hover/narrative:shadow-[0_0_6px_rgba(255,107,53,0.25)]" />
                   </div>
                 </CardContent>
               </Card>
             ))}
-            {!narratives.length && <p className="text-gray-500 text-center py-8 col-span-full">No narratives found.</p>}
+            {!narratives.length && (
+              <div className="group/empty text-gray-500 text-center py-8 col-span-full hover:text-gray-400 transition-all duration-500">
+                No narratives found.
+              </div>
+            )}
           </div>
         </TabsContent>
       </Tabs>

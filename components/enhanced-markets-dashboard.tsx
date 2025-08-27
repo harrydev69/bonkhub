@@ -514,11 +514,12 @@ export default function EnhancedMarketsDashboard() {
       return false;
     return true;
   }).filter((venue, index, self) => 
-    // Remove duplicates based on exchange + pair + marketType combination
+    // Remove duplicates based on exchange + pair + marketType + volume combination
     index === self.findIndex(v => 
       v.exchange === venue.exchange && 
       v.pair === venue.pair && 
-      v.marketType === venue.marketType
+      v.marketType === venue.marketType &&
+      v.volume24h === venue.volume24h
     )
   );
 
@@ -594,28 +595,28 @@ export default function EnhancedMarketsDashboard() {
           onValueChange={setActiveFilter}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-4 bg-gray-800 border-gray-700">
+          <TabsList className="grid w-full grid-cols-4 bg-gray-800 border-gray-700 gap-1 p-1">
             <TabsTrigger
               value="overview"
-              className="data-[state=active]:bg-orange-600 data-[state=active]:text-white hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu"
+              className="data-[state=active]:bg-orange-600 data-[state=active]:text-white hover:scale-105 hover:shadow-[0_0_6px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu"
             >
               Overview
             </TabsTrigger>
             <TabsTrigger
               value="venues"
-              className="data-[state=active]:bg-orange-600 data-[state=active]:text-white hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu"
+              className="data-[state=active]:bg-orange-600 data-[state=active]:text-white hover:scale-105 hover:shadow-[0_0_6px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu"
             >
               Trading Venues
             </TabsTrigger>
             <TabsTrigger
               value="analysis"
-              className="data-[state=active]:bg-orange-600 data-[state=active]:text-white hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu"
+              className="data-[state=active]:bg-orange-600 data-[state=active]:text-white hover:scale-105 hover:shadow-[0_0_6px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu"
             >
               Market Analysis
             </TabsTrigger>
             <TabsTrigger
               value="quality"
-              className="data-[state=active]:bg-orange-600 data-[state=active]:text-white hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu"
+              className="data-[state=active]:bg-orange-600 data-[state=active]:text-white hover:scale-105 hover:shadow-[0_0_6px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu"
             >
               Data Quality
             </TabsTrigger>
@@ -958,7 +959,7 @@ export default function EnhancedMarketsDashboard() {
                         })
                         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                         .map((venue, index) => (
-                          <TableRow key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${index}`} data-venue-id={`${venue.exchange}-${venue.pair}-${venue.marketType}-${index}`} className="border-gray-700 hover:bg-gray-800/50">
+                          <TableRow key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${index}`} data-venue-id={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${index}`} className="border-gray-700 hover:bg-gray-800/50">
                             <TableCell className="text-white font-medium">{venue.rank}</TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
@@ -1275,7 +1276,7 @@ export default function EnhancedMarketsDashboard() {
                     <TableBody>
                       {filteredVenues.map((venue, index) => (
                         <TableRow
-                          key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${index}`}
+                          key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${index}`}
                           className="border-gray-700 hover:bg-gray-800 hover:scale-[1.01] hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu group/row"
                         >
                           <TableCell className="text-gray-300">
@@ -1391,7 +1392,7 @@ export default function EnhancedMarketsDashboard() {
                   <div className="space-y-4">
                     {filteredVenues.slice(0, 6).map((venue, index) => (
                       <div
-                        key={`${venue.exchange}-${venue.pair}-${venue.marketType}-depth-${index}`}
+                        key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-depth-${index}`}
                         className="p-4 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu group/item"
                       >
                         <div className="flex items-center justify-between mb-2">
@@ -1453,7 +1454,7 @@ export default function EnhancedMarketsDashboard() {
                   <div className="space-y-4">
                     {filteredVenues.slice(0, 5).map((venue, index) => (
                       <div
-                        key={`${venue.exchange}-${venue.pair}-${venue.marketType}-volume-${index}`}
+                        key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-volume-${index}`}
                         className="flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu group/item"
                       >
                         <div className="flex items-center space-x-3">
@@ -1690,13 +1691,7 @@ export default function EnhancedMarketsDashboard() {
                     <div className="text-sm text-gray-400 transition-all duration-500 group-hover/stat:text-gray-300">Stale Data</div>
                   </div>
                 </div>
-                <div className="mt-4 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg hover:bg-blue-900/30 hover:border-blue-500/50 hover:scale-105 hover:shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-all duration-500 transform-gpu group/source">
-                  <div className="text-blue-400 text-sm transition-all duration-500 group-hover/source:text-blue-300">
-                    <strong>Data Source:</strong> CoinGecko Pro API • Last
-                    refresh:{" "}
-                    {lastUpdated ? lastUpdated.toLocaleString() : "Loading..."}
-                  </div>
-                </div>
+
               </CardContent>
             </Card>
           </TabsContent>

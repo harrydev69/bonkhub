@@ -271,12 +271,12 @@ export function AnalyticsGrid() {
             </div>
 
             <div className="p-3">
-                             <h3 className="text-white text-sm font-medium line-clamp-2 mb-2 transition-all duration-500 group-hover:text-[#ff6b35] group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)] group-hover:scale-[1.01] transform-gpu">
+                             <h3 className="text-white text-sm font-medium line-clamp-2 mb-2 transition-all duration-500 group-hover:text-[#ff6b35] group-hover:scale-[1.01] transform-gpu">
                  {item.title}
                </h3>
 
               <div className="flex items-center text-gray-400 text-xs mb-1">
-                <span className="transition-all duration-500 hover:text-[#ff6b35] hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)] hover:scale-[1.02] cursor-pointer transform-gpu">
+                <span className="transition-all duration-500 hover:text-[#ff6b35] hover:scale-[1.02] cursor-pointer transform-gpu">
                   {item.channel}
                 </span>
                 <span className="mx-1">•</span>
