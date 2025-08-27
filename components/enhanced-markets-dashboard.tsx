@@ -595,28 +595,28 @@ export default function EnhancedMarketsDashboard() {
           onValueChange={setActiveFilter}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-4 bg-gray-800 border-gray-700 gap-1 p-1">
+                               <TabsList className="flex w-full bg-gray-800 border border-gray-700 rounded-xl p-2 gap-2">
             <TabsTrigger
               value="overview"
-              className="data-[state=active]:bg-orange-600 data-[state=active]:text-white hover:scale-105 hover:shadow-[0_0_6px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu"
+              className="flex-1 px-6 py-3 text-base font-medium text-gray-300 data-[state=active]:bg-orange-600 data-[state=active]:text-white rounded-lg transition-all duration-300 hover:bg-gray-700/50 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)]"
             >
               Overview
             </TabsTrigger>
             <TabsTrigger
               value="venues"
-              className="data-[state=active]:bg-orange-600 data-[state=active]:text-white hover:scale-105 hover:shadow-[0_0_6px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu"
+              className="flex-1 px-6 py-3 text-base font-medium text-gray-300 data-[state=active]:bg-orange-600 data-[state=active]:text-white rounded-lg transition-all duration-300 hover:bg-gray-700/50 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)]"
             >
               Trading Venues
             </TabsTrigger>
             <TabsTrigger
               value="analysis"
-              className="data-[state=active]:bg-orange-600 data-[state=active]:text-white hover:scale-105 hover:shadow-[0_0_6px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu"
+              className="flex-1 px-6 py-3 text-base font-medium text-gray-300 data-[state=active]:bg-orange-600 data-[state=active]:text-white rounded-lg transition-all duration-300 hover:bg-gray-700/50 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)]"
             >
               Market Analysis
             </TabsTrigger>
             <TabsTrigger
               value="quality"
-              className="data-[state=active]:bg-orange-600 data-[state=active]:text-white hover:scale-105 hover:shadow-[0_0_6px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu"
+              className="flex-1 px-6 py-3 text-base font-medium text-gray-300 data-[state=active]:bg-orange-600 data-[state=active]:text-white rounded-lg transition-all duration-300 hover:bg-gray-700/50 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)]"
             >
               Data Quality
             </TabsTrigger>
@@ -959,7 +959,7 @@ export default function EnhancedMarketsDashboard() {
                         })
                         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                         .map((venue, index) => (
-                          <TableRow key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${index}`} data-venue-id={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${index}`} className="border-gray-700 hover:bg-gray-800/50">
+                          <TableRow key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${venue.lastUpdated}-${index}`} data-venue-id={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${venue.lastUpdated}-${index}`} className="border-gray-700 hover:bg-gray-800/50">
                             <TableCell className="text-white font-medium">{venue.rank}</TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
@@ -972,7 +972,7 @@ export default function EnhancedMarketsDashboard() {
                                     className="w-8 h-8 rounded-sm object-cover exchange-logo"
                                     onError={() => {
                                       // Fallback to letter if image fails to load
-                                      const target = document.querySelector(`[data-venue-id="${venue.exchange}-${venue.pair}-${venue.marketType}-${index}"] .exchange-logo`) as HTMLElement;
+                                      const target = document.querySelector(`[data-venue-id="${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${venue.lastUpdated}-${index}"] .exchange-logo`) as HTMLElement;
                                       if (target) target.style.display = 'none';
                                       const fallback = target?.nextElementSibling as HTMLElement;
                                       if (fallback) fallback.classList.remove('hidden');
@@ -1276,7 +1276,7 @@ export default function EnhancedMarketsDashboard() {
                     <TableBody>
                       {filteredVenues.map((venue, index) => (
                         <TableRow
-                          key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${index}`}
+                          key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${venue.lastUpdated}-${index}`}
                           className="border-gray-700 hover:bg-gray-800 hover:scale-[1.01] hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu group/row"
                         >
                           <TableCell className="text-gray-300">
@@ -1392,7 +1392,7 @@ export default function EnhancedMarketsDashboard() {
                   <div className="space-y-4">
                     {filteredVenues.slice(0, 6).map((venue, index) => (
                       <div
-                        key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-depth-${index}`}
+                        key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${venue.lastUpdated}-depth-${index}`}
                         className="p-4 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu group/item"
                       >
                         <div className="flex items-center justify-between mb-2">
@@ -1454,7 +1454,7 @@ export default function EnhancedMarketsDashboard() {
                   <div className="space-y-4">
                     {filteredVenues.slice(0, 5).map((venue, index) => (
                       <div
-                        key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-volume-${index}`}
+                        key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${venue.lastUpdated}-volume-${index}`}
                         className="flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu group/item"
                       >
                         <div className="flex items-center space-x-3">
