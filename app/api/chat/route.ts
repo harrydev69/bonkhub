@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 
+export const runtime = 'edge'
+
 const chatMessageSchema = z.object({
   role: z.enum(["system", "user", "assistant"]),
   content: z.string(),
@@ -17,21 +19,6 @@ const chatRequestSchema = z.object({
   }).optional(),
 })
 
-const jatevoRequestSchema = z.object({
-  model: z.string(),
-  messages: z.array(chatMessageSchema),
-  stream: z.boolean().optional(),
-  stop: z.array(z.string()).optional(),
-  stream_options: z.object({
-    include_usage: z.boolean(),
-    continuous_usage_stats: z.boolean(),
-  }).optional(),
-  top_p: z.number().optional(),
-  max_tokens: z.number().optional(),
-  temperature: z.number().optional(),
-  presence_penalty: z.number().optional(),
-  frequency_penalty: z.number().optional(),
-})
 
 export async function POST(request: NextRequest) {
   try {
@@ -139,19 +126,30 @@ export async function POST(request: NextRequest) {
 
 **Sentiment:** ${ecosystemContext.sentiment}
 
-Provide insights about BONK prices, sentiment, trading volume, market data, and ecosystem developments. Be helpful and accurate. Use the provided data to give context-aware responses.`,
+Provide insights about BONK prices, sentiment, trading volume, market data, and ecosystem developments. Be helpful and accurate. Use the provided data to give context-aware responses.
+Keep your response under 300 words and focus on actionable insights.
+Do not regurgitate the context data; synthesize it into a coherent summary, focusing on the key takeaways and actionable insights.
+
+Format your summary into sections of:
+1. Headline: A concise summary of the current market performance and key metrics.
+2. Signals: A summary of recent price movements and trends.
+3. Sentiment: A summary of social sentiment and community engagement.
+4. Actionable Insights: Key takeaways and recommendations based on the analysis.
+
+at all cost avoid writing out mathematical expressions like Aonhourlydipsunder, suggestsaggressiverotationratherthancapitulation
+
+speak normally like a human expert in economics and finance would, especially in cryptocurrency, maintain a wam academic tone but also be engaging and easy to read for a broad audience.
+
+Avoid just giving out raw data; instead, interpret and analyze the information to provide valuable insights for traders and investors.
+`,
     }
     enhancedMessages.unshift(systemMessage)
 
     const jatevoPayload = {
       model: "moonshotai/kimi-k2-instruct",
       messages: enhancedMessages,
-      stream,
+      stream: true,
       stop: [],
-      stream_options: stream ? {
-        include_usage: true,
-        continuous_usage_stats: true,
-      } : undefined,
       top_p: 1,
       max_tokens: 1000,
       temperature: 1,
@@ -179,23 +177,42 @@ Provide insights about BONK prices, sentiment, trading volume, market data, and 
     }
 
     if (stream) {
-      // Forward the streaming response directly from Jatevo
-      return new Response(jatevoResponse.body, {
+      const readableStream = new ReadableStream({
+        async start(controller) {
+          if (jatevoResponse.body) {
+            const reader = jatevoResponse.body.getReader()
+            try {
+              while (true) {
+                const { done, value } = await reader.read()
+                if (done) {
+                  break
+                }
+                controller.enqueue(value)
+              }
+            } catch (error) {
+              console.error("Error while reading stream:", error)
+              controller.error(error)
+            } finally {
+              controller.close()
+            }
+          }
+        },
+      })
+
+      return new Response(readableStream, {
         headers: {
           "Content-Type": "text/event-stream",
-          "Cache-Control": "no-cache",
+          "Cache-Control": "no-cache, no-transform",
           "Connection": "keep-alive",
         },
       })
     }
 
-    // Return non-streaming response
-    const data = await jatevoResponse.json()
-    return NextResponse.json(data)
+    return NextResponse.json(await jatevoResponse.json())
   } catch (error) {
     console.error("Chat API error:", error)
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: "Invalid request format", details: error.errors }, { status: 400 })
+      return NextResponse.json({ error: "Invalid request format", details: error.issues }, { status: 400 })
     }
     return NextResponse.json({ error: "Failed to process chat request" }, { status: 500 })
   }

@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Send, Bot, User, TrendingUp, DollarSign, BarChart3, MessageSquare, Sparkles, Zap, Brain } from "lucide-react"
-
+import { Streamdown } from "streamdown"
 interface Message {
   id: string
   content: string
@@ -47,6 +47,7 @@ export function ChatInterface() {
   ])
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [streamContent, setStreamContent] = useState("")
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const abortRef = useRef<AbortController | null>(null)
@@ -86,7 +87,7 @@ export function ChatInterface() {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
-  }, [messages])
+  }, [messages, streamContent])
 
   useEffect(() => {
     return () => {
@@ -130,64 +131,56 @@ export function ChatInterface() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          stream: true,
           messages: history,
+          stream: true, // Ensure we request a stream
         }),
         signal: abortRef.current.signal,
       })
 
-      if (!res.ok) throw new Error(`chat ${res.status}`)
-
-      const ct = res.headers.get("content-type") || ""
-
-      if (!res.body || !ct.includes("text/event-stream")) {
-        const json = await res.json().catch(() => null as any)
-        const full = json?.choices?.[0]?.message?.content ?? ""
-        const clean = stripThink(full || "")
-        setMessages((prev) =>
-          prev.map((m) => (m.id === assistantId ? { ...m, content: clean, timestamp: new Date() } : m)),
-        )
-        setIsLoading(false)
-        return
+      if (!res.ok) {
+        const errorBody = await res.text()
+        console.error("Chat API error response:", errorBody)
+        throw new Error(`chat ${res.status}: ${errorBody}`)
       }
+      if (!res.body) throw new Error("Response body is empty")
 
       const reader = res.body.getReader()
-      const dec = new TextDecoder()
-      let buf = ""
-      let acc = ""
+      const decoder = new TextDecoder()
+      let buffer = ""
 
-      while (true) {
-        const { value, done } = await reader.read()
-        if (done) break
-        buf += dec.decode(value, { stream: true })
+      const processStream = async () => {
+        while (true) {
+          const { value, done } = await reader.read()
+          if (done) break
 
-        let i
-        while ((i = buf.indexOf("\n\n")) !== -1) {
-          const frame = buf.slice(0, i).trim()
-          buf = buf.slice(i + 2)
+          buffer += decoder.decode(value, { stream: true })
+          const lines = buffer.split("\n")
+          buffer = lines.pop() || ""
 
-          if (!frame.startsWith("data:")) continue
-          const payload = frame.slice(5).trim()
-          if (payload === "[DONE]") {
-            setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, timestamp: new Date() } : m)))
-            setIsLoading(false)
-            return
-          }
-          try {
-            const json = JSON.parse(payload)
-            const delta = json?.choices?.[0]?.delta?.content ?? json?.choices?.[0]?.message?.content ?? ""
-            if (!delta) continue
+          for (const line of lines) {
+            if (line.trim().startsWith("data: ")) {
+              const jsonString = line.trim().substring(6)
+              if (jsonString === "[DONE]") return
 
-            const clean = stripThink(delta)
-            if (!clean) continue
-
-            acc += clean
-            setMessages((prev) => prev.map((m) => (m.id === assistantId ? { ...m, content: acc } : m)))
-          } catch {
-            // ignore keepalives / non-JSON
+              try {
+                const json = JSON.parse(jsonString)
+                const content = json.choices?.[0]?.delta?.content ?? ""
+                if (content) {
+                  setMessages((prev) =>
+                    prev.map((m) =>
+                      m.id === assistantId ? { ...m, content: stripThink(m.content + content) } : m,
+                    ),
+                  )
+                }
+              } catch (e) {
+                console.error("Failed to parse stream chunk:", jsonString, e)
+              }
+            }
           }
         }
       }
+
+      await processStream()
     } catch (err) {
       if ((err as any)?.name === "AbortError") return
       console.error("Chat error:", err)
@@ -289,7 +282,7 @@ export function ChatInterface() {
                         : "bg-gray-800/80 text-white border border-gray-600/50 hover:border-gray-500/70 hover:bg-gray-750 backdrop-blur-sm shadow-lg"
                     }`}
                   >
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
+                    <Streamdown className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</Streamdown>
                   </div>
                   <div className={`flex items-center space-x-2 mt-3 ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
                     <span className="text-xs text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full backdrop-blur-sm">

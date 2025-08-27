@@ -6,6 +6,7 @@ export async function GET(
 ) {
   try {
     const { tokenId } = await params
+    const lowerTokenId = tokenId.toLowerCase()
     const { searchParams } = new URL(request.url)
     const days = searchParams.get('days') || '7' // Default to 7 days
     
@@ -22,7 +23,7 @@ export async function GET(
 
     // Fetch detailed token information with price change percentages
     const tokenResponse = await fetch(
-      `https://pro-api.coingecko.com/api/v3/coins/${tokenId}?localization=false&tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=true&asset_platform_id=ethereum&asset_platform_id=solana&asset_platform_id=binance-smart-chain`,
+      `https://pro-api.coingecko.com/api/v3/coins/${lowerTokenId}?localization=false&tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=true&asset_platform_id=ethereum&asset_platform_id=solana&asset_platform_id=binance-smart-chain`,
       { headers }
     )
 
@@ -34,7 +35,7 @@ export async function GET(
 
     // Fetch market chart data for the price chart with dynamic days parameter
     const chartResponse = await fetch(
-      `https://pro-api.coingecko.com/api/v3/coins/${tokenId}/market_chart?vs_currency=usd&days=${days}`,
+      `https://pro-api.coingecko.com/api/v3/coins/${lowerTokenId}/market_chart?vs_currency=usd&days=${days}`,
       { headers }
     )
 
@@ -46,7 +47,7 @@ export async function GET(
 
     // Also fetch the markets data to get price change percentages
     const marketsResponse = await fetch(
-      `https://pro-api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenId}&order=market_cap_desc&per_page=1&page=1&sparkline=false&price_change_percentage=1h,24h,7d,30d,1y&locale=en`,
+      `https://pro-api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${lowerTokenId}&order=market_cap_desc&per_page=1&page=1&sparkline=false&price_change_percentage=1h,24h,7d,30d,1y&locale=en`,
       { headers }
     )
 
