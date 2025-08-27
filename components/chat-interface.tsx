@@ -132,12 +132,6 @@ export function ChatInterface() {
         body: JSON.stringify({
           stream: true,
           messages: history,
-          context: {
-            price: "$0.000000",
-            change24h: "+0.00%",
-            volume24h: "$0",
-            sentiment: "neutral",
-          },
         }),
         signal: abortRef.current.signal,
       })

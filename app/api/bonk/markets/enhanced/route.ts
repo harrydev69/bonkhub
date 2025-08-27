@@ -39,7 +39,7 @@ interface Venue {
   rank: number
   exchange: string
   pair: string
-  exchangeLogo?: string
+  exchangeLogo?: string | null
   price: number
   spread: number
   depth2Percent: {
@@ -511,30 +511,41 @@ function calculateExchangeTypeDistribution(venues: Venue[]) {
   return distribution
 }
 
+interface ExchangeSummary {
+  name: string;
+  volume: number;
+  venueCount: number;
+  trustScores: string[];
+  averageTrustScore?: string;
+}
+
 function calculateTopExchanges(venues: Venue[]) {
-  const exchangeMap = new Map()
+  const exchangeMap = new Map<string, ExchangeSummary>()
   
   venues.forEach((venue: Venue) => {
     const existing = exchangeMap.get(venue.exchange)
     if (existing) {
       existing.volume += venue.volume24h
       existing.venueCount += 1
+      if (venue.trustScore) {
+        existing.trustScores.push(venue.trustScore);
+      }
     } else {
       exchangeMap.set(venue.exchange, {
         name: venue.exchange,
         volume: venue.volume24h,
         venueCount: 1,
-        trustScores: [venue.trustScore],
+        trustScores: venue.trustScore ? [venue.trustScore] : [],
       })
     }
   })
   
   return Array.from(exchangeMap.values())
-    .map((exchange: any) => ({
+    .map((exchange: ExchangeSummary) => ({
       ...exchange,
       averageTrustScore: calculateAverageTrustScoreFromArray(exchange.trustScores),
     }))
-    .sort((a: any, b: any) => b.volume - a.volume)
+    .sort((a: ExchangeSummary, b: ExchangeSummary) => b.volume - a.volume)
     .slice(0, 10)
 }
 
