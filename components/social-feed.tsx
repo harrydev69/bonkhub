@@ -150,10 +150,14 @@ export function SocialFeed({
   }
 
   return (
-    <Card>
+    <Card className="group/social-feed bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Live BONK Social Feed</CardTitle>
-        <Badge variant="outline">{posts.length} posts</Badge>
+        <CardTitle className="text-white transition-all duration-500 group-hover/social-feed:text-orange-400">
+          Live BONK Social Feed
+        </CardTitle>
+        <Badge variant="outline" className="transition-all duration-500 group-hover/social-feed:scale-105 group-hover/social-feed:shadow-[0_0_4px_rgba(255,107,53,0.2)]">
+          {posts.length} posts
+        </Badge>
       </CardHeader>
       <CardContent className="space-y-4">
         {currentPosts.map((p) => {
@@ -167,33 +171,63 @@ export function SocialFeed({
           const id = String(p.id)
 
           return (
-            <div key={id} className="p-4 border rounded-lg">
+            <div key={id} className="group/post p-4 border border-gray-700 rounded-lg hover:bg-gray-800 hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
               <div className="flex items-start gap-3">
-                <Avatar className="h-10 w-10">
+                <Avatar className="h-10 w-10 transition-all duration-500 group-hover/post:scale-110 group-hover/post:shadow-[0_0_4px_rgba(255,107,53,0.3)]">
                   <AvatarImage src={p.creator_avatar || ""} />
-                  <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback className="bg-orange-600 text-white transition-all duration-500 group-hover/post:bg-orange-500">
+                    {name.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-semibold">{name}</span>
-                      {handle && <span className="text-sm text-muted-foreground">{handle}</span>}
-                      <Badge variant="secondary">{platform}</Badge>
-                      {sentimentBadge(p.post_sentiment)}
+                      <span className="font-semibold text-white transition-all duration-500 group-hover/post:text-orange-400">
+                        {name}
+                      </span>
+                      {handle && (
+                        <span className="text-sm text-muted-foreground transition-all duration-500 group-hover/post:text-gray-300">
+                          {handle}
+                        </span>
+                      )}
+                      <Badge variant="secondary" className="transition-all duration-500 group-hover/post:scale-105 group-hover/post:shadow-[0_0_4px_rgba(255,107,53,0.2)]">
+                        {platform}
+                      </Badge>
+                      <div className="transition-all duration-500 group-hover/post:scale-105 group-hover/post:shadow-[0_0_4px_rgba(255,107,53,0.2)]">
+                        {sentimentBadge(p.post_sentiment)}
+                      </div>
                     </div>
-                    <span className="text-xs text-muted-foreground">{humanTime(p.post_created)}</span>
+                    <span className="text-xs text-muted-foreground transition-all duration-500 group-hover/post:text-gray-300">
+                      {humanTime(p.post_created)}
+                    </span>
                   </div>
-                  <p className="text-sm whitespace-pre-wrap">{text}</p>
+                  <p className="text-sm whitespace-pre-wrap text-gray-300 transition-all duration-500 group-hover/post:text-gray-200">
+                    {text}
+                  </p>
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1"><ThumbsUp className="h-3 w-3" />{likeCount}</span>
-                    <span className="flex items-center gap-1"><Repeat2 className="h-3 w-3" />{rtCount}</span>
-                    <span className="flex items-center gap-1"><MessageCircle className="h-3 w-3" />{replyCount}</span>
-                    <span className="flex items-center gap-1">Followers: {p.creator_followers}</span>
-                    <span className="flex items-center gap-1">Interactions: {p.interactions_24h}</span>
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/post:text-gray-300">
+                      <ThumbsUp className="h-3 w-3 transition-all duration-500 group-hover/post:scale-110 group-hover/post:rotate-2" />
+                      {likeCount}
+                    </span>
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/post:text-gray-300">
+                      <Repeat2 className="h-3 w-3 transition-all duration-500 group-hover/post:scale-110 group-hover/post:rotate-2" />
+                      {rtCount}
+                    </span>
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/post:text-gray-300">
+                      <MessageCircle className="h-3 w-3 transition-all duration-500 group-hover/post:scale-110 group-hover/post:rotate-2" />
+                      {replyCount}
+                    </span>
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/post:text-gray-300">
+                      Followers: {p.creator_followers}
+                    </span>
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/post:text-gray-300">
+                      Interactions: {p.interactions_24h}
+                    </span>
                     {p.post_link && (
                       <a href={p.post_link} target="_blank" rel="noreferrer">
-                        <Button size="sm" variant="ghost" className="h-7 px-2">
-                          <ExternalLink className="h-3 w-3 mr-1" /> Open
+                        <Button size="sm" variant="ghost" className="group/open h-7 px-2 hover:scale-105 hover:shadow-[0_0_4px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu">
+                          <ExternalLink className="h-3 w-3 mr-1 transition-all duration-500 group-hover/open:scale-110 group-hover/open:rotate-2" /> 
+                          Open
                         </Button>
                       </a>
                     )}
@@ -203,7 +237,11 @@ export function SocialFeed({
             </div>
           )
         })}
-        {!posts.length && <div className="text-sm text-muted-foreground">No recent posts found.</div>}
+        {!posts.length && (
+          <div className="group/empty text-sm text-muted-foreground hover:text-gray-300 transition-all duration-500">
+            No recent posts found.
+          </div>
+        )}
         
         {totalPages > 1 && (
           <div className="mt-6">
@@ -212,7 +250,11 @@ export function SocialFeed({
                 <PaginationItem>
                   <PaginationPrevious 
                     onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    className={`group/prev transition-all duration-500 ${
+                      currentPage === 1 
+                        ? "pointer-events-none opacity-50" 
+                        : "cursor-pointer hover:scale-105 hover:shadow-[0_0_4px_rgba(255,107,53,0.2)]"
+                    }`}
                   />
                 </PaginationItem>
                 
@@ -221,7 +263,7 @@ export function SocialFeed({
                     <PaginationLink
                       isActive={currentPage === page}
                       onClick={() => handlePageChange(page)}
-                      className="cursor-pointer"
+                      className="group/page cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-[0_0_4px_rgba(255,107,53,0.2)]"
                     >
                       {page}
                     </PaginationLink>
@@ -231,7 +273,11 @@ export function SocialFeed({
                 <PaginationItem>
                   <PaginationNext 
                     onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    className={`group/next transition-all duration-500 ${
+                      currentPage === totalPages 
+                        ? "pointer-events-none opacity-50" 
+                        : "cursor-pointer hover:scale-105 hover:shadow-[0_0_4px_rgba(255,107,53,0.2)]"
+                    }`}
                   />
                 </PaginationItem>
               </PaginationContent>

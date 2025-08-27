@@ -282,16 +282,16 @@ export function BONKNewsFeed({ selectedCategory = "all", searchQuery = "", artic
   }
 
   return (
-    <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_20px_rgba(255,107,53,0.1)] transition-all">
+    <Card className="bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer group">
       <CardHeader>
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-orange-600/20 rounded-lg">
-              <Newspaper className="h-6 w-6 text-orange-500" />
+            <div className="p-2 bg-orange-600/20 rounded-lg transition-all duration-500 group-hover:bg-orange-600/30 group-hover:scale-110">
+              <Newspaper className="h-6 w-6 text-orange-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white">BONK News Feed</h2>
-              <p className="text-sm text-gray-400">
+              <h2 className="text-2xl font-bold text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">BONK News Feed</h2>
+              <p className="text-sm text-gray-400 transition-all duration-500 group-hover:text-gray-300">
                 {filteredNews.length} articles available • Showing {Math.min(articlesPerPage, filteredNews.length)} per page
               </p>
             </div>
@@ -307,7 +307,7 @@ export function BONKNewsFeed({ selectedCategory = "all", searchQuery = "", artic
               }}
               variant="default"
               size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white animate-pulse"
+              className="bg-green-600 hover:bg-green-700 text-white animate-pulse hover:scale-105 hover:shadow-[0_0_8px_rgba(34,197,94,0.4)] transition-all duration-500 transform-gpu"
             >
               🆕 {newArticlesCount} New Articles
             </Button>
@@ -325,7 +325,7 @@ export function BONKNewsFeed({ selectedCategory = "all", searchQuery = "", artic
               }}
               variant="outline"
               size="sm"
-              className="border-gray-700 text-gray-300 hover:border-orange-500"
+              className="border-gray-700 text-gray-300 hover:border-orange-500 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu"
             >
               🔄 Refresh
             </Button>
@@ -337,16 +337,16 @@ export function BONKNewsFeed({ selectedCategory = "all", searchQuery = "", artic
       <CardContent className="space-y-4">
         {/* Latest Articles Indicator */}
         {currentPage === 1 && (
-          <div className="bg-blue-900/20 border border-blue-800 rounded-lg p-3 mb-4">
+          <div className="bg-blue-900/20 border border-blue-800 rounded-lg p-3 mb-4 hover:bg-blue-900/30 hover:border-blue-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-all duration-500 transform-gpu group/indicator">
             <div className="flex items-center justify-between text-blue-300">
               <div className="flex items-center space-x-2">
-                <span className="text-sm font-medium">📰 Latest Articles</span>
-                <span className="text-xs text-blue-400">
+                <span className="text-sm font-medium transition-all duration-500 group-hover/indicator:text-blue-200">📰 Latest Articles</span>
+                <span className="text-xs text-blue-400 transition-all duration-500 group-hover/indicator:text-blue-300">
                   Showing most recent {Math.min(articlesPerPage, filteredNews.length)} of {filteredNews.length} articles
                 </span>
               </div>
               {filteredNews.length > articlesPerPage && (
-                <span className="text-xs text-blue-400">
+                <span className="text-xs text-blue-400 transition-all duration-500 group-hover/indicator:text-blue-300">
                   {filteredNews.length - articlesPerPage} more articles available
                 </span>
               )}
@@ -362,25 +362,25 @@ export function BONKNewsFeed({ selectedCategory = "all", searchQuery = "", artic
           return (
             <div
               key={uniqueKey}
-              className="border border-gray-800 rounded-lg p-4 hover:border-orange-500/30 transition-all hover:shadow-[0_0_10px_rgba(255,107,53,0.1)]"
+              className="border border-gray-800 rounded-lg p-4 hover:border-orange-500/50 hover:bg-gray-800/30 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu cursor-pointer group/article"
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center space-x-2">
-                  <Badge variant="outline" className="border-gray-700 text-gray-300">
+                  <Badge variant="outline" className="border-gray-700 text-gray-300 transition-all duration-500 group-hover/article:border-orange-500/50 group-hover/article:text-orange-300 group-hover/article:shadow-[0_0_3px_rgba(255,107,53,0.3)]">
                     {article.category}
                   </Badge>
                   {article.subCategory && (
-                    <Badge variant="outline" className="border-gray-700 text-gray-400 text-xs">
+                    <Badge variant="outline" className="border-gray-700 text-gray-400 text-xs transition-all duration-500 group-hover/article:border-orange-500/50 group-hover/article:text-orange-400 group-hover/article:shadow-[0_0_3px_rgba(255,107,53,0.3)]">
                       {article.subCategory}
                     </Badge>
                   )}
                 </div>
                 <div className="text-right">
-                  <Badge variant="outline" className={`${sentimentDisplay.bgColor} ${sentimentDisplay.color} border-0 mb-1`}>
+                  <Badge variant="outline" className={`${sentimentDisplay.bgColor} ${sentimentDisplay.color} border-0 mb-1 transition-all duration-500 group-hover/article:scale-110 group-hover/article:shadow-[0_0_4px_rgba(255,107,53,0.4)]`}>
                     <sentimentDisplay.icon className="h-3 w-3 mr-1" />
                     {sentimentDisplay.text}
                   </Badge>
-                  <div className="text-xs text-gray-400">
+                  <div className="text-xs text-gray-400 transition-all duration-500 group-hover/article:text-gray-300">
                     Score: {article.sentiment.score.toFixed(3)}
                   </div>
                 </div>
@@ -402,31 +402,31 @@ export function BONKNewsFeed({ selectedCategory = "all", searchQuery = "", artic
                 
                 <div className="flex-1 min-w-0">
                   <h3 
-                    className="text-white font-medium mb-2 hover:text-orange-400 transition-colors line-clamp-2 cursor-pointer"
+                    className="text-white font-medium mb-2 hover:text-orange-400 transition-all duration-500 group-hover/article:text-orange-400 group-hover/article:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)] line-clamp-2 cursor-pointer"
                     onClick={() => window.open(article.link, "_blank")}
                   >
                     {article.title}
                   </h3>
 
-                  <p className="text-gray-400 text-sm mb-3 line-clamp-2">{article.summary}</p>
+                  <p className="text-gray-400 text-sm mb-3 line-clamp-2 transition-all duration-500 group-hover/article:text-gray-300">{article.summary}</p>
 
                   <div className="flex items-center text-xs text-gray-500">
                     <div className="flex items-center space-x-2">
-                      <span className="font-medium text-gray-400">{article.source}</span>
-                      <span>•</span>
-                      <span>{formatDate(article.published)}</span>
-                      <span>•</span>
-                      <span>{article.relativeTime}</span>
+                      <span className="font-medium text-gray-400 transition-all duration-500 group-hover/article:text-orange-400 group-hover/article:drop-shadow-[0_0_2px_rgba(255,107,53,0.4)]">{article.source}</span>
+                      <span className="transition-all duration-500 group-hover/article:text-gray-400">•</span>
+                      <span className="transition-all duration-500 group-hover/article:text-gray-400">{formatDate(article.published)}</span>
+                      <span className="transition-all duration-500 group-hover/article:text-gray-400">•</span>
+                      <span className="transition-all duration-500 group-hover/article:text-gray-400">{article.relativeTime}</span>
                       {article.readingTime && (
                         <>
-                          <span>•</span>
-                          <span>{article.readingTime}</span>
+                          <span className="transition-all duration-500 group-hover/article:text-gray-400">•</span>
+                          <span className="transition-all duration-500 group-hover/article:text-gray-400">{article.readingTime}</span>
                         </>
                       )}
                       {article.interactions24h && (
                         <>
-                          <span>•</span>
-                          <span>{article.interactions24h.toLocaleString()} interactions</span>
+                          <span className="transition-all duration-500 group-hover/article:text-gray-400">•</span>
+                          <span className="transition-all duration-500 group-hover/article:text-gray-400">{article.interactions24h.toLocaleString()} interactions</span>
                         </>
                       )}
                     </div>
@@ -439,11 +439,11 @@ export function BONKNewsFeed({ selectedCategory = "all", searchQuery = "", artic
 
         {/* Article Summary and View More */}
         {filteredNews.length > articlesPerPage && (
-          <div className="flex items-center justify-between border-t border-gray-800 pt-6 mt-6 bg-gray-900/50 rounded-lg p-4">
+          <div className="flex items-center justify-between border-t border-gray-800 pt-6 mt-6 bg-gray-900/50 rounded-lg p-4 hover:bg-gray-900/70 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu group/pagination">
             <div className="text-sm text-gray-400">
-              <span className="font-medium">Showing {startIndex + 1}-{Math.min(endIndex, filteredNews.length)} of {filteredNews.length} articles</span>
+              <span className="font-medium transition-all duration-500 group-hover/pagination:text-gray-300">Showing {startIndex + 1}-{Math.min(endIndex, filteredNews.length)} of {filteredNews.length} articles</span>
               {totalPages > 1 && (
-                <span className="ml-2 text-gray-500">(Page {currentPage} of {totalPages})</span>
+                <span className="ml-2 text-gray-500 transition-all duration-500 group-hover/pagination:text-gray-400">(Page {currentPage} of {totalPages})</span>
               )}
             </div>
             
@@ -453,7 +453,7 @@ export function BONKNewsFeed({ selectedCategory = "all", searchQuery = "", artic
                 disabled={currentPage === 1}
                 variant="outline"
                 size="sm"
-                className="border-gray-700 text-gray-300 hover:border-orange-500 disabled:opacity-50"
+                className="border-gray-700 text-gray-300 hover:border-orange-500 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] disabled:opacity-50 transition-all duration-500 transform-gpu"
               >
                 ← Previous
               </Button>
@@ -463,18 +463,18 @@ export function BONKNewsFeed({ selectedCategory = "all", searchQuery = "", artic
                   const pageNum = i + 1
                   if (totalPages <= 5) {
                     return (
-                      <Button
-                        key={pageNum}
-                        onClick={() => setCurrentPage(pageNum)}
-                        variant={currentPage === pageNum ? "default" : "outline"}
-                        size="sm"
-                        className={currentPage === pageNum 
-                          ? "bg-orange-600 hover:bg-orange-700 text-white" 
-                          : "border-gray-700 text-gray-300 hover:border-orange-500"
-                        }
-                      >
-                        {pageNum}
-                      </Button>
+                                              <Button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          variant={currentPage === pageNum ? "default" : "outline"}
+                          size="sm"
+                          className={currentPage === pageNum 
+                            ? "bg-orange-600 hover:bg-orange-700 text-white hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.4)] transition-all duration-500 transform-gpu" 
+                            : "border-gray-700 text-gray-300 hover:border-orange-500 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu"
+                          }
+                        >
+                          {pageNum}
+                        </Button>
                     )
                   } else {
                     // Show first, last, and current page with ellipsis
@@ -486,8 +486,8 @@ export function BONKNewsFeed({ selectedCategory = "all", searchQuery = "", artic
                           variant={currentPage === pageNum ? "default" : "outline"}
                           size="sm"
                           className={currentPage === pageNum 
-                            ? "bg-orange-600 hover:bg-orange-700 text-white" 
-                            : "border-gray-700 text-gray-300 hover:border-orange-500"
+                            ? "bg-orange-600 hover:bg-orange-700 text-white hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.4)] transition-all duration-500 transform-gpu" 
+                            : "border-gray-700 text-gray-300 hover:border-orange-500 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu"
                           }
                         >
                           {pageNum}
@@ -506,7 +506,7 @@ export function BONKNewsFeed({ selectedCategory = "all", searchQuery = "", artic
                 disabled={currentPage === totalPages}
                 variant="outline"
                 size="sm"
-                className="border-gray-700 text-gray-300 hover:border-orange-500 disabled:opacity-50"
+                className="border-gray-700 text-gray-300 hover:border-orange-500 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] disabled:opacity-50 transition-all duration-500 transform-gpu"
               >
                 Next →
               </Button>
@@ -523,7 +523,7 @@ export function BONKNewsFeed({ selectedCategory = "all", searchQuery = "", artic
                 ? "No articles match your current filters." 
                 : "No BONK news available at the moment."}
             </p>
-            <Button onClick={() => fetchBONKNews()} className="bg-orange-600 hover:bg-orange-700 text-white mt-2">
+            <Button onClick={() => fetchBONKNews()} className="bg-orange-600 hover:bg-orange-700 text-white mt-2 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.4)] transition-all duration-500 transform-gpu">
               Try Again
             </Button>
           </div>

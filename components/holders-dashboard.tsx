@@ -414,35 +414,35 @@ export function HoldersDashboard() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="group/header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all duration-500 hover:scale-[1.01] transform-gpu">
         <div>
-          <h1 className="text-3xl font-bold text-white">BONK Holders Analytics</h1>
-          <p className="text-gray-400 mt-2">Comprehensive analysis of BONK token holders, distribution, and trends</p>
+          <h1 className="text-3xl font-bold text-white transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.6)]">BONK Holders Analytics</h1>
+          <p className="text-gray-400 mt-2 transition-all duration-500 group-hover/header:text-gray-300">Comprehensive analysis of BONK token holders, distribution, and trends</p>
         </div>
 
       </div>
 
       {/* Key Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-gray-900 border-gray-800 hover:border-orange-500/50 transition-colors">
+        <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Total Holders</p>
-                <p className="text-2xl font-bold text-white">{formatNumber(holdersData.overview?.total_holders)}</p>
-                <p className="text-orange-400 text-sm">{holdersData.overview?.holder_percentage || 0}% of supply</p>
+                <p className="text-gray-400 text-sm transition-all duration-500 group-hover:text-gray-300">Total Holders</p>
+                <p className="text-2xl font-bold text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">{formatNumber(holdersData.overview?.total_holders)}</p>
+                <p className="text-orange-400 text-sm transition-all duration-500 group-hover:text-orange-300">{holdersData.overview?.holder_percentage || 0}% of supply</p>
               </div>
-              <Users className="h-8 w-8 text-orange-500" />
+              <Users className="h-8 w-8 text-orange-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-gray-800 hover:border-orange-500/50 transition-colors">
+        <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Distribution Health</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-gray-400 text-sm transition-all duration-500 group-hover:text-gray-300">Distribution Health</p>
+                <p className="text-2xl font-bold text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
                   {holdersData.stats?.hhi
                     ? holdersData.stats.hhi < 0.25
                       ? "Healthy"
@@ -451,19 +451,19 @@ export function HoldersDashboard() {
                         : "Concentrated"
                     : "Healthy"}
                 </p>
-                <p className="text-orange-400 text-sm">HHI: {holdersData.stats?.hhi?.toFixed(3) || "0.158"}</p>
+                <p className="text-orange-400 text-sm transition-all duration-500 group-hover:text-orange-300">HHI: {holdersData.stats?.hhi?.toFixed(3) || "0.158"}</p>
               </div>
-              <Target className="h-8 w-8 text-orange-500" />
+              <Target className="h-8 w-8 text-orange-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-gray-800 hover:border-orange-500/50 transition-colors">
+        <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Whale Concentration</p>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-gray-400 text-sm transition-all duration-500 group-hover:text-gray-300">Whale Concentration</p>
+                <p className="text-2xl font-bold text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
                   {holdersData.breakdowns?.holders_over_10000_usd
                     ? (
                         (holdersData.breakdowns.holders_over_10000_usd / (holdersData.overview?.total_holders || 1)) *
@@ -472,22 +472,22 @@ export function HoldersDashboard() {
                     : "0.52"}
                   %
                 </p>
-                <p className="text-orange-400 text-sm">Holders {">$10K"}</p>
+                <p className="text-orange-400 text-sm transition-all duration-500 group-hover:text-orange-300">Holders {">$10K"}</p>
               </div>
-              <Activity className="h-8 w-8 text-orange-500" />
+              <Activity className="h-8 w-8 text-orange-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-gray-800 hover:border-orange-500/50 transition-colors">
+        <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Gini Coefficient</p>
-                <p className="text-2xl font-bold text-white">{holdersData.stats?.gini?.toFixed(3) || "0.920"}</p>
-                <p className="text-orange-400 text-sm">Inequality Measure</p>
+                <p className="text-gray-400 text-sm transition-all duration-500 group-hover:text-gray-300">Gini Coefficient</p>
+                <p className="text-2xl font-bold text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">{holdersData.stats?.gini?.toFixed(3) || "0.920"}</p>
+                <p className="text-orange-400 text-sm transition-all duration-500 group-hover:text-orange-300">Inequality Measure</p>
               </div>
-              <TrendingUp className="h-8 w-8 text-orange-500" />
+              <TrendingUp className="h-8 w-8 text-orange-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
             </div>
           </CardContent>
         </Card>
@@ -496,15 +496,15 @@ export function HoldersDashboard() {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Redesigned Holder Changes Chart - Horizontal Bar Chart */}
-        <Card className="bg-gray-900 border-gray-800 hover:border-orange-500/30 transition-all duration-300">
+        <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardHeader className="pb-4">
-            <CardTitle className="text-white flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg">
-                <TrendingUp className="h-5 w-5 text-white" />
+            <CardTitle className="text-white flex items-center gap-3 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
+              <div className="p-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_0_8px_rgba(255,107,53,0.4)]">
+                <TrendingUp className="h-5 w-5 text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-2" />
               </div>
               <div>
-                <div className="text-lg">Holder Changes by Time Period</div>
-                <div className="text-sm text-gray-400 font-normal">Net holder movement over time</div>
+                <div className="text-lg transition-all duration-500 group-hover:text-orange-400">Holder Changes by Time Period</div>
+                <div className="text-sm text-gray-400 font-normal transition-all duration-500 group-hover:text-gray-300">Net holder movement over time</div>
               </div>
             </CardTitle>
           </CardHeader>
@@ -512,26 +512,26 @@ export function HoldersDashboard() {
             <div className="space-y-4">
               {/* Summary Stats */}
               <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="text-center p-3 bg-gray-800 rounded-lg">
-                  <div className="text-2xl font-bold text-green-400">
+                <div className="group/stat text-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(34,197,94,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+                  <div className="text-2xl font-bold text-green-400 transition-all duration-500 group-hover/stat:text-white group-hover/stat:drop-shadow-[0_0_4px_rgba(34,197,94,0.6)]">
                     {holderChangeData.filter(d => d.change > 0).reduce((sum, d) => sum + d.change, 0).toLocaleString()}
                   </div>
-                  <div className="text-gray-400 text-sm">Total Gained</div>
+                  <div className="text-gray-400 text-sm transition-all duration-500 group-hover/stat:text-gray-300">Total Gained</div>
                 </div>
-                <div className="text-center p-3 bg-gray-800 rounded-lg">
-                  <div className="text-2xl font-bold text-red-400">
+                <div className="group/stat text-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(239,68,68,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+                  <div className="text-2xl font-bold text-red-400 transition-all duration-500 group-hover/stat:text-white group-hover/stat:drop-shadow-[0_0_4px_rgba(239,68,68,0.6)]">
                     {Math.abs(holderChangeData.filter(d => d.change < 0).reduce((sum, d) => sum + d.change, 0)).toLocaleString()}
                   </div>
-                  <div className="text-gray-400 text-sm">Total Lost</div>
+                  <div className="text-gray-400 text-sm transition-all duration-500 group-hover/stat:text-gray-300">Total Lost</div>
                 </div>
-                <div className="text-center p-3 bg-gray-800 rounded-lg">
-                  <div className={`text-2xl font-bold ${
+                <div className="group/stat text-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+                  <div className={`text-2xl font-bold transition-all duration-500 group-hover/stat:text-white group-hover/stat:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)] ${
                     holderChangeData.reduce((sum, d) => sum + d.change, 0) > 0 ? 'text-green-400' : 'text-red-400'
                   }`}>
                     {holderChangeData.reduce((sum, d) => sum + d.change, 0) > 0 ? '+' : ''}
                     {holderChangeData.reduce((sum, d) => sum + d.change, 0).toLocaleString()}
                   </div>
-                  <div className="text-gray-400 text-sm">Net Change</div>
+                  <div className="text-gray-400 text-sm transition-all duration-500 group-hover/stat:text-gray-300">Net Change</div>
                 </div>
               </div>
 
@@ -546,31 +546,31 @@ export function HoldersDashboard() {
                   const barWidth = isNeutral ? 0 : (Math.abs(change) / maxChange) * 100;
                   
                   return (
-                    <div key={index} className="group">
+                    <div key={index} className="group/bar">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-300 min-w-[80px]">
+                        <span className="text-sm font-medium text-gray-300 min-w-[80px] transition-all duration-500 group-hover/bar:text-white group-hover/bar:drop-shadow-[0_0_2px_rgba(255,107,53,0.4)]">
                           {entry.period}
                         </span>
                         <div className="flex items-center gap-3">
-                          <span className={`text-sm font-semibold ${
+                          <span className={`text-sm font-semibold transition-all duration-500 group-hover/bar:scale-110 group-hover/bar:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)] ${
                             isPositive ? 'text-green-400' : isNegative ? 'text-red-400' : 'text-gray-400'
                           }`}>
                             {isPositive ? '+' : ''}{change.toLocaleString()}
                           </span>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 transition-all duration-500 group-hover/bar:scale-125">
                             {isPositive ? '📈' : isNegative ? '📉' : '➡️'}
                           </span>
                         </div>
                       </div>
                       
-                      <div className="relative h-8 bg-gray-800 rounded-full overflow-hidden">
+                      <div className="relative h-8 bg-gray-800 rounded-full overflow-hidden hover:bg-gray-700 transition-all duration-500">
                         {/* Background track */}
                         <div className="absolute inset-0 bg-gray-700 rounded-full"></div>
                         
                         {/* Progress bar */}
                         {!isNeutral && (
                           <div
-                            className={`h-full rounded-full transition-all duration-500 ease-out ${
+                            className={`h-full rounded-full transition-all duration-500 ease-out hover:shadow-[0_0_8px_rgba(255,107,53,0.4)] ${
                               isPositive 
                                 ? 'bg-gradient-to-r from-green-500 to-emerald-600' 
                                 : 'bg-gradient-to-r from-red-500 to-pink-600'
@@ -588,8 +588,8 @@ export function HoldersDashboard() {
                           <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gray-600 transform -translate-x-1/2"></div>
                         )}
                         
-                        {/* Hover effect */}
-                        <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-200 rounded-full"></div>
+                        {/* Enhanced hover effect */}
+                        <div className="absolute inset-0 bg-white opacity-0 group-hover/bar:opacity-15 transition-opacity duration-300 rounded-full"></div>
                       </div>
                     </div>
                   );
@@ -616,26 +616,26 @@ export function HoldersDashboard() {
         </Card>
 
         {/* Redesigned Holder Categories Chart - Stacked Bar Chart */}
-        <Card className="bg-gray-900 border-gray-800 hover:border-blue-500/30 transition-all duration-300">
+        <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(59,130,246,0.2)] hover:border-blue-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardHeader className="pb-4">
-            <CardTitle className="text-white flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
-                <Users className="h-5 w-5 text-white" />
+            <CardTitle className="text-white flex items-center gap-3 transition-all duration-500 group-hover:text-blue-400 group-hover:drop-shadow-[0_0_4px_rgba(59,130,246,0.6)]">
+              <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_0_8px_rgba(59,130,246,0.4)]">
+                <Users className="h-5 w-5 text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-2" />
               </div>
               <div>
-                <div className="text-lg">Holder Categories Distribution</div>
-                <div className="text-sm text-gray-400 font-normal">Community wealth tiers</div>
+                <div className="text-lg transition-all duration-500 group-hover:text-blue-400">Holder Categories Distribution</div>
+                <div className="text-sm text-gray-400 font-normal transition-all duration-500 group-hover:text-gray-300">Community wealth tiers</div>
               </div>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
               {/* Total Holders Display */}
-              <div className="text-center p-4 bg-gradient-to-r from-blue-900/50 to-purple-900/50 rounded-lg border border-blue-800/30">
-                <div className="text-3xl font-bold text-blue-400">
+              <div className="group/total text-center p-4 bg-gradient-to-r from-blue-900/50 to-purple-900/50 rounded-lg border border-blue-800/30 hover:scale-105 hover:shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+                <div className="text-3xl font-bold text-blue-400 transition-all duration-500 group-hover/total:text-white group-hover/total:drop-shadow-[0_0_4px_rgba(59,130,246,0.6)]">
                   {formatNumber(pieChartData.reduce((sum, item) => sum + item.value, 0))}
                 </div>
-                <div className="text-gray-300">Total Holders</div>
+                <div className="text-gray-300 transition-all duration-500 group-hover/total:text-gray-200">Total Holders</div>
               </div>
 
               {/* Category Breakdown */}
@@ -669,37 +669,37 @@ export function HoldersDashboard() {
                   };
 
                   return (
-                    <div key={index} className="group">
+                    <div key={index} className="group/category">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3">
-                          <span className="text-2xl">{getCategoryIcon(entry.name)}</span>
+                          <span className="text-2xl transition-all duration-500 group-hover/category:scale-110 group-hover/category:rotate-2">{getCategoryIcon(entry.name)}</span>
                           <div>
-                            <div className="font-semibold text-white">{entry.name}</div>
-                            <div className="text-sm text-gray-400">
+                            <div className="font-semibold text-white transition-all duration-500 group-hover/category:text-blue-300 group-hover/category:drop-shadow-[0_0_2px_rgba(59,130,246,0.4)]">{entry.name}</div>
+                            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/category:text-gray-300">
                               {formatNumber(entry.value)} holders
                             </div>
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-lg font-bold text-blue-400">{percentage}%</div>
-                          <div className="text-xs text-gray-500">of total</div>
+                          <div className="text-lg font-bold text-blue-400 transition-all duration-500 group-hover/category:text-white group-hover/category:drop-shadow-[0_0_3px_rgba(59,130,246,0.5)]">{percentage}%</div>
+                          <div className="text-xs text-gray-500 transition-all duration-500 group-hover/category:text-gray-400">of total</div>
                         </div>
                       </div>
                       
                       {/* Progress Bar */}
-                      <div className="relative h-4 bg-gray-800 rounded-full overflow-hidden">
+                      <div className="relative h-4 bg-gray-800 rounded-full overflow-hidden hover:bg-gray-700 transition-all duration-500">
                         <div className="absolute inset-0 bg-gray-700 rounded-full"></div>
                         <div
-                          className={`h-full bg-gradient-to-r ${getCategoryColor(entry.name)} rounded-full transition-all duration-700 ease-out`}
+                          className={`h-full bg-gradient-to-r ${getCategoryColor(entry.name)} rounded-full transition-all duration-700 ease-out hover:shadow-[0_0_8px_rgba(59,130,246,0.4)]`}
                           style={{ width: `${barWidth}%` }}
                         />
                         
-                        {/* Hover effect */}
-                        <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-200 rounded-full"></div>
+                        {/* Enhanced hover effect */}
+                        <div className="absolute inset-0 bg-white opacity-0 group-hover/category:opacity-25 transition-opacity duration-300 rounded-full"></div>
                       </div>
                       
                       {/* Value indicator on bar */}
-                      <div className="text-xs text-gray-400 mt-1 text-center">
+                      <div className="text-xs text-gray-400 mt-1 text-center transition-all duration-500 group-hover/category:text-gray-300 group-hover/category:scale-110">
                         {formatNumber(entry.value)} holders
                       </div>
                     </div>
@@ -708,9 +708,9 @@ export function HoldersDashboard() {
               </div>
 
               {/* Wealth Distribution Insight */}
-              <div className="p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-                <div className="text-sm text-gray-300 mb-2">💡 Distribution Insight</div>
-                <div className="text-xs text-gray-400">
+              <div className="group/insight p-4 bg-gray-800/50 rounded-lg border border-gray-700 hover:bg-gray-700/70 hover:scale-105 hover:shadow-[0_0_8px_rgba(59,130,246,0.2)] transition-all duration-500 transform-gpu cursor-pointer">
+                <div className="text-sm text-gray-300 mb-2 transition-all duration-500 group-hover/insight:text-blue-300 group-hover/insight:drop-shadow-[0_0_2px_rgba(59,130,246,0.4)]">💡 Distribution Insight</div>
+                <div className="text-xs text-gray-400 transition-all duration-500 group-hover/insight:text-gray-300">
                   {(() => {
                     const shrimp = pieChartData.find(d => d.name.toLowerCase() === 'shrimp')?.value || 0;
                     const whale = pieChartData.find(d => d.name.toLowerCase() === 'whale')?.value || 0;
@@ -734,21 +734,21 @@ export function HoldersDashboard() {
       </div>
 
       {/* Holder Breakdowns by Value */}
-      <Card className="bg-gray-900 border-gray-800">
+      <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <Info className="h-5 w-5 text-orange-500" />
+          <CardTitle className="text-white flex items-center gap-2 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
+            <Info className="h-5 w-5 text-orange-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
             Holder Breakdowns by Value
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div className="text-center p-4 bg-gray-800 rounded-lg">
-              <div className="text-2xl font-bold text-white">
+            <div className="group/breakdown text-center p-4 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+              <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/breakdown:text-orange-400 group-hover/breakdown:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
                 {formatNumber(holdersData.breakdowns?.holders_over_10_usd)}
               </div>
-              <div className="text-gray-400 text-sm">Over $10</div>
-              <div className="text-orange-400 text-xs">
+              <div className="text-gray-400 text-sm transition-all duration-500 group-hover/breakdown:text-gray-300">Over $10</div>
+              <div className="text-orange-400 text-xs transition-all duration-500 group-hover/breakdown:text-orange-300">
                 {(
                   (holdersData.breakdowns?.holders_over_10_usd || 0) / (holdersData.breakdowns?.total_holders || 1) *
                   100
@@ -756,12 +756,12 @@ export function HoldersDashboard() {
                 %
               </div>
             </div>
-            <div className="text-center p-4 bg-gray-800 rounded-lg">
-              <div className="text-2xl font-bold text-white">
+            <div className="group/breakdown text-center p-4 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+              <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/breakdown:text-orange-400 group-hover/breakdown:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
                 {formatNumber(holdersData.breakdowns?.holders_over_100_usd)}
               </div>
-              <div className="text-gray-400 text-sm">Over $100</div>
-              <div className="text-orange-400 text-xs">
+              <div className="text-gray-400 text-sm transition-all duration-500 group-hover/breakdown:text-gray-300">Over $100</div>
+              <div className="text-orange-400 text-xs transition-all duration-500 group-hover/breakdown:text-orange-300">
                 {(
                   (holdersData.breakdowns?.holders_over_100_usd || 0) / (holdersData.breakdowns?.total_holders || 1) *
                   100
@@ -827,42 +827,42 @@ export function HoldersDashboard() {
 
       {/* Advanced Metrics Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-gray-900 border-gray-800">
+        <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
               {holdersData.stats?.median_holder_position || 0}
             </div>
-            <div className="text-gray-400 text-sm">Median Position</div>
+            <div className="text-gray-400 text-sm transition-all duration-500 group-hover:text-gray-300">Median Position</div>
           </CardContent>
         </Card>
-        <Card className="bg-gray-900 border-gray-800">
+        <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
               {holdersData.stats?.retention_rate
                 ? `${(holdersData.stats.retention_rate * 100).toFixed(1)}%`
                 : "Available Soon"}
             </div>
-            <div className="text-gray-400 text-sm">Retention Rate</div>
+            <div className="text-gray-400 text-sm transition-all duration-500 group-hover:text-gray-300">Retention Rate</div>
           </CardContent>
         </Card>
-        <Card className="bg-gray-900 border-gray-800">
+        <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
               {holdersData.pnlStats?.unrealized_pnl_total
                 ? holdersData.pnlStats.unrealized_pnl_total > 0
                   ? "Profitable"
                   : "Loss"
                 : "Available Soon"}
             </div>
-            <div className="text-gray-400 text-sm">PnL Status</div>
+            <div className="text-gray-400 text-sm transition-all duration-500 group-hover:text-gray-300">PnL Status</div>
           </CardContent>
         </Card>
-        <Card className="bg-gray-900 border-gray-800">
+        <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
               {holdersData.walletCategories?.new_holders ? holdersData.walletCategories.new_holders : "Available Soon"}
             </div>
-            <div className="text-gray-400 text-sm">New Holders</div>
+            <div className="text-gray-400 text-sm transition-all duration-500 group-hover:text-gray-300">New Holders</div>
           </CardContent>
         </Card>
       </div>
@@ -870,26 +870,26 @@ export function HoldersDashboard() {
       {/* Enhanced PnL & Wallet Categories Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* PnL Statistics */}
-        <Card className="bg-gray-900 border-gray-800">
+        <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(34,197,94,0.2)] hover:border-green-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-500" />
+            <CardTitle className="text-white flex items-center gap-2 transition-all duration-500 group-hover:text-green-400 group-hover:drop-shadow-[0_0_4px_rgba(34,197,94,0.6)]">
+              <TrendingUp className="h-5 w-5 text-green-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(34,197,94,0.6)]" />
               Profit & Loss Analysis
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-3 bg-gray-800 rounded-lg">
-                  <div className="text-lg font-bold text-green-400">
+                <div className="group/pnl text-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(34,197,94,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+                  <div className="text-lg font-bold text-green-400 transition-all duration-500 group-hover/pnl:text-white group-hover/pnl:drop-shadow-[0_0_3px_rgba(34,197,94,0.5)]">
                     {holdersData.pnlStats?.realized_pnl_total
                       ? formatCurrency(holdersData.pnlStats.realized_pnl_total)
                       : "Available Soon"}
                   </div>
-                  <div className="text-gray-400 text-sm">Realized PnL</div>
+                  <div className="text-gray-400 text-sm transition-all duration-500 group-hover/pnl:text-gray-300">Realized PnL</div>
                 </div>
-                <div className="text-center p-3 bg-gray-800 rounded-lg">
-                  <div className={`text-lg font-bold ${
+                <div className="group/pnl text-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(34,197,94,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+                  <div className={`text-lg font-bold transition-all duration-500 group-hover/pnl:text-white group-hover/pnl:drop-shadow-[0_0_3px_rgba(34,197,94,0.5)] ${
                     holdersData.pnlStats?.unrealized_pnl_total
                       ? holdersData.pnlStats.unrealized_pnl_total > 0
                         ? 'text-green-400'
@@ -900,16 +900,16 @@ export function HoldersDashboard() {
                       ? formatCurrency(holdersData.pnlStats.unrealized_pnl_total)
                       : "Available Soon"}
                   </div>
-                  <div className="text-gray-400 text-sm">Unrealized PnL</div>
+                  <div className="text-gray-400 text-sm transition-all duration-500 group-hover/pnl:text-gray-300">Unrealized PnL</div>
                 </div>
               </div>
               
               {holdersData.pnlStats?.break_even_price && (
-                <div className="text-center p-3 bg-gray-800 rounded-lg">
-                  <div className="text-lg font-bold text-blue-400">
+                <div className="group/break-even text-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+                  <div className="text-lg font-bold text-blue-400 transition-all duration-500 group-hover/break-even:text-white group-hover/break-even:drop-shadow-[0_0_3px_rgba(59,130,246,0.5)]">
                     ${holdersData.pnlStats.break_even_price.toFixed(6)}
                   </div>
-                  <div className="text-gray-400 text-sm">Break-even Price</div>
+                  <div className="text-gray-400 text-sm transition-all duration-500 group-hover/break-even:text-gray-300">Break-even Price</div>
                 </div>
               )}
               
@@ -921,10 +921,10 @@ export function HoldersDashboard() {
         </Card>
 
         {/* Wallet Categories */}
-        <Card className="bg-gray-900 border-gray-800">
+        <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(168,85,247,0.2)] hover:border-purple-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Users className="h-5 w-5 text-purple-500" />
+            <CardTitle className="text-white flex items-center gap-2 transition-all duration-500 group-hover:text-purple-400 group-hover:drop-shadow-[0_0_4px_rgba(168,85,247,0.6)]">
+              <Users className="h-5 w-5 text-purple-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(168,85,247,0.6)]" />
               Holder Wealth Tiers
             </CardTitle>
           </CardHeader>
@@ -956,12 +956,12 @@ export function HoldersDashboard() {
                 };
 
                 return (
-                  <div key={category} className="flex items-center justify-between p-2 bg-gray-800 rounded-lg">
+                  <div key={category} className="group/tier flex items-center justify-between p-2 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(168,85,247,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
                     <div className="flex items-center gap-3">
-                      <span className="text-xl">{getCategoryIcon(category)}</span>
-                      <span className="text-white capitalize">{category}</span>
+                      <span className="text-xl transition-all duration-500 group-hover/tier:scale-110 group-hover/tier:rotate-2">{getCategoryIcon(category)}</span>
+                      <span className="text-white capitalize transition-all duration-500 group-hover/tier:text-purple-300 group-hover/tier:drop-shadow-[0_0_2px_rgba(168,85,247,0.4)]">{category}</span>
                     </div>
-                    <span className={`font-bold ${getCategoryColor(category)}`}>
+                    <span className={`font-bold transition-all duration-500 group-hover/tier:text-white group-hover/tier:drop-shadow-[0_0_2px_rgba(168,85,247,0.4)] ${getCategoryColor(category)}`}>
                       {count && count > 0 ? formatNumber(count) : "Available Soon"}
                     </span>
                   </div>
@@ -973,23 +973,23 @@ export function HoldersDashboard() {
       </div>
 
       {/* Supply Breakdown Section */}
-      <Card className="bg-gray-900 border-gray-800">
+      <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(59,130,246,0.2)] hover:border-blue-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-blue-500" />
+          <CardTitle className="text-white flex items-center gap-2 transition-all duration-500 group-hover:text-blue-400 group-hover:drop-shadow-[0_0_4px_rgba(59,130,246,0.6)]">
+            <BarChart3 className="h-5 w-5 text-blue-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(59,130,246,0.6)]" />
             Supply Distribution by Holder Tiers
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {/* Total Supply Display */}
-            <div className="text-center p-4 bg-gradient-to-r from-blue-900/50 to-purple-900/50 rounded-lg border border-blue-800/30">
-              <div className="text-2xl font-bold text-blue-400">
+            <div className="group/supply text-center p-4 bg-gradient-to-r from-blue-900/50 to-purple-900/50 rounded-lg border border-blue-800/30 hover:scale-105 hover:shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+              <div className="text-2xl font-bold text-blue-400 transition-all duration-500 group-hover/supply:text-white group-hover/supply:drop-shadow-[0_0_4px_rgba(59,130,246,0.6)]">
                 {formatTokenAmount(
                   Object.values(holdersData.supplyBreakdown || {}).reduce((sum, amount) => sum + (amount || 0), 0)
                 )}
               </div>
-              <div className="text-gray-300">Total Supply in Top 1000 Wallets</div>
+              <div className="text-gray-300 transition-all duration-500 group-hover/supply:text-gray-200">Total Supply in Top 1000 Wallets</div>
             </div>
 
             {/* Supply Breakdown Grid */}
@@ -1021,21 +1021,21 @@ export function HoldersDashboard() {
                 };
 
                 return (
-                  <div key={category} className="text-center p-4 bg-gray-800 rounded-lg">
-                    <div className="text-2xl mb-2">{getCategoryIcon(category)}</div>
-                    <div className="text-lg font-bold text-white capitalize mb-1">{category}</div>
-                    <div className="text-blue-400 font-semibold mb-1">
+                  <div key={category} className="group/supply-item text-center p-4 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-105 hover:shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+                    <div className="text-2xl mb-2 transition-all duration-500 group-hover/supply-item:scale-110 group-hover/supply-item:rotate-2">{getCategoryIcon(category)}</div>
+                    <div className="text-lg font-bold text-white capitalize mb-1 transition-all duration-500 group-hover/supply-item:text-blue-300 group-hover/supply-item:drop-shadow-[0_0_2px_rgba(59,130,246,0.4)]">{category}</div>
+                    <div className="text-blue-400 font-semibold mb-1 transition-all duration-500 group-hover/supply-item:text-white group-hover/supply-item:drop-shadow-[0_0_3px_rgba(59,130,246,0.5)]">
                       {amount && amount > 0 ? formatTokenAmount(amount) : "Available Soon"}
                     </div>
-                    <div className="text-gray-400 text-sm">
+                    <div className="text-gray-400 text-sm transition-all duration-500 group-hover/supply-item:text-gray-300">
                       {amount && amount > 0 ? `${percentage}%` : "N/A"}
                     </div>
                     
                     {/* Progress bar */}
                     {amount && amount > 0 ? (
-                      <div className="mt-3 relative h-2 bg-gray-700 rounded-full overflow-hidden">
+                      <div className="mt-3 relative h-2 bg-gray-700 rounded-full overflow-hidden hover:bg-gray-600 transition-all duration-500">
                         <div
-                          className={`h-full bg-gradient-to-r ${getCategoryColor(category)} rounded-full transition-all duration-500`}
+                          className={`h-full bg-gradient-to-r ${getCategoryColor(category)} rounded-full transition-all duration-500 hover:shadow-[0_0_8px_rgba(59,130,246,0.4)]`}
                           style={{ width: `${percentage}%` }}
                         />
                       </div>
@@ -1050,9 +1050,9 @@ export function HoldersDashboard() {
             </div>
 
             {/* Supply Insight */}
-            <div className="p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-              <div className="text-sm text-gray-300 mb-2">💡 Supply Distribution Insight</div>
-              <div className="text-xs text-gray-400">
+            <div className="group/supply-insight p-4 bg-gray-800/50 rounded-lg border border-gray-700 hover:bg-gray-700/70 hover:scale-105 hover:shadow-[0_0_8px_rgba(59,130,246,0.2)] transition-all duration-500 transform-gpu cursor-pointer">
+              <div className="text-sm text-gray-300 mb-2 transition-all duration-500 group-hover/supply-insight:text-blue-300 group-hover/supply-insight:drop-shadow-[0_0_2px_rgba(59,130,246,0.4)]">💡 Supply Distribution Insight</div>
+              <div className="text-xs text-gray-400 transition-all duration-500 group-hover/supply-insight:text-gray-300">
                 {(() => {
                   const diamond = holdersData.supplyBreakdown?.diamond || 0;
                   const wood = holdersData.supplyBreakdown?.wood || 0;
@@ -1075,10 +1075,10 @@ export function HoldersDashboard() {
       </Card>
 
       {/* Individual Holder Search Section */}
-      <Card className="bg-gray-900 border-gray-800 mb-6">
+      <Card className="group bg-gray-900 border-gray-800 mb-6 hover:shadow-[0_0_15px_rgba(59,130,246,0.2)] hover:border-blue-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <Search className="h-5 w-5 text-blue-500" />
+          <CardTitle className="text-white flex items-center gap-2 transition-all duration-500 group-hover:text-blue-400 group-hover:drop-shadow-[0_0_4px_rgba(59,130,246,0.6)]">
+            <Search className="h-5 w-5 text-blue-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(59,130,246,0.6)]" />
             Individual Holder Analysis
           </CardTitle>
         </CardHeader>
@@ -1091,7 +1091,7 @@ export function HoldersDashboard() {
               <input
                 type="text"
                 placeholder="e.g., DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 hover:border-blue-500/50 hover:shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-all duration-500"
                 value={searchAddress}
                 onChange={(e) => setSearchAddress(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -1110,14 +1110,14 @@ export function HoldersDashboard() {
           {searchResult && (
             <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="text-center p-3 bg-gray-700 rounded-lg">
-                  <div className="text-lg font-bold text-blue-400">
+                <div className="group/search-result text-center p-3 bg-gray-700 rounded-lg hover:bg-gray-600 hover:scale-105 hover:shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+                  <div className="text-lg font-bold text-blue-400 transition-all duration-500 group-hover/search-result:text-white group-hover/search-result:drop-shadow-[0_0_3px_rgba(59,130,246,0.5)]">
                     {searchResult.holder_category?.charAt(0).toUpperCase() + searchResult.holder_category?.slice(1) || 'N/A'}
                   </div>
-                  <div className="text-gray-400 text-sm">Holder Category</div>
+                  <div className="text-gray-400 text-sm transition-all duration-500 group-hover/search-result:text-gray-300">Holder Category</div>
                 </div>
-                <div className="text-center p-3 bg-gray-700 rounded-lg">
-                  <div className={`text-lg font-bold ${
+                <div className="group/search-result text-center p-3 bg-gray-700 rounded-lg hover:bg-gray-600 hover:scale-105 hover:shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+                  <div className={`text-lg font-bold transition-all duration-500 group-hover/search-result:text-white group-hover/search-result:drop-shadow-[0_0_3px_rgba(59,130,246,0.5)] ${
                     searchResult.unrealized_pnl !== null && searchResult.unrealized_pnl !== undefined
                       ? searchResult.unrealized_pnl > 0 
                         ? 'text-green-400' 
@@ -1129,16 +1129,16 @@ export function HoldersDashboard() {
                       : 'Not Available'
                     }
                   </div>
-                  <div className="text-gray-400 text-sm">Unrealized PnL</div>
+                  <div className="text-gray-400 text-sm transition-all duration-500 group-hover/search-result:text-gray-300">Unrealized PnL</div>
                 </div>
-                <div className="text-center p-3 bg-gray-700 rounded-lg">
-                  <div className="text-lg font-bold text-green-400">
+                <div className="group/search-result text-center p-3 bg-gray-700 rounded-lg hover:bg-gray-600 hover:scale-105 hover:shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+                  <div className="text-lg font-bold text-green-400 transition-all duration-500 group-hover/search-result:text-white group-hover/search-result:drop-shadow-[0_0_3px_rgba(59,130,246,0.5)]">
                     {searchResult.realized_pnl !== null && searchResult.realized_pnl !== undefined
                       ? `$${searchResult.realized_pnl.toFixed(2)}`
                       : 'Not Available'
                     }
                   </div>
-                  <div className="text-gray-400 text-sm">Realized PnL</div>
+                  <div className="text-gray-400 text-sm transition-all duration-500 group-hover/search-result:text-gray-300">Realized PnL</div>
                 </div>
               </div>
               
@@ -1167,9 +1167,9 @@ export function HoldersDashboard() {
       </Card>
 
       {/* Top Holders Section */}
-      <Card className="bg-gray-900 border-gray-800">
+      <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
         <CardHeader>
-          <CardTitle className="text-white">Top Holders</CardTitle>
+          <CardTitle className="text-white transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">Top Holders</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -1185,32 +1185,32 @@ export function HoldersDashboard() {
               </thead>
               <tbody>
                 {holdersData.topHolders?.holders && holdersData.topHolders.holders.length > 0 ? (
-                  holdersData.topHolders.holders.slice(0, 50).map((holder, holderIndex) => (
-                    <tr key={holderIndex} className="border-b border-gray-800 hover:bg-gray-800/50">
-                      <td className="py-3 text-white">#{holder.rank}</td>
+                                    holdersData.topHolders.holders.slice(0, 50).map((holder, holderIndex) => (
+                    <tr key={holderIndex} className="group/row border-b border-gray-800 hover:bg-gray-800/50 hover:scale-[1.01] hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu">
+                      <td className="py-3 text-white transition-all duration-500 group-hover/row:text-orange-400 group-hover/row:drop-shadow-[0_0_2px_rgba(255,107,53,0.4)]">#{holder.rank}</td>
                       <td className="py-3">
                         <div className="flex items-center gap-2">
-                          <span className="text-gray-300 font-mono text-sm">
+                          <span className="text-gray-300 font-mono text-sm transition-all duration-500 group-hover/row:text-white group-hover/row:drop-shadow-[0_0_2px_rgba(255,107,53,0.4)]">
                             {holder.address.slice(0, 8)}...{holder.address.slice(-6)}
                           </span>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => copyToClipboard(holder.address)}
-                            className="h-6 w-6 p-0 hover:bg-orange-500/20"
+                            className="h-6 w-6 p-0 hover:bg-orange-500/20 transition-all duration-500 group-hover/row:scale-110"
                           >
                             <Copy className="h-3 w-3" />
                           </Button>
                         </div>
                       </td>
-                                          <td className="py-3 text-white">{formatTokenAmount(holder.amount)}</td>
-                    <td className="py-3 text-green-400">${((holder.amount * 0.000021) / 1e5).toFixed(2)}</td>
+                      <td className="py-3 text-white transition-all duration-500 group-hover/row:text-orange-400 group-hover/row:drop-shadow-[0_0_2px_rgba(255,107,53,0.4)]">{formatTokenAmount(holder.amount)}</td>
+                      <td className="py-3 text-green-400 transition-all duration-500 group-hover/row:text-green-300 group-hover/row:drop-shadow-[0_0_2px_rgba(34,197,94,0.4)]">${((holder.amount * 0.000021) / 1e5).toFixed(2)}</td>
                       <td className="py-3">
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => window.open(`https://solscan.io/account/${holder.address}`, "_blank")}
-                          className="h-6 w-6 p-0 hover:bg-orange-500/20"
+                          className="h-6 w-6 p-0 hover:bg-orange-500/20 transition-all duration-500 group-hover/row:scale-110"
                         >
                           <ExternalLink className="h-3 w-3" />
                         </Button>

@@ -149,87 +149,87 @@ export function WhaleMovementTracker() {
   const netFlow = totalBuyVolume - totalSellVolume
 
   return (
-    <Card className="group bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:border-[#ff6b35] hover:shadow-lg hover:shadow-[#ff6b35]/20 transition-all duration-500">
+    <Card className="group bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle className="text-[#ff6b35] text-2xl font-bold flex items-center gap-2 group-hover:text-white transition-colors duration-300">
-            <span className="text-orange-500 group-hover:scale-110 transition-transform duration-300">🐋</span>
+          <CardTitle className="text-[#ff6b35] text-2xl font-bold flex items-center gap-2 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
+            <span className="text-orange-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]">🐋</span>
             Whale Movement Tracker
           </CardTitle>
-          <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors duration-300">Monitor large BONK transactions and their market impact</p>
+          <p className="text-gray-400 text-sm transition-all duration-500 group-hover:text-gray-300">Monitor large BONK transactions and their market impact</p>
         </div>
 
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Summary Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="group/item text-center p-4 bg-gradient-to-br from-orange-500/10 to-orange-400/5 rounded-lg border border-orange-500/20 hover:border-orange-400/40 hover:bg-orange-500/20 transition-all duration-300 cursor-pointer">
-            <div className="text-3xl font-bold text-orange-500 group-hover/item:text-white transition-colors duration-300">$9.6M</div>
-            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Total Volume</div>
-            <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors duration-300">24 Hours</div>
+          <div className="group/item text-center p-4 bg-gradient-to-br from-orange-500/10 to-orange-400/5 rounded-lg border border-orange-500/20 hover:border-orange-500/40 hover:bg-orange-500/20 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+            <div className="text-3xl font-bold text-orange-500 transition-all duration-500 group-hover/item:text-white group-hover/item:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">$9.6M</div>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">Total Volume</div>
+            <div className="text-xs text-gray-500 transition-all duration-500 group-hover/item:text-gray-400">24 Hours</div>
           </div>
-          <div className="group/item text-center p-4 bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg border border-green-500/20 hover:border-green-400/40 hover:bg-green-500/20 transition-all duration-300 cursor-pointer">
-            <div className="text-3xl font-bold text-green-400 group-hover/item:text-white transition-colors duration-300">${totalBuyVolume.toFixed(1)}M</div>
-            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Buy Volume</div>
+          <div className="group/item text-center p-4 bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg border border-green-500/20 hover:border-green-500/40 hover:bg-green-500/20 hover:scale-105 hover:shadow-[0_0_8px_rgba(34,197,94,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+            <div className="text-3xl font-bold text-green-400 transition-all duration-500 group-hover/item:text-white group-hover/item:drop-shadow-[0_0_4px_rgba(34,197,94,0.6)]">${totalBuyVolume.toFixed(1)}M</div>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">Buy Volume</div>
           </div>
-          <div className="group/item text-center p-4 bg-gradient-to-br from-red-500/10 to-red-400/5 rounded-lg border border-red-500/20 hover:border-red-400/40 hover:bg-red-500/20 transition-all duration-300 cursor-pointer">
-            <div className="text-3xl font-bold text-red-400 group-hover/item:text-white transition-colors duration-300">${totalSellVolume.toFixed(1)}M</div>
-            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Sell Volume</div>
+          <div className="group/item text-center p-4 bg-gradient-to-br from-red-500/10 to-red-400/5 rounded-lg border border-red-500/20 hover:border-red-500/40 hover:bg-red-500/20 hover:scale-105 hover:shadow-[0_0_8px_rgba(239,68,68,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+            <div className="text-3xl font-bold text-red-400 transition-all duration-500 group-hover/item:text-white group-hover/item:drop-shadow-[0_0_4px_rgba(239,68,68,0.6)]">${totalSellVolume.toFixed(1)}M</div>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">Sell Volume</div>
           </div>
-          <div className="group/item text-center p-4 bg-gradient-to-br from-gray-700/10 to-gray-600/5 rounded-lg border border-gray-600/20 hover:border-gray-500/40 hover:bg-gray-600/20 transition-all duration-300 cursor-pointer">
-            <div className="text-3xl font-bold text-white group-hover/item:text-[#ff6b35] transition-colors duration-300">13</div>
-            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">High Impact</div>
+          <div className="group/item text-center p-4 bg-gradient-to-br from-gray-700/10 to-gray-600/5 rounded-lg border border-gray-600/20 hover:border-gray-500/40 hover:bg-gray-600/20 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+            <div className="text-3xl font-bold text-white transition-all duration-500 group-hover/item:text-orange-400 group-hover/item:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">13</div>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">High Impact</div>
           </div>
         </div>
 
         {/* Net Whale Flow */}
-        <div className="bg-gray-800/50 rounded-lg p-4">
+        <div className="bg-gray-800/50 rounded-lg p-4 hover:bg-gray-800/70 hover:scale-105 hover:shadow-[0_0_8px_rgba(34,197,94,0.3)] transition-all duration-500 transform-gpu group/flow">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-semibold text-white">Net Whale Flow</h3>
-            <Badge variant="outline" className="border-green-500 text-green-400">
-              <TrendingUp className="h-3 w-3 mr-1" />
+            <h3 className="text-sm font-semibold text-white transition-all duration-500 group-hover/flow:text-green-300 group-hover/flow:drop-shadow-[0_0_2px_rgba(34,197,94,0.4)]">Net Whale Flow</h3>
+            <Badge variant="outline" className="border-green-500 text-green-400 transition-all duration-500 group-hover/flow:scale-110 group-hover/flow:shadow-[0_0_4px_rgba(34,197,94,0.5)]">
+              <TrendingUp className="h-3 w-3 mr-1 transition-all duration-500 group-hover/flow:rotate-2" />
               Bullish Signal
             </Badge>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-400">+${netFlow.toFixed(2)}M</div>
-            <div className="text-sm text-gray-400">Net inflow indicates accumulation</div>
+            <div className="text-2xl font-bold text-green-400 transition-all duration-500 group-hover/flow:text-green-300 group-hover/flow:drop-shadow-[0_0_4px_rgba(34,197,94,0.6)]">+${netFlow.toFixed(2)}M</div>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/flow:text-gray-300">Net inflow indicates accumulation</div>
           </div>
         </div>
 
         {/* Recent Transactions */}
-        <div className="space-y-4">
+        <div className="space-y-4 group/transactions">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white">Recent Large Transactions</h3>
+            <h3 className="text-lg font-semibold text-white transition-all duration-500 group-hover/transactions:text-orange-400 group-hover/transactions:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">Recent Large Transactions</h3>
 
           </div>
 
           <div className="space-y-2">
             {whaleTransactions.map((tx, index) => (
-              <div key={index} className="bg-gray-800/30 rounded-lg p-4 hover:bg-gray-800/50 transition-colors">
+              <div key={index} className="bg-gray-800/30 rounded-lg p-4 hover:bg-gray-800/50 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu group/tx">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Badge variant="outline" className={getTypeColor(tx.type)}>
+                    <Badge variant="outline" className={`${getTypeColor(tx.type)} transition-all duration-500 group-hover/tx:scale-110 group-hover/tx:shadow-[0_0_3px_rgba(255,107,53,0.4)]`}>
                       {getTypeIcon(tx.type)}
                       {tx.type}
                     </Badge>
-                    <Badge variant="outline" className="border-orange-500 text-orange-400">
+                    <Badge variant="outline" className="border-orange-500 text-orange-400 transition-all duration-500 group-hover/tx:scale-110 group-hover/tx:shadow-[0_0_3px_rgba(255,107,53,0.4)]">
                       {tx.impact} impact
                     </Badge>
-                    <div className="text-sm text-gray-400">
+                    <div className="text-sm text-gray-400 transition-all duration-500 group-hover/tx:text-gray-300">
                       {tx.wallet} • {tx.exchange}
                     </div>
                   </div>
-                  <div className="text-xs text-gray-500">{tx.time}</div>
+                  <div className="text-xs text-gray-500 transition-all duration-500 group-hover/tx:text-gray-400">{tx.time}</div>
                 </div>
 
                 <div className="flex items-center justify-between mt-2">
                   <div className="flex items-center gap-4">
-                    <div className="text-lg font-bold text-white">{tx.usdValue}</div>
-                    <div className="text-sm text-gray-400">{tx.bonkAmount}</div>
+                    <div className="text-lg font-bold text-white transition-all duration-500 group-hover/tx:text-orange-400 group-hover/tx:drop-shadow-[0_0_2px_rgba(255,107,53,0.4)]">{tx.usdValue}</div>
+                    <div className="text-sm text-gray-400 transition-all duration-500 group-hover/tx:text-gray-300">{tx.bonkAmount}</div>
                   </div>
                   <div
-                    className={`text-sm font-semibold ${
+                    className={`text-sm font-semibold transition-all duration-500 group-hover/tx:scale-110 ${
                       tx.priceImpact.startsWith("+") ? "text-green-400" : "text-red-400"
                     }`}
                   >
@@ -242,27 +242,27 @@ export function WhaleMovementTracker() {
         </div>
 
         {/* Whale Activity Analysis */}
-        <div className="bg-gray-800/50 rounded-lg p-6 space-y-4">
-          <h3 className="text-lg font-semibold text-white">Whale Activity Analysis</h3>
+        <div className="bg-gray-800/50 rounded-lg p-6 space-y-4 hover:bg-gray-800/70 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu group/analysis">
+          <h3 className="text-lg font-semibold text-white transition-all duration-500 group-hover/analysis:text-orange-400 group-hover/analysis:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">Whale Activity Analysis</h3>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="text-sm font-semibold text-orange-500 mb-3">Market Impact</h4>
+            <div className="group/impact">
+              <h4 className="text-sm font-semibold text-orange-500 mb-3 transition-all duration-500 group-hover/impact:text-orange-400 group-hover/impact:drop-shadow-[0_0_2px_rgba(255,107,53,0.4)]">Market Impact</h4>
               <ul className="space-y-1 text-sm text-gray-300">
-                <li>• 13 high-impact transactions detected</li>
-                <li>• Average transaction size: $639K</li>
-                <li>• Accumulation phase indicated</li>
-                <li>• Price correlation: 21.1%</li>
+                <li className="transition-all duration-500 group-hover/impact:text-gray-200">• 13 high-impact transactions detected</li>
+                <li className="transition-all duration-500 group-hover/impact:text-gray-200">• Average transaction size: $639K</li>
+                <li className="transition-all duration-500 group-hover/impact:text-gray-200">• Accumulation phase indicated</li>
+                <li className="transition-all duration-500 group-hover/impact:text-gray-200">• Price correlation: 21.1%</li>
               </ul>
             </div>
 
-            <div>
-              <h4 className="text-sm font-semibold text-orange-500 mb-3">Trading Patterns</h4>
+            <div className="group/patterns">
+              <h4 className="text-sm font-semibold text-orange-500 mb-3 transition-all duration-500 group-hover/patterns:text-orange-400 group-hover/patterns:drop-shadow-[0_0_2px_rgba(255,107,53,0.4)]">Trading Patterns</h4>
               <ul className="space-y-1 text-sm text-gray-300">
-                <li>• Most active exchange: Raydium (DEX)</li>
-                <li>• Peak activity: 12:00 - 18:00 UTC</li>
-                <li>• Whale count: ~4 unique wallets</li>
-                <li>• Average hold time: 16 days</li>
+                <li className="transition-all duration-500 group-hover/patterns:text-gray-200">• Most active exchange: Raydium (DEX)</li>
+                <li className="transition-all duration-500 group-hover/patterns:text-gray-200">• Peak activity: 12:00 - 18:00 UTC</li>
+                <li className="transition-all duration-500 group-hover/patterns:text-gray-200">• Whale count: ~4 unique wallets</li>
+                <li className="transition-all duration-500 group-hover/patterns:text-gray-200">• Average hold time: 16 days</li>
               </ul>
             </div>
           </div>

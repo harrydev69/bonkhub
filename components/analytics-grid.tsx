@@ -225,11 +225,11 @@ export function AnalyticsGrid() {
         key={page}
         onClick={() => handlePageChange(page)}
         disabled={page === 1 ? false : true} // Only page 1 is active for now
-        className={`px-3 py-2 mx-1 rounded-md text-sm font-medium transition-all duration-200 ${
+        className={`px-3 py-2 mx-1 rounded-md text-sm font-medium transition-all duration-500 transform-gpu ${
           page === currentPage
-            ? "bg-[#ff6b35] text-black shadow-[0_0_10px_rgba(255,107,53,0.5)]"
+            ? "bg-[#ff6b35] text-black shadow-[0_0_10px_rgba(255,107,53,0.4)] hover:scale-[1.02] hover:shadow-[0_0_12px_rgba(255,107,53,0.5)]"
             : page === 1
-            ? "bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white cursor-pointer"
+            ? "bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white hover:scale-105 hover:shadow-[0_0_10px_rgba(255,107,53,0.4)] cursor-pointer"
             : "bg-gray-800 text-gray-500 cursor-not-allowed opacity-50"
         }`}
       >
@@ -244,21 +244,21 @@ export function AnalyticsGrid() {
         {currentItems.map((item, index) => (
           <Card
             key={index}
-            className="bg-gray-900 border-gray-800 overflow-hidden transition-all duration-300 cursor-pointer group hover:border-[#ff6b35]/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.3)] hover:scale-[1.02] hover:bg-gray-800"
+            className="bg-gray-900 border-gray-800 overflow-hidden transition-all duration-500 cursor-pointer group hover:border-[#ff6b35]/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.3)] hover:scale-[1.02] hover:bg-gray-800 hover:rotate-[0.3deg] transform-gpu"
           >
             <div className="relative">
               <img
                 src={item.thumbnail || "/placeholder.svg"}
                 alt={item.title}
-                className="w-full h-48 object-cover transition-all duration-300 group-hover:brightness-110"
+                className="w-full h-48 object-cover transition-all duration-500 group-hover:brightness-110 group-hover:scale-[1.02] group-hover:contrast-105 transform-gpu"
               />
-              <div className="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded transition-all duration-300 group-hover:bg-[#ff6b35]/80">
+              <div className="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded transition-all duration-500 group-hover:bg-[#ff6b35]/80 group-hover:scale-105 group-hover:shadow-[0_0_8px_rgba(255,107,53,0.4)] transform-gpu">
                 {item.duration}
               </div>
               <div className="absolute top-2 left-2">
                 <Badge
                   variant={item.trend === "up" ? "default" : "destructive"}
-                  className="text-xs transition-all duration-300 group-hover:shadow-[0_0_8px_rgba(255,107,53,0.4)]"
+                  className="text-xs transition-all duration-500 group-hover:shadow-[0_0_8px_rgba(255,107,53,0.4)] group-hover:scale-[1.02] group-hover:rotate-[0.5deg] transform-gpu"
                 >
                   {item.trend === "up" ? (
                     <TrendingUp className="w-3 h-3 mr-1" />
@@ -271,12 +271,12 @@ export function AnalyticsGrid() {
             </div>
 
             <div className="p-3">
-              <h3 className="text-white text-sm font-medium line-clamp-2 mb-2 transition-all duration-300 group-hover:text-[#ff6b35] group-hover:drop-shadow-[0_0_5px_rgba(255,107,53,0.7)]">
-                {item.title}
-              </h3>
+                             <h3 className="text-white text-sm font-medium line-clamp-2 mb-2 transition-all duration-500 group-hover:text-[#ff6b35] group-hover:scale-[1.01] transform-gpu">
+                 {item.title}
+               </h3>
 
               <div className="flex items-center text-gray-400 text-xs mb-1">
-                <span className="transition-all duration-200 hover:text-[#ff6b35] hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)] cursor-pointer">
+                <span className="transition-all duration-500 hover:text-[#ff6b35] hover:scale-[1.02] cursor-pointer transform-gpu">
                   {item.channel}
                 </span>
                 <span className="mx-1">•</span>
@@ -300,10 +300,10 @@ export function AnalyticsGrid() {
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className={`p-2 rounded-md transition-all duration-200 ${
+          className={`p-2 rounded-md transition-all duration-500 transform-gpu ${
             currentPage === 1
               ? "bg-gray-800 text-gray-500 cursor-not-allowed opacity-50"
-              : "bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white hover:shadow-[0_0_8px_rgba(255,107,53,0.3)]"
+              : "bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] hover:scale-105 hover:rotate-1"
           }`}
         >
           <ChevronLeft className="w-4 h-4" />
@@ -316,10 +316,10 @@ export function AnalyticsGrid() {
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className={`p-2 rounded-md transition-all duration-200 ${
+          className={`p-2 rounded-md transition-all duration-500 transform-gpu ${
             currentPage === totalPages
               ? "bg-gray-800 text-gray-500 cursor-not-allowed opacity-50"
-              : "bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white hover:shadow-[0_0_8px_rgba(255,107,53,0.3)]"
+              : "bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] hover:scale-105 hover:rotate-[-1deg]"
           }`}
         >
           <ChevronRight className="w-4 h-4" />

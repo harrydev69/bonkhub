@@ -302,11 +302,11 @@ export default function AudioPage() {
 
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="text-center py-12">
-            <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Failed to load audio tracks</h2>
-            <p className="text-gray-400 mb-6">{error}</p>
-            <Button onClick={fetchTracks} className="bg-[#ff6b35] hover:bg-[#ff6b35]/90">
-              <RefreshCw className="w-4 h-4 mr-2" />
+            <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4 transition-all duration-500 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_0_4px_rgba(239,68,68,0.4)]" />
+            <h2 className="text-2xl font-bold mb-2 transition-all duration-500 hover:text-red-400">Failed to load audio tracks</h2>
+            <p className="text-gray-400 mb-6 transition-all duration-500 hover:text-gray-300">{error}</p>
+            <Button onClick={fetchTracks} className="group/retry bg-[#ff6b35] hover:bg-[#ff6b35]/90 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu">
+              <RefreshCw className="w-4 h-4 mr-2 transition-all duration-500 group-hover/retry:scale-110 group-hover/retry:rotate-2" />
               Try again
             </Button>
           </div>
@@ -322,9 +322,11 @@ export default function AudioPage() {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Hot audio content Internationally 🔥</h1>
-          <p className="text-gray-400">
+        <div className="group/header mb-8 transition-all duration-500 hover:scale-[1.01] transform-gpu">
+          <h1 className="text-4xl font-bold mb-2 transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
+            Hot audio content Internationally 🔥
+          </h1>
+          <p className="text-gray-400 transition-all duration-500 group-hover/header:text-gray-300">
             Discover BONK ecosystem podcasts, interviews, and analysis from trusted platforms. Let the dog run!
           </p>
         </div>
@@ -346,7 +348,7 @@ export default function AudioPage() {
           ].map((tag) => (
             <button
               key={tag}
-              className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-full text-sm transition-colors duration-200 hover:shadow-[0_0_10px_rgba(255,107,53,0.3)]"
+              className="group/tag px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-full text-sm transition-all duration-500 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-105 hover:text-orange-400 transform-gpu"
             >
               {tag}
             </button>
@@ -356,13 +358,13 @@ export default function AudioPage() {
         {/* Search and Filters */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
           <div className="lg:col-span-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <div className="relative group/search">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 transition-all duration-500 group-hover/search:text-orange-400 group-hover/search:scale-110" />
               <Input
                 placeholder="Search BONK Content"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-gray-800 border-gray-700 focus:border-[#ff6b35] text-white"
+                className="pl-10 bg-gray-800 border-gray-700 focus:border-[#ff6b35] text-white hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500"
               />
             </div>
           </div>
@@ -371,7 +373,7 @@ export default function AudioPage() {
             <select
               value={filters.category}
               onChange={(e) => setFilters((prev) => ({ ...prev, category: e.target.value }))}
-              className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md focus:border-[#ff6b35] text-white"
+              className="group/select w-full p-2 bg-gray-800 border border-gray-700 rounded-md focus:border-[#ff6b35] text-white hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500"
             >
               <option value="">All Categories</option>
               <option value="podcast">Podcast</option>
@@ -388,7 +390,7 @@ export default function AudioPage() {
             <select
               value={filters.verifiedOnly.toString()}
               onChange={(e) => setFilters((prev) => ({ ...prev, verifiedOnly: e.target.value === "true" }))}
-              className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md focus:border-[#ff6b35] text-white"
+              className="group/select w-full p-2 bg-gray-800 border border-gray-700 rounded-md focus:border-[#ff6b35] text-white hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500"
             >
               <option value="false">All Tracks</option>
               <option value="true">Verified Only</option>
@@ -398,45 +400,45 @@ export default function AudioPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="group/stats bg-gray-800 p-4 rounded-lg hover:bg-gray-750 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
             <div className="flex items-center gap-2 mb-2">
-              <Headphones className="w-5 h-5 text-[#ff6b35]" />
-              <span className="text-sm text-gray-400">Total Tracks</span>
+              <Headphones className="w-5 h-5 text-[#ff6b35] transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+              <span className="text-sm text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">Total Tracks</span>
             </div>
-            <div className="text-2xl font-bold">{tracks.length}</div>
-            <div className="text-xs text-gray-500">Available tracks</div>
+            <div className="text-2xl font-bold transition-all duration-500 group-hover/stats:text-orange-400">{tracks.length}</div>
+            <div className="text-xs text-gray-500 transition-all duration-500 group-hover/stats:text-gray-400">Available tracks</div>
           </div>
 
-          <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="group/stats bg-gray-800 p-4 rounded-lg hover:bg-gray-750 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
             <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-5 h-5 text-[#ff6b35]" />
-              <span className="text-sm text-gray-400">High Relevance</span>
+              <Sparkles className="w-5 h-5 text-[#ff6b35] transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+              <span className="text-sm text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">High Relevance</span>
             </div>
-            <div className="text-2xl font-bold text-[#ff6b35]">
+            <div className="text-2xl font-bold text-[#ff6b35] transition-all duration-500 group-hover/stats:text-orange-400">
               {tracks.filter((t) => t.relevanceScore >= 70).length}
             </div>
-            <div className="text-xs text-gray-500">70%+ relevance</div>
+            <div className="text-xs text-gray-500 transition-all duration-500 group-hover/stats:text-gray-400">70%+ relevance</div>
           </div>
 
-          <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="group/stats bg-gray-800 p-4 rounded-lg hover:bg-gray-750 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
             <div className="flex items-center gap-2 mb-2">
-              <Badge className="w-5 h-5 text-[#ff6b35]" />
-              <span className="text-sm text-gray-400">Verified Tracks</span>
+              <Badge className="w-5 h-5 text-[#ff6b35] transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+              <span className="text-sm text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">Verified Tracks</span>
             </div>
-            <div className="text-2xl font-bold">{tracks.filter((t) => t.verified).length}</div>
-            <div className="text-xs text-gray-500">Quality assured</div>
+            <div className="text-2xl font-bold transition-all duration-500 group-hover/stats:text-orange-400">{tracks.filter((t) => t.verified).length}</div>
+            <div className="text-xs text-gray-500 transition-all duration-500 group-hover/stats:text-gray-400">Quality assured</div>
           </div>
 
-          <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="group/stats bg-gray-800 p-4 rounded-lg hover:bg-gray-750 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
             <div className="flex items-center gap-2 mb-2">
-              <Coins className="w-5 h-5 text-[#ff6b35]" />
-              <span className="text-sm text-gray-400">Avg Relevance</span>
+              <Coins className="w-5 h-5 text-[#ff6b35] transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+              <span className="text-sm text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">Avg Relevance</span>
             </div>
-            <div className="text-2xl font-bold text-[#ff6b35]">
+            <div className="text-2xl font-bold text-[#ff6b35] transition-all duration-500 group-hover/stats:text-orange-400">
               {tracks.length > 0 ? Math.round(tracks.reduce((sum, t) => sum + t.relevanceScore, 0) / tracks.length) : 0}
               %
             </div>
-            <div className="text-xs text-gray-500">Overall quality</div>
+            <div className="text-xs text-gray-500 transition-all duration-500 group-hover/stats:text-gray-400">Overall quality</div>
           </div>
         </div>
 
@@ -445,46 +447,52 @@ export default function AudioPage() {
           {filteredTracks.map((track) => (
             <div
               key={track.id}
-              className="bg-gray-900 rounded-lg overflow-hidden hover:bg-gray-800 transition-all duration-200 hover:shadow-[0_0_20px_rgba(255,107,53,0.2)] hover:scale-105 group"
+              className="group/track bg-gray-900 rounded-lg overflow-hidden hover:bg-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer"
             >
               <PlatformPlayer track={track} />
 
               <div className="p-4">
                 <div className="mb-3">
-                  <h3 className="font-semibold text-white mb-1 line-clamp-2 group-hover:text-[#ff6b35] transition-colors">
+                  <h3 className="font-semibold text-white mb-1 line-clamp-2 transition-all duration-500 group-hover/track:text-orange-400">
                     {track.title}
                   </h3>
-                  <p className="text-sm text-gray-400">{track.artist}</p>
+                  <p className="text-sm text-gray-400 transition-all duration-500 group-hover/track:text-gray-300">{track.artist}</p>
                 </div>
 
                 <div className="flex flex-wrap gap-1 mb-3">
-                  <Badge className={`${getCategoryColor(track.category)} text-white text-xs`}>{track.category}</Badge>
-                  {track.verified && <Badge className="bg-[#ff6b35] text-white text-xs">✓ Verified</Badge>}
+                  <Badge className={`${getCategoryColor(track.category)} text-white text-xs transition-all duration-500 group-hover/track:scale-105 group-hover/track:shadow-[0_0_4px_rgba(255,107,53,0.2)]`}>
+                    {track.category}
+                  </Badge>
+                  {track.verified && (
+                    <Badge className="bg-[#ff6b35] text-white text-xs transition-all duration-500 group-hover/track:scale-105 group-hover/track:shadow-[0_0_4px_rgba(255,107,53,0.3)]">
+                      ✓ Verified
+                    </Badge>
+                  )}
                 </div>
 
-                <p className="text-xs text-gray-500 mb-3 line-clamp-2">{track.description}</p>
+                <p className="text-xs text-gray-500 mb-3 line-clamp-2 transition-all duration-500 group-hover/track:text-gray-400">{track.description}</p>
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-1 mb-3">
                   {track.tags.slice(0, 3).map((tag) => (
-                    <span key={tag} className="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">
+                    <span key={tag} className="group/tag text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded hover:bg-gray-700 hover:text-gray-200 hover:scale-105 hover:shadow-[0_0_4px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu cursor-pointer">
                       #{tag}
                     </span>
                   ))}
                   {track.tags.length > 3 && (
-                    <span className="text-xs text-gray-500">+{track.tags.length - 3} more</span>
+                    <span className="text-xs text-gray-500 transition-all duration-500 group-hover/track:text-gray-400">+{track.tags.length - 3} more</span>
                   )}
                 </div>
 
                 {/* Stats and Controls */}
                 <div className="flex items-center justify-between text-xs text-gray-400">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
+                    <div className="flex items-center gap-1 transition-all duration-500 group-hover/track:text-gray-300">
+                      <Clock className="w-3 h-3 transition-all duration-500 group-hover/track:scale-110 group-hover/track:rotate-2" />
                       {track.duration}
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Play className="w-3 h-3" />
+                    <div className="flex items-center gap-1 transition-all duration-500 group-hover/track:text-gray-300">
+                      <Play className="w-3 h-3 transition-all duration-500 group-hover/track:scale-110 group-hover/track:rotate-2" />
                       {formatPlays(track.plays)}
                     </div>
                   </div>
@@ -493,9 +501,9 @@ export default function AudioPage() {
                     size="sm"
                     variant="ghost"
                     onClick={() => handleLike(track.id)}
-                    className="flex items-center gap-1 text-gray-400 hover:text-[#ff6b35] hover:bg-gray-800"
+                    className="group/like flex items-center gap-1 text-gray-400 hover:text-[#ff6b35] hover:bg-gray-800 hover:scale-105 hover:shadow-[0_0_4px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu"
                   >
-                    <Heart className="w-3 h-3" />
+                    <Heart className="w-3 h-3 transition-all duration-500 group-hover/like:scale-110 group-hover/like:rotate-2" />
                     {track.likes}
                   </Button>
                 </div>

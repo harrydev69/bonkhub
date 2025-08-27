@@ -277,53 +277,53 @@ export function SocialMentionWordCloud() {
   }
 
   return (
-    <Card className="group bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:border-[#ff6b35] hover:shadow-lg hover:shadow-[#ff6b35]/20 transition-all duration-500">
+    <Card className="group bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle className="text-[#ff6b35] text-2xl font-bold flex items-center gap-2 group-hover:text-white transition-colors duration-300">
-            <span className="text-orange-500 group-hover:scale-110 transition-transform duration-300">☁️</span>
+          <CardTitle className="text-[#ff6b35] text-2xl font-bold flex items-center gap-2 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
+            <span className="text-orange-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]">☁️</span>
             Social Mention Word Cloud
           </CardTitle>
-          <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors duration-300">Trending topics and sentiment from social media mentions</p>
+          <p className="text-gray-400 text-sm transition-all duration-500 group-hover:text-gray-300">Trending topics and sentiment from social media mentions</p>
         </div>
 
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Enhanced Summary Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="group/item text-center p-4 bg-gradient-to-br from-orange-500/10 to-orange-400/5 rounded-lg border border-orange-500/20 hover:border-orange-400/40 hover:bg-orange-500/20 transition-all duration-300 cursor-pointer">
-            <div className="text-3xl font-bold text-orange-500 group-hover/item:text-white transition-colors duration-300">{filteredAndSortedData.length}</div>
-            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Trending Topics</div>
-            <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors duration-300">Filtered & Sorted</div>
+          <div className="group/item text-center p-4 bg-gradient-to-br from-orange-500/10 to-orange-400/5 rounded-lg border border-orange-500/20 hover:border-orange-500/40 hover:bg-orange-500/20 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+            <div className="text-3xl font-bold text-orange-500 transition-all duration-500 group-hover/item:text-white group-hover/item:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">{filteredAndSortedData.length}</div>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">Trending Topics</div>
+            <div className="text-xs text-gray-500 transition-all duration-500 group-hover/item:text-gray-400">Filtered & Sorted</div>
           </div>
-          <div className="group/item text-center p-4 bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg border border-green-500/20 hover:border-green-400/40 hover:bg-green-500/20 transition-all duration-300 cursor-pointer">
-            <div className="text-3xl font-bold text-green-400 group-hover/item:text-white transition-colors duration-300">
+          <div className="group/item text-center p-4 bg-gradient-to-br from-green-500/10 to-green-400/5 rounded-lg border border-green-500/20 hover:border-green-500/40 hover:bg-green-500/20 hover:scale-105 hover:shadow-[0_0_8px_rgba(34,197,94,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+            <div className="text-3xl font-bold text-green-400 transition-all duration-500 group-hover/item:text-white group-hover/item:drop-shadow-[0_0_4px_rgba(34,197,94,0.6)]">
               {Math.round((filteredAndSortedData.filter(w => w.sentiment === "positive").length / Math.max(filteredAndSortedData.length, 1)) * 100)}%
             </div>
-            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Positive Topics</div>
-            <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors duration-300">Based on analysis</div>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">Positive Topics</div>
+            <div className="text-xs text-gray-500 transition-all duration-500 group-hover/item:text-gray-400">Based on analysis</div>
           </div>
-          <div className="group/item text-center p-4 bg-gradient-to-br from-blue-500/10 to-blue-400/5 rounded-lg border border-blue-500/20 hover:border-blue-400/40 hover:bg-blue-500/20 transition-all duration-300 cursor-pointer">
-            <div className="text-3xl font-bold text-blue-400 group-hover/item:text-white transition-colors duration-300">
+          <div className="group/item text-center p-4 bg-gradient-to-br from-blue-500/10 to-blue-400/5 rounded-lg border border-blue-500/20 hover:border-blue-500/40 hover:bg-blue-500/20 hover:scale-105 hover:shadow-[0_0_8px_rgba(59,130,246,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+            <div className="text-3xl font-bold text-blue-400 transition-all duration-500 group-hover/item:text-white group-hover/item:drop-shadow-[0_0_4px_rgba(59,130,246,0.6)]">
               {Math.round(filteredAndSortedData.reduce((sum, w) => sum + w.influenceScore, 0) / Math.max(filteredAndSortedData.length, 1))}
             </div>
-            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">Avg Influence</div>
-            <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors duration-300">0-100 scale</div>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">Avg Influence</div>
+            <div className="text-xs text-gray-500 transition-all duration-500 group-hover/item:text-gray-400">0-100 scale</div>
           </div>
-          <div className="group/item text-center p-4 bg-gradient-to-br from-purple-500/10 to-purple-400/5 rounded-lg border border-purple-500/20 hover:border-purple-400/40 hover:bg-purple-500/20 transition-all duration-300 cursor-pointer">
-            <div className="text-3xl font-bold text-purple-400 group-hover/item:text-white transition-colors duration-300">
+          <div className="group/item text-center p-4 bg-gradient-to-br from-purple-500/10 to-purple-400/5 rounded-lg border border-purple-500/20 hover:border-purple-500/40 hover:bg-purple-500/20 hover:scale-105 hover:shadow-[0_0_8px_rgba(168,85,247,0.3)] transition-all duration-500 transform-gpu cursor-pointer">
+            <div className="text-3xl font-bold text-purple-400 transition-all duration-500 group-hover/item:text-white group-hover/item:drop-shadow-[0_0_4px_rgba(168,85,247,0.6)]">
               {topicData?.data.interactions_24h.toLocaleString() || '0'}
             </div>
-            <div className="text-sm text-gray-400 group-hover/item:text-gray-300 transition-colors duration-300">24h Interactions</div>
-            <div className="text-xs text-gray-500 group-hover/item:text-gray-400 transition-colors duration-300">Total engagement</div>
+            <div className="text-sm text-gray-400 transition-all duration-500 group-hover/item:text-gray-300">24h Interactions</div>
+            <div className="text-xs text-gray-500 transition-all duration-500 group-hover/item:text-gray-400">Total engagement</div>
           </div>
         </div>
 
         {/* Advanced Search and Filtering */}
-        <Card className="bg-gray-800/50 border-gray-600">
+        <Card className="bg-gray-800/50 border-gray-600 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer group/analysis">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2 text-lg">
-              <Filter className="h-5 w-5 text-orange-500" />
+            <CardTitle className="text-white flex items-center gap-2 text-lg transition-all duration-500 group-hover/analysis:text-orange-400 group-hover/analysis:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">
+              <Filter className="h-5 w-5 text-orange-500 transition-all duration-500 group-hover/analysis:scale-110 group-hover/analysis:rotate-2 group-hover/analysis:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
               Advanced Topic Analysis
             </CardTitle>
           </CardHeader>
@@ -335,19 +335,19 @@ export function SocialMentionWordCloud() {
                 placeholder="Search trending topics..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-orange-500"
+                className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-orange-500 hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500"
               />
             </div>
 
             {/* Filter Controls */}
             <div className="flex flex-wrap gap-3">
               {/* Category Filter */}
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-400">Category:</span>
+              <div className="flex items-center gap-2 group/category">
+                <span className="text-sm text-gray-400 transition-all duration-500 group-hover/category:text-gray-300">Category:</span>
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="bg-gray-700 border border-gray-600 text-white text-sm rounded px-3 py-1 focus:border-orange-500"
+                  className="bg-gray-700 border border-gray-600 text-white text-sm rounded px-3 py-1 focus:border-orange-500 hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500"
                 >
                   {availableCategories.map(category => (
                     <option key={category} value={category}>
@@ -358,12 +358,12 @@ export function SocialMentionWordCloud() {
               </div>
 
               {/* Sort Control */}
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-400">Sort by:</span>
+              <div className="flex items-center gap-2 group/sort">
+                <span className="text-sm text-gray-400 transition-all duration-500 group-hover/sort:text-gray-300">Sort by:</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as "influence" | "mentions" | "alphabetical")}
-                  className="bg-gray-700 border border-gray-600 text-white text-sm rounded px-3 py-1 focus:border-orange-500"
+                  className="bg-gray-700 border border-gray-600 text-white text-sm rounded px-3 py-1 focus:border-orange-500 hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500"
                 >
                   <option value="influence">Influence Score</option>
                   <option value="mentions">Mentions</option>
@@ -372,8 +372,8 @@ export function SocialMentionWordCloud() {
               </div>
 
               {/* Results Count */}
-              <div className="flex items-center gap-2 ml-auto">
-                <span className="text-sm text-gray-400">
+              <div className="flex items-center gap-2 ml-auto group/results">
+                <span className="text-sm text-gray-400 transition-all duration-500 group-hover/results:text-gray-300">
                   Showing {filteredAndSortedData.length} of {wordCloudData.length} topics
                 </span>
               </div>

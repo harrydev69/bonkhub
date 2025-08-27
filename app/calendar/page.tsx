@@ -201,11 +201,11 @@ export default function CalendarPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-gray-800 rounded-lg overflow-hidden animate-pulse">
-                <div className="aspect-video bg-gray-700"></div>
+              <div key={i} className="group/loading bg-gray-800 rounded-lg overflow-hidden animate-pulse hover:bg-gray-750 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+                <div className="aspect-video bg-gray-700 transition-all duration-500 group-hover/loading:scale-105 group-hover/loading:shadow-[0_0_2px_rgba(255,107,53,0.1)]"></div>
                 <div className="p-4">
-                  <div className="h-4 bg-gray-700 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-700 rounded w-2/3"></div>
+                  <div className="h-4 bg-gray-700 rounded mb-2 transition-all duration-500 group-hover/loading:scale-105 group-hover/loading:shadow-[0_0_2px_rgba(255,107,53,0.1)]"></div>
+                  <div className="h-3 bg-gray-700 rounded w-2/3 transition-all duration-500 group-hover/loading:scale-105 group-hover/loading:shadow-[0_0_2px_rgba(255,107,53,0.1)]"></div>
                 </div>
               </div>
             ))}
@@ -223,11 +223,11 @@ export default function CalendarPage() {
 
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="text-center py-12">
-            <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Failed to load events</h2>
-            <p className="text-gray-400 mb-6">{error}</p>
-            <Button onClick={fetchEvents} className="bg-[#ff6b35] hover:bg-[#ff6b35]/80">
-              <RefreshCw className="w-4 h-4 mr-2" />
+            <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4 transition-all duration-500 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_0_4px_rgba(239,68,68,0.4)]" />
+            <h2 className="text-2xl font-bold mb-2 transition-all duration-500 hover:text-red-400">Failed to load events</h2>
+            <p className="text-gray-400 mb-6 transition-all duration-500 hover:text-gray-300">{error}</p>
+            <Button onClick={fetchEvents} className="group/retry bg-[#ff6b35] hover:bg-[#ff6b35]/80 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu">
+              <RefreshCw className="w-4 h-4 mr-2 transition-all duration-500 group-hover/retry:scale-110 group-hover/retry:rotate-2" />
               Try again
             </Button>
           </div>
@@ -246,29 +246,33 @@ export default function CalendarPage() {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">🔥 Hot BONK events Internationally</h1>
-          <p className="text-gray-400">
+        <div className="group/header mb-8 transition-all duration-500 hover:scale-[1.01] transform-gpu">
+          <h1 className="text-4xl font-bold text-white mb-2 transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
+            🔥 Hot BONK events Internationally
+          </h1>
+          <p className="text-gray-400 transition-all duration-500 group-hover/header:text-gray-300">
             Stay updated with BONK ecosystem events, launches, and community activities. Let the dog run!
           </p>
         </div>
 
-        <Card className="bg-gray-900 border-gray-800 mb-8">
+        <Card className="group/filters bg-gray-900 border-gray-800 mb-8 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardHeader>
-            <CardTitle className="text-[#ff6b35] flex items-center">
-              <Sparkles className="w-5 h-5 mr-2" />
+            <CardTitle className="text-[#ff6b35] flex items-center transition-all duration-500 group-hover/filters:text-orange-400">
+              <Sparkles className="w-5 h-5 mr-2 transition-all duration-500 group-hover/filters:scale-110 group-hover/filters:rotate-2 group-hover/filters:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
               Filters & Customization
             </CardTitle>
-            <CardDescription className="text-gray-400">Refine your BONK event view</CardDescription>
+            <CardDescription className="text-gray-400 transition-all duration-500 group-hover/filters:text-gray-300">
+              Refine your BONK event view
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Verification</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1 transition-all duration-500 hover:text-gray-200">Verification</label>
                 <select
                   value={filters.verifiedOnly.toString()}
                   onChange={(e) => setFilters((prev) => ({ ...prev, verifiedOnly: e.target.value === "true" }))}
-                  className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md focus:border-[#ff6b35] text-white"
+                  className="group/select w-full p-2 bg-gray-800 border border-gray-700 rounded-md focus:border-[#ff6b35] text-white hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500"
                 >
                   <option value="false">All Events</option>
                   <option value="true">Verified Only</option>
@@ -276,11 +280,11 @@ export default function CalendarPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Event Type</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1 transition-all duration-500 hover:text-gray-200">Event Type</label>
                 <select
                   value={filters.type}
                   onChange={(e) => setFilters((prev) => ({ ...prev, type: e.target.value }))}
-                  className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md focus:border-[#ff6b35] text-white"
+                  className="group/select w-full p-2 bg-gray-800 border border-gray-700 rounded-md focus:border-[#ff6b35] text-white hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500"
                 >
                   <option value="">All Types</option>
                   <option value="conference">Conference</option>
@@ -297,11 +301,11 @@ export default function CalendarPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Tag</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1 transition-all duration-500 hover:text-gray-200">Tag</label>
                 <select
                   value={filters.tag}
                   onChange={(e) => setFilters((prev) => ({ ...prev, tag: e.target.value }))}
-                  className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md focus:border-[#ff6b35] text-white"
+                  className="group/select w-full p-2 bg-gray-800 border border-gray-700 rounded-md focus:border-[#ff6b35] text-white hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500"
                 >
                   <option value="">All Tags</option>
                   <option value="BONK">BONK</option>
@@ -393,8 +397,9 @@ export default function CalendarPage() {
           {/* Event List */}
           <Card className="bg-gray-900 border-gray-800">
             <CardHeader>
-              <CardTitle className="text-[#ff6b35] flex items-center justify-between">
-                <span>
+              <CardTitle className="text-white flex items-center justify-between">
+                <span className="flex items-center">
+                  <Calendar className="w-5 h-5 mr-2 text-[#ff6b35]" />
                   {selectedDate
                     ? `Events on ${selectedDate.toLocaleDateString("en-US", {
                         weekday: "long",
@@ -407,9 +412,9 @@ export default function CalendarPage() {
                 <Button
                   onClick={() => setShowAddEventModal(true)}
                   size="sm"
-                  className="bg-gradient-to-r from-[#ff6b35] to-red-500 hover:from-[#ff6b35]/80 hover:to-red-500/80"
+                  className="group/add-event bg-gradient-to-r from-[#ff6b35] to-red-500 hover:from-[#ff6b35]/80 hover:to-red-500/80 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu"
                 >
-                  <Plus className="w-4 h-4 mr-1" />
+                  <Plus className="w-4 h-4 mr-1 transition-all duration-500 group-hover/add-event:scale-110 group-hover/add-event:rotate-2" />
                   Add Event
                 </Button>
               </CardTitle>
@@ -424,23 +429,31 @@ export default function CalendarPage() {
                 (selectedDate ? selectedDateEvents : events).map((event) => (
                   <div
                     key={event.id}
-                    className="mb-4 p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors duration-200 hover:shadow-[0_0_10px_rgba(255,107,53,0.3)]"
+                    className="group/event mb-4 p-4 bg-gray-800 rounded-lg hover:bg-gray-700 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer"
                   >
                     <div className="flex items-start justify-between mb-2">
-                      <h4 className="font-semibold text-white">{event.title}</h4>
+                      <h4 className="font-semibold text-white transition-all duration-500 group-hover/event:text-orange-400">
+                        {event.title}
+                      </h4>
                       <div className="flex items-center space-x-2">
-                        <Badge className={`${getEventTypeColor(event.type)} text-white border-0`}>
+                        <Badge className={`${getEventTypeColor(event.type)} text-white border-0 transition-all duration-500 group-hover/event:scale-105 group-hover/event:shadow-[0_0_4px_rgba(255,107,53,0.2)]`}>
                           {event.type.replace("-", " ")}
                         </Badge>
-                        {event.verified && <Badge className="bg-green-500 text-white border-0">✓ Verified</Badge>}
+                        {event.verified && (
+                          <Badge className="bg-green-500 text-white border-0 transition-all duration-500 group-hover/event:scale-105 group-hover/event:shadow-[0_0_4px_rgba(34,197,94,0.3)]">
+                            ✓ Verified
+                          </Badge>
+                        )}
                       </div>
                     </div>
 
-                    <p className="text-gray-400 text-sm mb-3">{event.description}</p>
+                    <p className="text-gray-400 text-sm mb-3 transition-all duration-500 group-hover/event:text-gray-300">
+                      {event.description}
+                    </p>
 
                     <div className="flex items-center text-xs text-gray-500 space-x-4 mb-2">
-                      <span className="flex items-center">
-                        <Clock className="w-3 h-3 mr-1" />
+                      <span className="flex items-center transition-all duration-500 group-hover/event:text-gray-400">
+                        <Clock className="w-3 h-3 mr-1 transition-all duration-500 group-hover/event:scale-110 group-hover/event:rotate-2" />
                         {new Date(event.date).toLocaleDateString("en-US", {
                           weekday: "short",
                           month: "short",
@@ -449,14 +462,14 @@ export default function CalendarPage() {
                         at {event.time}
                       </span>
                       {event.location && (
-                        <span className="flex items-center">
-                          <MapPin className="w-3 h-3 mr-1" />
+                        <span className="flex items-center transition-all duration-500 group-hover/event:text-gray-400">
+                          <MapPin className="w-3 h-3 mr-1 transition-all duration-500 group-hover/event:scale-110 group-hover/event:rotate-2" />
                           {event.location}
                         </span>
                       )}
                       {event.attendees && (
-                        <span className="flex items-center">
-                          <Users className="w-3 h-3 mr-1" />
+                        <span className="flex items-center transition-all duration-500 group-hover/event:text-gray-400">
+                          <Users className="w-3 h-3 mr-1 transition-all duration-500 group-hover/event:scale-110 group-hover/event:rotate-2" />
                           {event.attendees} attending
                         </span>
                       )}
@@ -464,7 +477,7 @@ export default function CalendarPage() {
 
                     <div className="flex flex-wrap gap-1 mb-3">
                       {event.tags.slice(0, 5).map((tag) => (
-                        <span key={tag} className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded">
+                        <span key={tag} className="group/tag px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded hover:bg-gray-600 hover:text-gray-200 hover:scale-105 hover:shadow-[0_0_4px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu cursor-pointer">
                           #{tag}
                         </span>
                       ))}
@@ -476,18 +489,20 @@ export default function CalendarPage() {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500 capitalize">{event.source}</span>
+                      <span className="text-xs text-gray-500 capitalize transition-all duration-500 group-hover/event:text-gray-400">
+                        {event.source}
+                      </span>
                       <div className="flex items-center space-x-2">
                         {event.link && (
-                          <Button size="sm" className="bg-[#ff6b35] hover:bg-[#ff6b35]/80 text-white">
-                            <ExternalLink className="w-3 h-3 mr-1" />
+                          <Button size="sm" className="group/details bg-[#ff6b35] hover:bg-[#ff6b35]/80 text-white hover:scale-105 hover:shadow-[0_0_4px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu">
+                            <ExternalLink className="w-3 h-3 mr-1 transition-all duration-500 group-hover/details:scale-110 group-hover/details:rotate-2" />
                             Event Details
                           </Button>
                         )}
                         <Button
                           size="sm"
                           variant="outline"
-                          className="border-gray-700 hover:bg-gray-800 bg-transparent"
+                          className="group/calendar border-gray-700 hover:bg-gray-800 bg-transparent hover:scale-105 hover:shadow-[0_0_4px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu"
                         >
                           Add to Calendar
                         </Button>
@@ -496,8 +511,8 @@ export default function CalendarPage() {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8">
-                  <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                <div className="group/empty text-center py-8 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+                  <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-4 transition-all duration-500 group-hover/empty:text-orange-400 group-hover/empty:scale-110" />
                   <h3 className="text-lg font-semibold text-gray-400 mb-2">
                     {selectedDate ? "No events on this date" : "No upcoming events found"}
                   </h3>

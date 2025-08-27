@@ -138,14 +138,14 @@ export function SupplyChart() {
 
   return (
     <TooltipProvider>
-      <Card className="bg-gray-900 border-gray-700 hover:border-[#ff6b35]/50 transition-all duration-300">
+      <Card className="bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer group">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle className="text-[#ff6b35] text-2xl font-bold flex items-center gap-2">
-              <Coins className="h-6 w-6" />
+            <CardTitle className="text-[#ff6b35] text-2xl font-bold flex items-center gap-2 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">
+              <Coins className="h-6 w-6 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
               BONK Supply Analysis
             </CardTitle>
-            <CardDescription className="text-gray-400 mt-2">
+            <CardDescription className="text-gray-400 mt-2 transition-all duration-500 group-hover:text-gray-300">
               Token supply distribution and utilization metrics • Last updated:{" "}
               {new Date(supplyData.lastUpdated).toLocaleString()}
             </CardDescription>
@@ -155,26 +155,26 @@ export function SupplyChart() {
 
         <CardContent className="space-y-8">
           {/* Supply Status */}
-          <div className="space-y-4">
+          <div className="space-y-4 group/status">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-white">Supply Utilization</h3>
+              <h3 className="text-lg font-semibold text-white transition-all duration-500 group-hover/status:text-orange-400 group-hover/status:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">Supply Utilization</h3>
               <Badge
                 variant="outline"
-                className={`border-${supplyStatus.color === "red" ? "red" : supplyStatus.color === "yellow" ? "yellow" : "green"}-500 text-${supplyStatus.color === "red" ? "red" : supplyStatus.color === "yellow" ? "yellow" : "green"}-400`}
+                className={`border-${supplyStatus.color === "red" ? "red" : supplyStatus.color === "yellow" ? "yellow" : "green"}-500 text-${supplyStatus.color === "red" ? "red" : supplyStatus.color === "yellow" ? "yellow" : "green"}-400 transition-all duration-500 group-hover/status:scale-110 group-hover/status:shadow-[0_0_4px_rgba(255,107,53,0.4)]`}
               >
                 {supplyStatus.label}
               </Badge>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 group/progress">
               <div className="flex justify-between text-sm text-gray-400">
-                <span>0%</span>
-                <span className="text-[#ff6b35] font-semibold">{circulatingPercentage.toFixed(1)}%</span>
-                <span>100%</span>
+                <span className="transition-all duration-500 group-hover/progress:text-gray-300">0%</span>
+                <span className="text-[#ff6b35] font-semibold transition-all duration-500 group-hover/progress:text-orange-400 group-hover/progress:drop-shadow-[0_0_2px_rgba(255,107,53,0.5)]">{circulatingPercentage.toFixed(1)}%</span>
+                <span className="transition-all duration-500 group-hover/progress:text-gray-300">100%</span>
               </div>
               <Progress
                 value={circulatingPercentage}
-                className="h-3 bg-gray-800"
+                className="h-3 bg-gray-800 transition-all duration-500 group-hover/progress:shadow-[0_0_8px_rgba(255,107,53,0.3)]"
                 style={{
                   background: `linear-gradient(to right, #ff6b35 ${circulatingPercentage}%, #374151 ${circulatingPercentage}%)`,
                 }}
@@ -184,29 +184,29 @@ export function SupplyChart() {
 
                      {/* Supply Metrics Grid */}
            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-             <Card className="group bg-gradient-to-br from-gray-800 to-gray-900 border-gray-600 hover:border-[#ff6b35] hover:shadow-lg hover:shadow-[#ff6b35]/20 transition-all duration-500 transform hover:scale-105 cursor-pointer">
+             <Card className="group bg-gradient-to-br from-gray-800 to-gray-900 border-gray-600 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
                <CardHeader className="pb-3">
-                 <CardTitle className="text-[#ff6b35] text-lg flex items-center gap-2 group-hover:text-white transition-colors duration-300">
-                   <TrendingUp className="h-5 w-5 group-hover:rotate-12 transition-transform duration-300" />
+                 <CardTitle className="text-[#ff6b35] text-lg flex items-center gap-2 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">
+                   <TrendingUp className="h-5 w-5 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
                    Circulating Supply
                  </CardTitle>
                </CardHeader>
                <CardContent>
-                 <div className="text-3xl font-bold text-white mb-2 group-hover:text-[#ff6b35] transition-colors duration-300">{formatSupply(circulating)}</div>
-                 <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                 <div className="text-3xl font-bold text-white mb-2 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">{formatSupply(circulating)}</div>
+                 <p className="text-sm text-gray-400 transition-all duration-500 group-hover:text-gray-300">
                    {max ? `${circulatingPercentage.toFixed(2)}% of max supply` : "Active tokens"}
                  </p>
                </CardContent>
              </Card>
 
-             <Card className="group bg-gradient-to-br from-gray-800 to-gray-900 border-gray-600 hover:border-[#ff6b35] hover:shadow-lg hover:shadow-[#ff6b35]/20 transition-all duration-500 transform hover:scale-105 cursor-pointer">
+             <Card className="group bg-gradient-to-br from-gray-800 to-gray-900 border-gray-600 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
                <CardHeader className="pb-3">
-                 <CardTitle className="text-[#ff6b35] text-lg flex items-center gap-2 group-hover:text-white transition-colors duration-300">
-                   <Coins className="h-5 w-5 group-hover:scale-110 transition-transform duration-300" />
+                 <CardTitle className="text-[#ff6b35] text-lg flex items-center gap-2 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">
+                   <Coins className="h-5 w-5 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
                    Total Supply
                    <Tooltip>
                      <TooltipTrigger>
-                       <Info className="h-4 w-4 text-gray-400 group-hover:text-[#ff6b35] transition-colors duration-300" />
+                       <Info className="h-4 w-4 text-gray-400 transition-all duration-500 group-hover:text-orange-400 group-hover:scale-110 group-hover:drop-shadow-[0_0_2px_rgba(255,107,53,0.5)]" />
                      </TooltipTrigger>
                      <TooltipContent>
                        <p>Total tokens created (may include locked/burned tokens)</p>
@@ -215,21 +215,21 @@ export function SupplyChart() {
                  </CardTitle>
                </CardHeader>
                <CardContent>
-                 <div className="text-3xl font-bold text-white mb-2 group-hover:text-[#ff6b35] transition-colors duration-300">{total ? formatSupply(total) : "N/A"}</div>
-                 <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
+                 <div className="text-3xl font-bold text-white mb-2 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">{total ? formatSupply(total) : "N/A"}</div>
+                 <p className="text-sm text-gray-400 transition-all duration-500 group-hover:text-gray-300">
                    {total && max ? `${totalPercentage.toFixed(2)}% of max supply` : "Not specified"}
                  </p>
                </CardContent>
              </Card>
 
-             <Card className="group bg-gradient-to-br from-gray-800 to-gray-900 border-gray-600 hover:border-[#ff6b35] hover:shadow-lg hover:shadow-[#ff6b35]/20 transition-all duration-500 transform hover:scale-105 cursor-pointer">
+             <Card className="group bg-gradient-to-br from-gray-800 to-gray-900 border-gray-600 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
                <CardHeader className="pb-3">
-                 <CardTitle className="text-[#ff6b35] text-lg flex items-center gap-2 group-hover:text-white transition-colors duration-300">
-                   <PieChart className="h-5 w-5 group-hover:rotate-12 transition-transform duration-300" />
+                 <CardTitle className="text-[#ff6b35] text-lg flex items-center gap-2 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">
+                   <PieChart className="h-5 w-5 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.6)]" />
                    Max Supply
                    <Tooltip>
                      <TooltipTrigger>
-                       <Info className="h-4 w-4 text-gray-400 group-hover:text-[#ff6b35] transition-colors duration-300" />
+                       <Info className="h-4 w-4 text-gray-400 transition-all duration-500 group-hover:text-orange-400 group-hover:scale-110 group-hover:drop-shadow-[0_0_2px_rgba(255,107,53,0.5)]" />
                      </TooltipTrigger>
                      <TooltipContent>
                        <p>Maximum tokens that can ever exist</p>
@@ -238,8 +238,8 @@ export function SupplyChart() {
                  </CardTitle>
                </CardHeader>
                <CardContent>
-                 <div className="text-3xl font-bold text-white mb-2 group-hover:text-[#ff6b35] transition-colors duration-300">{max ? formatSupply(max) : "Unlimited"}</div>
-                 <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors duration-300">{max ? "Hard cap" : "No maximum limit"}</p>
+                 <div className="text-3xl font-bold text-white mb-2 transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_4px_rgba(255,107,53,0.6)]">{max ? formatSupply(max) : "Unlimited"}</div>
+                 <p className="text-sm text-gray-400 transition-all duration-500 group-hover:text-gray-300">{max ? "Hard cap" : "No maximum limit"}</p>
                </CardContent>
              </Card>
            </div>
@@ -247,9 +247,9 @@ export function SupplyChart() {
           {/* Supply Visualization */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                          {/* Supply Distribution with Exact Numbers */}
-             <Card className="group bg-gradient-to-br from-gray-800 to-gray-900 border-gray-600 hover:border-[#ff6b35] hover:shadow-lg hover:shadow-[#ff6b35]/20 transition-all duration-500">
+             <Card className="group bg-gradient-to-br from-gray-800 to-gray-900 border-gray-600 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
                <CardHeader>
-                 <CardTitle className="text-[#ff6b35] group-hover:text-white transition-colors duration-300">Supply Distribution</CardTitle>
+                 <CardTitle className="text-[#ff6b35] transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">Supply Distribution</CardTitle>
                </CardHeader>
                <CardContent className="space-y-4">
                  {/* Circulating Supply */}
@@ -310,9 +310,9 @@ export function SupplyChart() {
              </Card>
 
                          {/* Supply Timeline */}
-             <Card className="group bg-gradient-to-br from-gray-800 to-gray-900 border-gray-600 hover:border-[#ff6b35] hover:shadow-lg hover:shadow-[#ff6b35]/20 transition-all duration-500">
+             <Card className="group bg-gradient-to-br from-gray-800 to-gray-900 border-gray-600 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
                <CardHeader>
-                 <CardTitle className="text-[#ff6b35] group-hover:text-white transition-colors duration-300">Supply Timeline</CardTitle>
+                 <CardTitle className="text-[#ff6b35] transition-all duration-500 group-hover:text-orange-400 group-hover:drop-shadow-[0_0_3px_rgba(255,107,53,0.5)]">Supply Timeline</CardTitle>
                </CardHeader>
                <CardContent className="space-y-4">
                  <div className="flex justify-between items-center py-3 border-b border-gray-700 hover:bg-gray-700/30 rounded-lg px-2 transition-all duration-300 group/item">
