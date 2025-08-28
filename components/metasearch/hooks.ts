@@ -259,3 +259,48 @@ export function useSocialDominanceQuery() {
 
   return query;
 }
+export function useTechnicalDataQuery() {
+  const {
+    debouncedSearchQuery,
+    hasSearched,
+    queryKeys,
+    setTechnicalData,
+    setTechnicalDataError,
+  } = useMetaSearchStore();
+
+  const query = useQuery({
+    queryKey: queryKeys.technical(debouncedSearchQuery),
+    queryFn: async () => {
+      const tokenId = debouncedSearchQuery || "bonk";
+      
+      const res = await fetch(`/api/coin/${tokenId}`, {
+        cache: "no-store",
+      });
+      
+      if (!res.ok) {
+        const body = await res.text().catch(() => "");
+        throw new Error(`technical data ${res.status}: ${body || res.statusText}`);
+      }
+      
+      const json = await res.json().catch(() => ({}));
+      return json.data || [];
+    },
+    refetchInterval: 30 * 60 * 1000, 
+    staleTime: 25 * 60 * 1000,
+    enabled: !!debouncedSearchQuery || hasSearched,
+  });
+
+  useEffect(() => {
+    if (query.data) {
+      setTechnicalData(query.data);
+    }
+  }, [query.data, setTechnicalData]);
+
+  useEffect(() => {
+    if (query.error) {
+      setTechnicalDataError(query.error);
+    }
+  }, [query.error, setTechnicalDataError]);
+
+  return query;
+}

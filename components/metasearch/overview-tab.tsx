@@ -14,10 +14,11 @@ import {
 import { Streamdown } from "streamdown";
 import { TokenPriceChart } from "@/components/token-price-chart";
 import { SocialDominanceChart } from "./social-dominance-chart";
+import { CoinTechnicalChart } from "./coin-technical-chart";
 import type { TokenStats, Creator, AIInsight } from "./types";
 import { formatNumber, formatPrice } from "./utils";
 import { useMetaSearchStore } from "./store";
-import { useSocialDominanceQuery } from "./hooks";
+import { useSocialDominanceQuery, useTechnicalDataQuery } from "./hooks";
 
 interface OverviewTabProps {
   tokenStats: TokenStats | null;
@@ -60,10 +61,14 @@ export function OverviewTab({
     socialDominanceData,
     socialDominanceLoading,
     socialDominanceError,
+    technicalData,
+    technicalDataLoading,
+    technicalDataError,
   } = useMetaSearchStore();
 
   // Fetch social dominance data
-  const socialDominanceQuery = useSocialDominanceQuery();
+  useSocialDominanceQuery();
+  useTechnicalDataQuery();
 
   // Handle time range change
   const handleTimeRangeChange = (newTimeRange: string) => {
@@ -410,6 +415,7 @@ export function OverviewTab({
             </div>
           </CardContent>
         </Card>
+
         {/* Top Creators */}
         <Card className="group/creators bg-gray-900 border-gray-800 hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] hover:border-orange-500/50 transition-all duration-500 transform-gpu">
           <CardHeader className="pb-4">
@@ -587,6 +593,12 @@ export function OverviewTab({
           data={socialDominanceData}
           loading={socialDominanceLoading}
           error={socialDominanceError}
+        />
+
+        <CoinTechnicalChart
+          data={technicalData}
+          loading={technicalDataLoading}
+          error={technicalDataError}
         />
       </div>
     </div>

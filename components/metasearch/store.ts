@@ -20,6 +20,7 @@ interface MetaSearchState {
   priceChartData: { prices: [number, number][]; market_caps: [number, number][]; total_volumes: [number, number][] };
   aiSummaryData: any;
   socialDominanceData: any[];
+  technicalData: any[];
 
   // Error states
   tokenStatsError: string | null;
@@ -29,6 +30,7 @@ interface MetaSearchState {
   priceChartError: any;
   aiSummaryError: any;
   socialDominanceError: any;
+  technicalDataError: any;
 
   // Loading states
   socialPostsLoading: boolean;
@@ -36,6 +38,7 @@ interface MetaSearchState {
   priceChartLoading: boolean;
   aiSummaryLoading: boolean;
   socialDominanceLoading: boolean;
+  technicalDataLoading: boolean;
 
   // Pagination states
   currentSocialPage: number;
@@ -66,6 +69,7 @@ interface MetaSearchState {
   setPriceChartData: (data: { prices: [number, number][]; market_caps: [number, number][]; total_volumes: [number, number][] }) => void;
   setAiSummaryData: (data: any) => void;
   setSocialDominanceData: (data: any[]) => void;
+  setTechnicalData: (data: any[]) => void;
 
   setTokenStatsError: (error: string | null) => void;
   setCreatorsError: (error: string | null) => void;
@@ -74,12 +78,14 @@ interface MetaSearchState {
   setPriceChartError: (error: any) => void;
   setAiSummaryError: (error: any) => void;
   setSocialDominanceError: (error: any) => void;
+  setTechnicalDataError: (error: any) => void;
 
   setSocialPostsLoading: (loading: boolean) => void;
   setNewsLoading: (loading: boolean) => void;
   setPriceChartLoading: (loading: boolean) => void;
   setAiSummaryLoading: (loading: boolean) => void;
   setSocialDominanceLoading: (loading: boolean) => void;
+  setTechnicalDataLoading: (loading: boolean) => void;
 
   setCurrentSocialPage: (page: number) => void;
   setCurrentNewsPage: (page: number) => void;
@@ -101,6 +107,7 @@ interface MetaSearchState {
     priceChart: (query: string, days: number) => string[];
     aiSummary: (query: string) => string[];
     socialDominance: (query: string) => string[];
+    technical: (query: string) => string[];
   };
 }
 
@@ -120,6 +127,7 @@ const initialState = {
   priceChartData: { prices: [] as any[], market_caps: [] as any[], total_volumes: [] as any[] },
   aiSummaryData: null,
   socialDominanceData: [],
+  technicalData: [],
 
   tokenStatsError: null,
   creatorsError: null,
@@ -128,12 +136,14 @@ const initialState = {
   priceChartError: null,
   aiSummaryError: null,
   socialDominanceError: null,
+  technicalDataError: null,
 
   socialPostsLoading: false,
   newsLoading: false,
   priceChartLoading: false,
   aiSummaryLoading: false,
   socialDominanceLoading: false,
+  technicalDataLoading: false,
 
   currentSocialPage: 1,
   currentNewsPage: 1,
@@ -177,6 +187,7 @@ export const useMetaSearchStore = create<MetaSearchState>()(
         setPriceChartData: (data: { prices: [number, number][]; market_caps: [number, number][]; total_volumes: [number, number][] }) => set({ priceChartData: data }),
         setAiSummaryData: (data: any) => set({ aiSummaryData: data }),
         setSocialDominanceData: (data: any[]) => set({ socialDominanceData: data }),
+        setTechnicalData: (data: any[]) => set({ technicalData: data }),
 
         setTokenStatsError: (error: string | null) => set({ tokenStatsError: error }),
         setCreatorsError: (error: string | null) => set({ creatorsError: error }),
@@ -185,12 +196,14 @@ export const useMetaSearchStore = create<MetaSearchState>()(
         setPriceChartError: (error: any) => set({ priceChartError: error }),
         setAiSummaryError: (error: any) => set({ aiSummaryError: error }),
         setSocialDominanceError: (error: any) => set({ socialDominanceError: error }),
+        setTechnicalDataError: (error: any) => set({ technicalDataError: error }),
 
         setSocialPostsLoading: (loading: boolean) => set({ socialPostsLoading: loading }),
         setNewsLoading: (loading: boolean) => set({ newsLoading: loading }),
         setPriceChartLoading: (loading: boolean) => set({ priceChartLoading: loading }),
         setAiSummaryLoading: (loading: boolean) => set({ aiSummaryLoading: loading }),
         setSocialDominanceLoading: (loading: boolean) => set({ socialDominanceLoading: loading }),
+        setTechnicalDataLoading: (loading: boolean) => set({ technicalDataLoading: loading }),
 
         setCurrentSocialPage: (page: number) => set({ currentSocialPage: page }),
         setCurrentNewsPage: (page: number) => set({ currentNewsPage: page }),
@@ -243,6 +256,7 @@ export const useMetaSearchStore = create<MetaSearchState>()(
           priceChartError: null,
           aiSummaryError: null,
           socialDominanceError: null,
+          technicalDataError: null,
         }),
 
         queryKeys: {
@@ -252,6 +266,7 @@ export const useMetaSearchStore = create<MetaSearchState>()(
           priceChart: (query: string, days: number) => ["priceChart", query || "bonk", days],
           aiSummary: (query: string) => ["aiSummary", query || "bonk"],
           socialDominance: (query: string) => ["socialDominance", query || "bonk"],
+          technical: (query: string) => ["technical", query || "bonk"],
         },
       }),
       {
