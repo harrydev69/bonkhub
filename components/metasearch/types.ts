@@ -65,14 +65,19 @@ export interface SocialPost {
 
 export interface NewsArticle {
   id: string;
-  title: string;
-  summary: string;
-  source: string;
-  url: string;
-  timestamp: string;
-  sentiment: "positive" | "negative" | "neutral";
-  relevance: number;
-  image?: string;
+  post_type: string;
+  post_title: string;
+  post_link: string;
+  post_image: string | null;
+  post_created: number;
+  post_sentiment: number;
+  creator_id: string;
+  creator_name: string;
+  creator_display_name: string;
+  creator_followers: number;
+  creator_avatar: string;
+  interactions_24h: number;
+  interactions_total: number;
 }
 
 export interface TokenStats {
@@ -87,6 +92,10 @@ export interface TokenStats {
   atl: number;
   atlChangePercentage: number;
   rank: number;
+  // Additional fields from contract API
+  name?: string;
+  symbol?: string;
+  contractAddress?: string;
 }
 
 export interface MetaSearchDashboardProps {

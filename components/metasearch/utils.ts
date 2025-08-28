@@ -55,9 +55,11 @@ export async function fetchTokenStats(tokenId: string) {
   }
   const data = await response.json();
 
+  // Handle both regular token API and contract API response formats
   return {
     price: data.market_data?.current_price?.usd || 0,
-    change24h: data.market_data?.price_change_percentage_24h || 0,
+    change24h: data.market_data?.price_change_percentage_24h_in_currency?.usd ||
+               data.market_data?.price_change_percentage_24h || 0,
     marketCap: data.market_data?.market_cap?.usd || 0,
     volume24h: data.market_data?.total_volume?.usd || 0,
     circulatingSupply: data.market_data?.circulating_supply || 0,
@@ -67,6 +69,10 @@ export async function fetchTokenStats(tokenId: string) {
     atl: data.market_data?.atl?.usd || 0,
     atlChangePercentage: data.market_data?.atl_change_percentage?.usd || 0,
     rank: data.market_data?.market_cap_rank || 0,
+    // Additional fields from contract API
+    name: data.name || '',
+    symbol: data.symbol || '',
+    contractAddress: data.contract_address || tokenId,
   };
 }
 

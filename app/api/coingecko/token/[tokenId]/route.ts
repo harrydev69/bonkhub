@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// Helper function to detect if a string is a Solana contract address
+function isSolanaContractAddress(address: string): boolean {
+  // Solana addresses are typically 32-44 characters and use base58 encoding
+  // They contain letters, numbers, but no lowercase 'l', 'I', 'O', '0' to avoid confusion
+  const base58Regex = /^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{32,44}$/
+  return base58Regex.test(address) && address.length >= 32 && address.length <= 44
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ tokenId: string }> }
@@ -9,7 +17,7 @@ export async function GET(
     const lowerTokenId = tokenId.toLowerCase()
     const { searchParams } = new URL(request.url)
     const days = searchParams.get('days') || '7' // Default to 7 days
-    
+
     if (!process.env.COINGECKO_API_KEY) {
       return NextResponse.json(
         { error: 'CoinGecko API key not configured' },
@@ -21,21 +29,53 @@ export async function GET(
       'x-cg-pro-api-key': process.env.COINGECKO_API_KEY
     }
 
-    // Fetch detailed token information with price change percentages
-    const tokenResponse = await fetch(
-      `https://pro-api.coingecko.com/api/v3/coins/${lowerTokenId}?localization=false&tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=true&asset_platform_id=ethereum&asset_platform_id=solana&asset_platform_id=binance-smart-chain`,
-      { headers }
-    )
+    let tokenData: any
+    let isContractAddress = false
 
-    if (!tokenResponse.ok) {
-      throw new Error(`CoinGecko API error: ${tokenResponse.status}`)
+    // Check if the tokenId looks like a Solana contract address
+    if (isSolanaContractAddress(tokenId)) {
+      isContractAddress = true
+      // Use contract address API for Solana
+      const contractResponse = await fetch(
+        `https://pro-api.coingecko.com/api/v3/coins/solana/contract/${tokenId}`,
+        { headers }
+      )
+
+      if (!contractResponse.ok) {
+        // If contract API fails, try the regular token API as fallback
+        const fallbackResponse = await fetch(
+          `https://pro-api.coingecko.com/api/v3/coins/${lowerTokenId}?localization=false&tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=true`,
+          { headers }
+        )
+
+        if (!fallbackResponse.ok) {
+          throw new Error(`CoinGecko API error: ${contractResponse.status}`)
+        }
+
+        tokenData = await fallbackResponse.json()
+        isContractAddress = false
+      } else {
+        tokenData = await contractResponse.json()
+      }
+    } else {
+      // Use regular token ID API
+      const tokenResponse = await fetch(
+        `https://pro-api.coingecko.com/api/v3/coins/${lowerTokenId}?localization=false&tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=true&asset_platform_id=ethereum&asset_platform_id=solana&asset_platform_id=binance-smart-chain`,
+        { headers }
+      )
+
+      if (!tokenResponse.ok) {
+        throw new Error(`CoinGecko API error: ${tokenResponse.status}`)
+      }
+
+      tokenData = await tokenResponse.json()
     }
 
-    const tokenData = await tokenResponse.json()
-
     // Fetch market chart data for the price chart with dynamic days parameter
+    // For contract addresses, use the token ID from the response, otherwise use the original tokenId
+    const chartTokenId = isContractAddress ? tokenData.id : lowerTokenId
     const chartResponse = await fetch(
-      `https://pro-api.coingecko.com/api/v3/coins/${lowerTokenId}/market_chart?vs_currency=usd&days=${days}`,
+      `https://pro-api.coingecko.com/api/v3/coins/${chartTokenId}/market_chart?vs_currency=usd&days=${days}`,
       { headers }
     )
 
@@ -47,7 +87,7 @@ export async function GET(
 
     // Also fetch the markets data to get price change percentages
     const marketsResponse = await fetch(
-      `https://pro-api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${lowerTokenId}&order=market_cap_desc&per_page=1&page=1&sparkline=false&price_change_percentage=1h,24h,7d,30d,1y&locale=en`,
+      `https://pro-api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${chartTokenId}&order=market_cap_desc&per_page=1&page=1&sparkline=false&price_change_percentage=1h,24h,7d,30d,1y&locale=en`,
       { headers }
     )
 

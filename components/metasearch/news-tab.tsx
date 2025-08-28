@@ -82,9 +82,9 @@ export function NewsTab({
       </CardHeader>
       <CardContent className="space-y-4">
         {currentNews.map((article) => {
-          const name = article.source || "Source";
-          const handle = "";
-          const text = article.title || "";
+          const name = article.creator_display_name || "Source";
+          const handle = article.creator_name ? `@${article.creator_name}` : "";
+          const text = article.post_title || "";
           const id = String(article.id);
 
           return (
@@ -94,7 +94,7 @@ export function NewsTab({
             >
               <div className="flex items-start gap-3">
                 <Avatar className="h-10 w-10 transition-all duration-500 group-hover/article:scale-110 group-hover/article:shadow-[0_0_4px_rgba(255,107,53,0.3)]">
-                  <AvatarImage src={article.image || ""} />
+                  <AvatarImage src={article.creator_avatar || article.post_image || ""} />
                   <AvatarFallback className="bg-orange-600 text-white transition-all duration-500 group-hover/article:bg-orange-500">
                     {name.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
@@ -114,16 +114,16 @@ export function NewsTab({
                         variant="secondary"
                         className="transition-all duration-500 group-hover/article:scale-105 group-hover/article:shadow-[0_0_4px_rgba(255,107,53,0.2)]"
                       >
-                        News
+                        {article.post_type}
                       </Badge>
                       <div className="transition-all duration-500 group-hover/article:scale-105 group-hover/article:shadow-[0_0_4px_rgba(255,107,53,0.2)]">
-                        <Badge variant={getSentimentVariant(article.sentiment === "positive" ? 0.2 : article.sentiment === "negative" ? -0.2 : 0)}>
-                          {article.sentiment}
+                        <Badge variant={getSentimentVariant(article.post_sentiment)}>
+                          {article.post_sentiment > 0 ? "positive" : article.post_sentiment < 0 ? "negative" : "neutral"}
                         </Badge>
                       </div>
                     </div>
                     <span className="text-xs text-muted-foreground transition-all duration-500 group-hover/article:text-gray-300">
-                      {humanTime(article.timestamp)}
+                      {humanTime(article.post_created)}
                     </span>
                   </div>
                   <p className="text-sm whitespace-pre-wrap text-gray-300 transition-all duration-500 group-hover/article:text-gray-200">
@@ -131,11 +131,14 @@ export function NewsTab({
                   </p>
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1 transition-all duration-500 group-hover/article:text-gray-300">
-                      Relevance: {Math.round(article.relevance * 100)}%
+                      👥 {article.creator_followers?.toLocaleString()} followers
                     </span>
-                    {article.url && (
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/article:text-gray-300">
+                      💬 {article.interactions_24h} interactions (24h)
+                    </span>
+                    {article.post_link && (
                       <a
-                        href={article.url}
+                        href={article.post_link}
                         target="_blank"
                         rel="noreferrer"
                       >

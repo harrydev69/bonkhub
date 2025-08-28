@@ -5,69 +5,41 @@ import { OverviewTab } from "./overview-tab";
 import { SocialTab } from "./social-tab";
 import { NewsTab } from "./news-tab";
 import { AnalyticsTab } from "./analytics-tab";
-import type { TokenStats, Creator, AIInsight, SocialPost, NewsArticle } from "./types";
+import { useMetaSearchStore } from "./store";
 
-interface ResultsTabsProps {
-  activeTab: string;
-  onTabChange: (value: string) => void;
-  // Overview tab props
-  tokenStats: TokenStats | null;
-  creators: Creator[];
-  aiInsight: AIInsight | null;
-  aiSummaryData: any;
-  aiSummaryLoading: boolean;
-  aiSummaryError: any;
-  priceChartData: any;
-  priceChartLoading: boolean;
-  priceChartError: any;
-  // Social tab props
-  socialPostsLoading: boolean;
-  socialPostsQueryError: any;
-  filteredSocialPosts: SocialPost[];
-  currentSocialPage: number;
-  socialTotalPages: number;
-  onSocialPageChange: (page: number) => void;
-  // News tab props
-  newsLoading: boolean;
-  newsQueryError: any;
-  filteredNews: NewsArticle[];
-  currentNewsPage: number;
-  newsTotalPages: number;
-  onNewsPageChange: (page: number) => void;
-}
+export function ResultsTabs() {
+  const {
+    activeTab,
+    setActiveTab,
+    // Overview props
+    tokenStats,
+    creators,
+    aiSummaryData,
+    aiSummaryLoading,
+    aiSummaryError,
+    priceChartData,
+    priceChartLoading,
+    priceChartError,
+    // Social props
+    socialPostsLoading,
+    socialPostsQueryError,
+    filteredSocialPosts,
+    currentSocialPage,
+    totalSocialPages,
+    setCurrentSocialPage,
+    // News props
+    newsLoading,
+    newsQueryError,
+    filteredNews,
+    currentNewsPage,
+    totalNewsPages,
+    setCurrentNewsPage,
+  } = useMetaSearchStore();
 
-export function ResultsTabs({
-  activeTab,
-  onTabChange,
-  // Overview props
-  tokenStats,
-  creators,
-  aiInsight,
-  aiSummaryData,
-  aiSummaryLoading,
-  aiSummaryError,
-  priceChartData,
-  priceChartLoading,
-  priceChartError,
-  // Social props
-  socialPostsLoading,
-  socialPostsQueryError,
-  filteredSocialPosts,
-  currentSocialPage,
-  socialTotalPages,
-  onSocialPageChange,
-  // News props
-  newsLoading,
-  newsQueryError,
-  filteredNews,
-  currentNewsPage,
-  newsTotalPages,
-  onNewsPageChange,
-}: ResultsTabsProps) {
   return (
     <Tabs
       value={activeTab}
-      onValueChange={onTabChange}
+      onValueChange={setActiveTab}
       className="space-y-6"
     >
       <div className="flex justify-center">
@@ -103,7 +75,7 @@ export function ResultsTabs({
         <OverviewTab
           tokenStats={tokenStats}
           creators={creators}
-          aiInsight={aiInsight}
+          aiInsight={null} // TODO: Add AI insight data
           aiSummaryData={aiSummaryData}
           aiSummaryLoading={aiSummaryLoading}
           aiSummaryError={aiSummaryError}
@@ -119,8 +91,8 @@ export function ResultsTabs({
           socialPostsQueryError={socialPostsQueryError}
           filteredSocialPosts={filteredSocialPosts}
           currentPage={currentSocialPage}
-          totalPages={socialTotalPages}
-          onPageChange={onSocialPageChange}
+          totalPages={totalSocialPages}
+          onPageChange={setCurrentSocialPage}
         />
       </TabsContent>
 
@@ -130,8 +102,8 @@ export function ResultsTabs({
           newsQueryError={newsQueryError}
           filteredNews={filteredNews}
           currentPage={currentNewsPage}
-          totalPages={newsTotalPages}
-          onPageChange={onNewsPageChange}
+          totalPages={totalNewsPages}
+          onPageChange={setCurrentNewsPage}
         />
       </TabsContent>
 
