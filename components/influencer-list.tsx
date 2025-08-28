@@ -80,14 +80,14 @@ function dedupeByKey<T extends Record<string, any>>(
   return out;
 }
 
-export default function InfluencerList({ limit = 20 }: { limit?: number }) {
+export default function InfluencerList({ tokenId = "bonk", limit = 20 }: { tokenId?: string; limit?: number }) {
   const [q, setQ] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("impact");
 
   const { data: influencers, isLoading, error } = useQuery({
-    queryKey: ["influencers", "bonk", limit],
+    queryKey: ["influencers", tokenId, limit],
     queryFn: async () => {
-      const res = await fetch(`/api/influencers/bonk?limit=${limit}`, {
+      const res = await fetch(`/api/influencers/${tokenId}?limit=${limit}`, {
         cache: "force-cache",
       })
       if (!res.ok) {
@@ -102,7 +102,7 @@ export default function InfluencerList({ limit = 20 }: { limit?: number }) {
   })
 
   const rows = useMemo(() => {
-    const mapped = (influencers || []).map((i, idx) => {
+    const mapped = (influencers || []).map((i: any, idx: number) => {
       const handle = i.creator_name || `user_${idx}`;
       const normHandle = handle.startsWith("@") ? handle : `@${handle}`;
       const name = i.creator_name || handle.replace(/^@/, "");
@@ -125,7 +125,7 @@ export default function InfluencerList({ limit = 20 }: { limit?: number }) {
       };
     });
 
-    const filtered = mapped.filter((r) => {
+    const filtered = mapped.filter((r: any) => {
       if (!q) return true;
       const needle = q.toLowerCase();
       return (
@@ -143,7 +143,7 @@ export default function InfluencerList({ limit = 20 }: { limit?: number }) {
         <Users className="h-5 w-5 text-purple-500" />
         <CardTitle>Creator Leaderboard</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Top BONK voices ranked by impact and reach
+          Top voices ranked by impact and reach
         </p>
       </div>
       <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -196,7 +196,7 @@ export default function InfluencerList({ limit = 20 }: { limit?: number }) {
 
         {!isLoading &&
           !error &&
-          rows.map((r, idx) => (
+          rows.map((r: any, idx: number) => (
             <div
               key={`${r.id}-${idx}`}
               className="flex items-center justify-between p-3 border rounded-lg"

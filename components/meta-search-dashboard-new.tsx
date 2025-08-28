@@ -43,7 +43,7 @@ export function MetaSearchDashboard({
   useInfluencersQuery();
   useSocialPostsQuery();
   useNewsQuery();
-  usePriceChartQuery();
+  usePriceChartQuery("7");
   useAiSummaryQuery();
 
   useEffect(() => {
@@ -122,36 +122,98 @@ export function MetaSearchDashboard({
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="text-center space-y-2 group/header transition-all duration-500 hover:scale-[1.01] transform-gpu">
-        <h1 className="text-4xl font-bold text-white transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
-          Meta Search
-        </h1>
-        <p className="text-gray-400 transition-all duration-500 group-hover/header:text-gray-300">
-          Search across multiple platforms for comprehensive crypto intelligence
-        </p>
+    <div className="min-h-screen bg-gray-950 text-white flex w-full">
+      <div className="w-full mx-auto px-6 py-8">
+        {/* Header */}
+        <div className="text-center space-y-2 group/header transition-all duration-500 transform-gpu mb-8">
+          <h1 className="text-4xl font-bold text-white transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
+            Meta Search
+          </h1>
+          <p className="text-gray-400 transition-all duration-500 group-hover/header:text-gray-300">
+            Search across multiple platforms for comprehensive crypto intelligence
+          </p>
+        </div>
+
+        {/* Conditional Layout Rendering */}
+        {(() => {
+          // Empty state - centered layout
+          if (!hasSearched && !loading) {
+            return (
+              <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
+                {/* Search Bar - Centered */}
+                <div className="w-full max-w-md group/search transition-all duration-300">
+                  <SearchBar
+                    inputValue={inputValue}
+                    onInputChange={setInputValue}
+                    onSearch={(query) => {
+                      setDebouncedSearchQuery(query);
+                      void handleSearch(query);
+                    }}
+                    loading={loading}
+                  />
+                </div>
+
+                {/* Empty State - Centered */}
+                <div className="group/empty transition-all duration-300">
+                  <EmptyState />
+                </div>
+              </div>
+            );
+          }
+
+          // Loading state - centered layout
+          if (loading) {
+            return (
+              <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
+                {/* Search Bar - Centered */}
+                <div className="w-full max-w-md group/search transition-all duration-300">
+                  <SearchBar
+                    inputValue={inputValue}
+                    onInputChange={setInputValue}
+                    onSearch={(query) => {
+                      setDebouncedSearchQuery(query);
+                      void handleSearch(query);
+                    }}
+                    loading={loading}
+                  />
+                </div>
+
+                {/* Loading State - Centered */}
+                <div className="group/loading transition-all duration-300">
+                  <LoadingState />
+                </div>
+              </div>
+            );
+          }
+
+          // Results state - full width layout (no left panel)
+          return (
+            <div className="space-y-6">
+              {/* Search Bar at Top */}
+              <div className="flex justify-center">
+                <div className="w-full max-w-md group/search transition-all duration-300">
+                  <SearchBar
+                    inputValue={inputValue}
+                    onInputChange={setInputValue}
+                    onSearch={(query) => {
+                      setDebouncedSearchQuery(query);
+                      void handleSearch(query);
+                    }}
+                    loading={loading}
+                  />
+                </div>
+              </div>
+
+              {/* Full Width Results */}
+              {hasSearched && !loading && (
+                <div className="group/results transition-all duration-300">
+                  <ResultsTabs />
+                </div>
+              )}
+            </div>
+          );
+        })()}
       </div>
-
-      {/* Search Bar */}
-      <SearchBar
-        inputValue={inputValue}
-        onInputChange={setInputValue}
-        onSearch={(query) => {
-          setDebouncedSearchQuery(query);
-          void handleSearch(query);
-        }}
-        loading={loading}
-      />
-
-      {/* Show empty state if no search has been performed */}
-      {!hasSearched && !loading && <EmptyState />}
-
-      {/* Show loading state */}
-      {loading && <LoadingState />}
-
-      {/* Show results only after search */}
-      {hasSearched && !loading && <ResultsTabs />}
     </div>
   );
 }

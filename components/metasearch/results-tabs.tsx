@@ -4,7 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OverviewTab } from "./overview-tab";
 import { SocialTab } from "./social-tab";
 import { NewsTab } from "./news-tab";
-import { AnalyticsTab } from "./analytics-tab";
 import { useMetaSearchStore } from "./store";
 
 export function ResultsTabs() {
@@ -62,12 +61,6 @@ export function ResultsTabs() {
           >
             News
           </TabsTrigger>
-          <TabsTrigger
-            value="analytics"
-            className="data-[state=active]:bg-orange-500 data-[state=active]:text-white transition-all duration-500 hover:scale-105"
-          >
-            Analytics
-          </TabsTrigger>
         </TabsList>
       </div>
 
@@ -105,10 +98,6 @@ export function ResultsTabs() {
           totalPages={totalNewsPages}
           onPageChange={setCurrentNewsPage}
         />
-      </TabsContent>
-
-      <TabsContent value="analytics" className="space-y-6">
-        <AnalyticsTab tokenStats={tokenStats} />
       </TabsContent>
     </Tabs>
   );

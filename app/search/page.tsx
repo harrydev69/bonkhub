@@ -13,7 +13,7 @@ export default function SearchPage() {
       <PornhubNavigation />
       <PornhubHeader onSearch={setSearchQuery} />
 
-      <main className="max-w-7xl mx-auto px-4 py-6">
+      <main className="w-full mx-auto px-4 py-6">
         <MetaSearchDashboard initialQuery={searchQuery} />
       </main>
     </div>

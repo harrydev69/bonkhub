@@ -17,8 +17,9 @@ interface MetaSearchState {
   influencersData: any[];
   rawSocialPostsData: SocialPost[];
   rawNewsData: NewsArticle[];
-  priceChartData: any[];
+  priceChartData: { prices: [number, number][]; market_caps: [number, number][]; total_volumes: [number, number][] };
   aiSummaryData: any;
+  socialDominanceData: any[];
 
   // Error states
   tokenStatsError: string | null;
@@ -27,12 +28,14 @@ interface MetaSearchState {
   newsQueryError: any;
   priceChartError: any;
   aiSummaryError: any;
+  socialDominanceError: any;
 
   // Loading states
   socialPostsLoading: boolean;
   newsLoading: boolean;
   priceChartLoading: boolean;
   aiSummaryLoading: boolean;
+  socialDominanceLoading: boolean;
 
   // Pagination states
   currentSocialPage: number;
@@ -60,8 +63,9 @@ interface MetaSearchState {
   setInfluencersData: (data: any[]) => void;
   setRawSocialPostsData: (data: SocialPost[]) => void;
   setRawNewsData: (data: NewsArticle[]) => void;
-  setPriceChartData: (data: any[]) => void;
+  setPriceChartData: (data: { prices: [number, number][]; market_caps: [number, number][]; total_volumes: [number, number][] }) => void;
   setAiSummaryData: (data: any) => void;
+  setSocialDominanceData: (data: any[]) => void;
 
   setTokenStatsError: (error: string | null) => void;
   setCreatorsError: (error: string | null) => void;
@@ -69,11 +73,13 @@ interface MetaSearchState {
   setNewsQueryError: (error: any) => void;
   setPriceChartError: (error: any) => void;
   setAiSummaryError: (error: any) => void;
+  setSocialDominanceError: (error: any) => void;
 
   setSocialPostsLoading: (loading: boolean) => void;
   setNewsLoading: (loading: boolean) => void;
   setPriceChartLoading: (loading: boolean) => void;
   setAiSummaryLoading: (loading: boolean) => void;
+  setSocialDominanceLoading: (loading: boolean) => void;
 
   setCurrentSocialPage: (page: number) => void;
   setCurrentNewsPage: (page: number) => void;
@@ -94,6 +100,7 @@ interface MetaSearchState {
     news: (query: string, limit: number) => string[];
     priceChart: (query: string, days: number) => string[];
     aiSummary: (query: string) => string[];
+    socialDominance: (query: string) => string[];
   };
 }
 
@@ -110,8 +117,9 @@ const initialState = {
   influencersData: [],
   rawSocialPostsData: [],
   rawNewsData: [],
-  priceChartData: [],
+  priceChartData: { prices: [] as any[], market_caps: [] as any[], total_volumes: [] as any[] },
   aiSummaryData: null,
+  socialDominanceData: [],
 
   tokenStatsError: null,
   creatorsError: null,
@@ -119,11 +127,13 @@ const initialState = {
   newsQueryError: null,
   priceChartError: null,
   aiSummaryError: null,
+  socialDominanceError: null,
 
   socialPostsLoading: false,
   newsLoading: false,
   priceChartLoading: false,
   aiSummaryLoading: false,
+  socialDominanceLoading: false,
 
   currentSocialPage: 1,
   currentNewsPage: 1,
@@ -164,8 +174,9 @@ export const useMetaSearchStore = create<MetaSearchState>()(
           set({ rawNewsData: data });
           get().updateFilteredNews();
         },
-        setPriceChartData: (data: any[]) => set({ priceChartData: data }),
+        setPriceChartData: (data: { prices: [number, number][]; market_caps: [number, number][]; total_volumes: [number, number][] }) => set({ priceChartData: data }),
         setAiSummaryData: (data: any) => set({ aiSummaryData: data }),
+        setSocialDominanceData: (data: any[]) => set({ socialDominanceData: data }),
 
         setTokenStatsError: (error: string | null) => set({ tokenStatsError: error }),
         setCreatorsError: (error: string | null) => set({ creatorsError: error }),
@@ -173,11 +184,13 @@ export const useMetaSearchStore = create<MetaSearchState>()(
         setNewsQueryError: (error: any) => set({ newsQueryError: error }),
         setPriceChartError: (error: any) => set({ priceChartError: error }),
         setAiSummaryError: (error: any) => set({ aiSummaryError: error }),
+        setSocialDominanceError: (error: any) => set({ socialDominanceError: error }),
 
         setSocialPostsLoading: (loading: boolean) => set({ socialPostsLoading: loading }),
         setNewsLoading: (loading: boolean) => set({ newsLoading: loading }),
         setPriceChartLoading: (loading: boolean) => set({ priceChartLoading: loading }),
         setAiSummaryLoading: (loading: boolean) => set({ aiSummaryLoading: loading }),
+        setSocialDominanceLoading: (loading: boolean) => set({ socialDominanceLoading: loading }),
 
         setCurrentSocialPage: (page: number) => set({ currentSocialPage: page }),
         setCurrentNewsPage: (page: number) => set({ currentNewsPage: page }),
@@ -229,6 +242,7 @@ export const useMetaSearchStore = create<MetaSearchState>()(
           newsQueryError: null,
           priceChartError: null,
           aiSummaryError: null,
+          socialDominanceError: null,
         }),
 
         queryKeys: {
@@ -237,6 +251,7 @@ export const useMetaSearchStore = create<MetaSearchState>()(
           news: (query: string, limit: number) => ["news", query || "bonk", limit],
           priceChart: (query: string, days: number) => ["priceChart", query || "bonk", days],
           aiSummary: (query: string) => ["aiSummary", query || "bonk"],
+          socialDominance: (query: string) => ["socialDominance", query || "bonk"],
         },
       }),
       {

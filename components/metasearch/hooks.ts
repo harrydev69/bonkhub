@@ -127,7 +127,7 @@ export function useNewsQuery() {
   return query;
 }
 
-export function usePriceChartQuery() {
+export function usePriceChartQuery(timeRange = "7") {
   const {
     debouncedSearchQuery,
     hasSearched,
@@ -137,10 +137,10 @@ export function usePriceChartQuery() {
   } = useMetaSearchStore();
 
   const query = useQuery({
-    queryKey: queryKeys.priceChart(debouncedSearchQuery, 7),
+    queryKey: queryKeys.priceChart(debouncedSearchQuery, parseInt(timeRange)),
     queryFn: async () => {
       const tokenId = debouncedSearchQuery || "bonk";
-      const res = await fetch(`/api/coingecko/token/${tokenId}?days=7`, {
+      const res = await fetch(`/api/coingecko/token/${tokenId}?days=${timeRange}`, {
         cache: "no-store",
       });
       if (!res.ok) {
@@ -148,7 +148,7 @@ export function usePriceChartQuery() {
         throw new Error(`price chart ${res.status}: ${body || res.statusText}`);
       }
       const json = await res.json().catch(() => ({}));
-      return json.chartData?.prices || [];
+      return json.chartData || { prices: [], market_caps: [], total_volumes: [] };
     },
     refetchInterval: 5 * 60 * 1000, // 5 minutes
     staleTime: 4 * 60 * 1000, // Consider stale after 4 minutes
@@ -209,6 +209,53 @@ export function useAiSummaryQuery() {
       setAiSummaryError(query.error);
     }
   }, [query.error, setAiSummaryError]);
+
+  return query;
+}
+
+export function useSocialDominanceQuery() {
+  const {
+    debouncedSearchQuery,
+    hasSearched,
+    queryKeys,
+    setSocialDominanceData,
+    setSocialDominanceError,
+  } = useMetaSearchStore();
+
+  const query = useQuery({
+    queryKey: queryKeys.socialDominance(debouncedSearchQuery),
+    queryFn: async () => {
+      const tokenId = debouncedSearchQuery || "bonk";
+      
+      // Fetch social dominance data from our API route
+      const res = await fetch(`/api/social-dominance/${tokenId}`, {
+        cache: "no-store",
+      });
+      
+      if (!res.ok) {
+        const body = await res.text().catch(() => "");
+        throw new Error(`social dominance ${res.status}: ${body || res.statusText}`);
+      }
+      
+      const json = await res.json().catch(() => ({}));
+      return json.data || [];
+    },
+    refetchInterval: 30 * 60 * 1000, // 30 minutes
+    staleTime: 25 * 60 * 1000, // Consider stale after 25 minutes
+    enabled: !!debouncedSearchQuery || hasSearched,
+  });
+
+  useEffect(() => {
+    if (query.data) {
+      setSocialDominanceData(query.data);
+    }
+  }, [query.data, setSocialDominanceData]);
+
+  useEffect(() => {
+    if (query.error) {
+      setSocialDominanceError(query.error);
+    }
+  }, [query.error, setSocialDominanceError]);
 
   return query;
 }
