@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { PornhubNavigation } from "@/components/pornhub-navigation"
 import { PornhubHeader } from "@/components/pornhub-header"
-import { MetaSearchDashboard } from "@/components/meta-search-dashboard"
+import { MetaSearchDashboard } from "@/components/meta-search-dashboard-new"
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -13,7 +13,7 @@ export default function SearchPage() {
       <PornhubNavigation />
       <PornhubHeader onSearch={setSearchQuery} />
 
-      <main className="max-w-7xl mx-auto px-4 py-6">
+      <main className="w-full mx-auto px-4 py-6">
         <MetaSearchDashboard initialQuery={searchQuery} />
       </main>
     </div>
