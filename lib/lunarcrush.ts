@@ -214,6 +214,30 @@ export async function getCreatorTimeSeries(network: string, creatorId: string, i
 }
 
 /**
+ * Fetch creator posts from LunarCrush API
+ * @param network Social network (e.g., "twitter", "youtube")
+ * @param creatorId Creator's unique identifier (e.g., "theunipcs")
+ * @param limit Maximum number of posts to return. Defaults to 200.
+ * @param start Unix timestamp to start from (optional, defaults to 30 days ago)
+ * @returns Promise with creator posts data
+ */
+export async function getCreatorPosts(network: string, creatorId: string, limit: number = 200, start?: number) {
+  const n = String(network).toLowerCase();
+  const id = String(creatorId).toLowerCase();
+  
+  // If no start time provided, default to 30 days ago to get more posts
+  const startTime = start || Math.floor(Date.now() / 1000) - (30 * 24 * 60 * 60);
+  
+  const params = new URLSearchParams();
+  params.set('start', startTime.toString());
+  // Note: LunarCrush creator posts endpoint doesn't accept limit parameter
+  
+  const raw = await fetchJson(`/public/creator/${n}/${id}/posts/v1?${params.toString()}`);
+  const items = unwrapArray(raw);
+  return items.slice(0, limit);
+}
+
+/**
  * Get topic news from LunarCrush API
  * @param topic - The topic to fetch news for (e.g., 'bonk', 'solana')
  * @returns Promise with news data

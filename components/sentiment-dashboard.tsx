@@ -583,14 +583,23 @@ export default function SentimentDashboard({
                           </div>
                         </div>
                         <div className="flex items-center space-x-3">
-                          <Badge
-                            variant={getSentimentBadge(influencer.sentiment)}
-                            className={`${influencer.sentiment === "bullish" ? "bg-[#ff6b35] text-black" : ""} transition-all duration-500 group-hover/influencer:scale-105 group-hover/influencer:shadow-[0_0_4px_rgba(255,107,53,0.2)]`}
-                          >
-                            {influencer.sentiment}
-                          </Badge>
-                          <div className="text-[#ff6b35] font-semibold transition-all duration-500 group-hover/influencer:text-orange-400">
-                            {influencer.impact.toLocaleString()}
+                          {/* Sentiment */}
+                          <div className="flex flex-col items-center">
+                            <div className="text-gray-400 text-xs mb-1">Sentiment</div>
+                            <Badge
+                              variant={getSentimentBadge(influencer.sentiment)}
+                              className={`${influencer.sentiment === "bullish" ? "bg-[#ff6b35] text-black" : ""} transition-all duration-500 group-hover/influencer:scale-105 group-hover/influencer:shadow-[0_0_4px_rgba(255,107,53,0.2)]`}
+                            >
+                              {influencer.sentiment}
+                            </Badge>
+                          </div>
+                          
+                          {/* Impact Score */}
+                          <div className="text-center">
+                            <div className="text-gray-400 text-xs mb-1">Impact Score</div>
+                            <div className="text-[#ff6b35] font-semibold transition-all duration-500 group-hover/influencer:text-orange-400">
+                              {influencer.impact.toLocaleString()}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -599,7 +608,7 @@ export default function SentimentDashboard({
                 </CardContent>
               </Card>
             </div>
-            <SocialFeed />
+            <SocialFeed limit={1000} />
           </div>
         </TabsContent>
 
@@ -723,35 +732,40 @@ export default function SentimentDashboard({
                         </div>
                       </div>
                       
-                      {/* Metrics */}
-                      <div className="flex items-center space-x-6">
-                        {/* Sentiment */}
-                                             <Badge
-                         variant={getSentimentBadge(influencer.sentiment)}
-                         className={`${influencer.sentiment === "bullish" ? "bg-[#ff6b35] text-black" : ""} transition-all duration-200 group-hover/row:scale-101 group-hover/row:shadow-[0_0_1px_rgba(255,107,53,0.08)]`}
-                       >
-                        {influencer.sentiment}
-                      </Badge>
-                        
-                        {/* Impact */}
-                        <div className="text-right">
-                          <div className="text-[#ff6b35] font-bold text-lg transition-all duration-500 group-hover/row:text-orange-400">
-                            {influencer.impact.toLocaleString()}
+                                              {/* Metrics */}
+                        <div className="flex items-center space-x-4">
+                          {/* Sentiment Badge */}
+                          <div className="flex flex-col items-center">
+                            <div className="text-gray-400 text-xs mb-1 transition-all duration-500 group-hover/row:text-gray-300">
+                              Sentiment
+                            </div>
+                            <Badge
+                              variant={getSentimentBadge(influencer.sentiment)}
+                              className={`${influencer.sentiment === "bullish" ? "bg-[#ff6b35] text-black" : ""} transition-all duration-200 group-hover/row:scale-105 group-hover/row:shadow-[0_0_2px_rgba(255,107,53,0.1)]`}
+                            >
+                              {influencer.sentiment}
+                            </Badge>
                           </div>
-                          <div className="text-gray-400 text-xs transition-all duration-500 group-hover/row:text-gray-300">
-                            Impact
+                          
+                          {/* Impact Score */}
+                          <div className="text-center">
+                            <div className="text-gray-400 text-xs mb-1 transition-all duration-500 group-hover/row:text-gray-300">
+                              Impact Score
+                            </div>
+                            <div className="text-[#ff6b35] font-bold text-lg transition-all duration-500 group-hover/row:text-orange-400">
+                              {influencer.impact.toLocaleString()}
+                            </div>
                           </div>
-                        </div>
-                        
-                        {/* Followers */}
-                        <div className="text-right">
-                          <div className="text-white font-semibold transition-all duration-500 group-hover/row:text-gray-200">
-                            {Number(influencer.followers || 0).toLocaleString()}
+                          
+                          {/* Followers Count */}
+                          <div className="text-center">
+                            <div className="text-gray-400 text-xs mb-1 transition-all duration-500 group-hover/row:text-gray-300">
+                              Followers
+                            </div>
+                            <div className="text-white font-semibold transition-all duration-500 group-hover/row:text-gray-200">
+                              {Number(influencer.followers || 0).toLocaleString()}
+                            </div>
                           </div>
-                          <div className="text-gray-400 text-xs transition-all duration-500 group-hover/row:text-gray-300">
-                            Followers
-                          </div>
-                        </div>
                         
                         {/* External Link */}
                         {influencer.url ? (
