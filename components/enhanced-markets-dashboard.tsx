@@ -959,7 +959,7 @@ export default function EnhancedMarketsDashboard() {
                         })
                         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                         .map((venue, index) => (
-                          <TableRow key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${venue.lastUpdated}-${index}`} data-venue-id={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${venue.lastUpdated}-${index}`} className="border-gray-700 hover:bg-gray-800/50">
+                          <TableRow key={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${venue.lastUpdated}-${index}-${venue.id || ''}-${venue.tradeUrl || ''}`} data-venue-id={`${venue.exchange}-${venue.pair}-${venue.marketType}-${venue.rank}-${venue.volume24h}-${venue.lastUpdated}-${index}`} className="border-gray-700 hover:bg-gray-800/50">
                             <TableCell className="text-white font-medium">{venue.rank}</TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">

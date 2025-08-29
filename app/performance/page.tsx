@@ -12,6 +12,9 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tool
 import { AuthGuard } from "@/components/auth-guard"
 import { PornhubNavigation } from "@/components/pornhub-navigation"
 import { PornhubHeader } from "@/components/pornhub-header"
+import { ChartErrorWrapper } from "@/components/chart-error-boundary"
+import { useCache } from "@/hooks/useCache"
+import { UnifiedLoading, CardSkeletonGrid, ChartLoading } from "@/components/loading"
 
 
 // Types for the LunarCrush data (based on actual API response)
@@ -48,9 +51,201 @@ type LunarCrushResponse = {
   data: LunarCrushDataPoint[]
 }
 
+// Performance Comparison Component
+const PerformanceComparisonRows: React.FC<{
+  currentData: LunarCrushResponse | null
+  timeRanges: string[]
+  loading: boolean
+}> = ({ currentData, timeRanges, loading }) => {
+  const [comparisonData, setComparisonData] = useState<Record<string, any>>({})
+  const [fetchingComparison, setFetchingComparison] = useState(false)
+
+  useEffect(() => {
+    const fetchComparisonData = async () => {
+      if (loading || !currentData?.data?.length) return
+      
+      setFetchingComparison(true)
+      try {
+        const promises = timeRanges.map(async (range) => {
+          const response = await fetch(`/api/test/lunarcrush-coins-v2?timeRange=${range}&coinId=bonk`)
+          const data = await response.json()
+          return { range, data: data.data?.data }
+        })
+        
+        const results = await Promise.all(promises)
+        const comparisonMap: Record<string, any> = {}
+        
+        results.forEach(({ range, data }) => {
+          if (data && data.length > 0) {
+            comparisonMap[range] = data
+          }
+        })
+        
+        setComparisonData(comparisonMap)
+      } catch (error) {
+        console.error('Failed to fetch comparison data:', error)
+      } finally {
+        setFetchingComparison(false)
+      }
+    }
+
+    fetchComparisonData()
+  }, [currentData, timeRanges, loading])
+
+  const calculateChange = (current: number, historical: number, isPercentage = false) => {
+    if (!historical || !current) return { value: 0, display: 'N/A' }
+    
+    if (isPercentage) {
+      const change = current - historical
+      return {
+        value: change,
+        display: `${change >= 0 ? '+' : ''}${change.toFixed(2)}`
+      }
+    } else {
+      const changePercent = ((current - historical) / historical) * 100
+      return {
+        value: changePercent,
+        display: `${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%`
+      }
+    }
+  }
+
+  const formatValue = (value: number | undefined, type: 'price' | 'number' | 'percentage' | 'rank') => {
+    if (value === undefined || value === null) return 'N/A'
+    
+    switch (type) {
+      case 'price':
+        return `$${value.toFixed(8)}`
+      case 'number':
+        return value.toLocaleString()
+      case 'percentage':
+        return `${value.toFixed(2)}%`
+      case 'rank':
+        return `#${Math.round(value)}`
+      default:
+        return value.toString()
+    }
+  }
+
+  const getChangeColor = (value: number) => {
+    if (value > 0) return 'text-green-400'
+    if (value < 0) return 'text-red-400'
+    return 'text-gray-400'
+  }
+
+
+
+  if (loading || fetchingComparison || !currentData?.data?.length) {
+    return (
+      <tr>
+        <td colSpan={6} className="text-center py-8">
+          <UnifiedLoading 
+            title="Loading Metrics"
+            description="Calculating performance comparisons..."
+            variant="table"
+            size="sm"
+          />
+        </td>
+      </tr>
+    )
+  }
+
+  const current = currentData.data[currentData.data.length - 1]
+  
+  const metrics = [
+    {
+      name: 'Alt Rank',
+      current: formatValue(current.alt_rank, 'rank'),
+      getValue: (data: LunarCrushDataPoint[]) => data[0]?.alt_rank,
+      currentValue: current.alt_rank,
+      type: 'rank' as const
+    },
+    {
+      name: 'Social Dominance',
+      current: formatValue(current.social_dominance, 'percentage'),
+      getValue: (data: LunarCrushDataPoint[]) => data[0]?.social_dominance,
+      currentValue: current.social_dominance,
+      type: 'number' as const
+    },
+    {
+      name: 'Sentiment',
+      current: `${current.sentiment || 0}/100`,
+      getValue: (data: LunarCrushDataPoint[]) => data[0]?.sentiment,
+      currentValue: current.sentiment,
+      type: 'percentage' as const,
+      isScore: true
+    },
+    {
+      name: 'Interactions',
+      current: formatValue(current.interactions, 'number'),
+      getValue: (data: LunarCrushDataPoint[]) => data[0]?.interactions,
+      currentValue: current.interactions,
+      type: 'number' as const
+    },
+    {
+      name: 'Galaxy Score',
+      current: `${current.galaxy_score || 0}/100`,
+      getValue: (data: LunarCrushDataPoint[]) => data[0]?.galaxy_score,
+      currentValue: current.galaxy_score,
+      type: 'percentage' as const,
+      isScore: true
+    }
+  ]
+
+  return (
+    <>
+      {metrics.map((metric, index) => (
+        <tr key={index} className="group/row border-b border-gray-800 hover:bg-gradient-to-r hover:from-orange-500/5 hover:to-transparent hover:border-orange-500/30 transition-all duration-500 transform-gpu">
+          <td className="py-4 px-6 font-semibold text-white text-base transition-all duration-500 group-hover/row:text-[#ff6b35]">
+            {metric.name}
+          </td>
+          <td className="py-4 px-4 text-center text-white font-bold text-base transition-all duration-500 group-hover/row:scale-105">
+            {metric.current}
+          </td>
+          {timeRanges.map((range) => {
+            const rangeData = comparisonData[range]
+            if (!rangeData || rangeData.length === 0) {
+              return (
+                <td key={range} className="py-4 px-4 text-center text-gray-500 font-medium">
+                  N/A
+                </td>
+              )
+            }
+
+            const historicalValue = metric.getValue(rangeData)
+            let change
+            
+            if (metric.type === 'rank') {
+              // For rank, lower is better, so we reverse the calculation
+              change = calculateChange(historicalValue || 0, metric.currentValue || 0, false)
+              change.value = -change.value // Reverse for rank
+            } else if (metric.isScore) {
+              // For scores (sentiment, galaxy), show absolute difference
+              change = calculateChange(metric.currentValue || 0, historicalValue || 0, true)
+            } else {
+              // For regular metrics, show percentage change
+              change = calculateChange(metric.currentValue || 0, historicalValue || 0, false)
+            }
+
+            return (
+              <td key={range} className="py-4 px-4 text-center transition-all duration-500 group-hover/row:scale-105">
+                <span className={`font-bold text-base ${getChangeColor(change.value)} transition-all duration-500 group-hover/row:drop-shadow-[0_0_4px_rgba(255,107,53,0.3)]`}>
+                  {change.display}
+                </span>
+              </td>
+            )
+          })}
+        </tr>
+      ))}
+    </>
+  )
+}
+
 export default function PerformancePage() {
   const [coinsData, setCoinsData] = useState<LunarCrushResponse | null>(null)
   const [topicData, setTopicData] = useState<LunarCrushResponse | null>(null)
+  const [currentData, setCurrentData] = useState<LunarCrushResponse | null>(null) // Always use 1h for current values
+  const [loading, setLoading] = useState(false)
 
   const [error, setError] = useState<string | null>(null)
   const [timeRange, setTimeRange] = useState("24h")
@@ -67,30 +262,65 @@ export default function PerformancePage() {
     altRank: false
   })
   const [chartType, setChartType] = useState<"stacked-area" | "line-chart">("stacked-area")
+  
+  // Cache management
+  const { invalidateByTimeRange, clearCache } = useCache()
 
   useEffect(() => {
     fetchAllData()
   }, [timeRange])
 
-  const fetchAllData = async () => {
+  const fetchAllData = async (forceRefresh = false) => {
+    setLoading(true)
+    setError(null)
+    
     try {
+      // If force refresh, invalidate cache for current time range
+      if (forceRefresh) {
+        await invalidateByTimeRange(timeRange)
+        console.log(`🔄 Cache invalidated for time range: ${timeRange}`)
+      }
+      
       // Fetch both data sources for comprehensive BONK analysis
-      const [coinsResponse, topicResponse] = await Promise.all([
+      // Always fetch current data from 24h endpoint (most reliable for current values)
+      const [coinsResponse, topicResponse, currentResponse] = await Promise.all([
         fetch(`/api/test/lunarcrush-coins-v2?timeRange=${timeRange}&coinId=bonk`),
-        fetch(`/api/test/lunarcrush-timeseries-v2?timeRange=${timeRange}&coinId=bonk`)
+        fetch(`/api/test/lunarcrush-timeseries-v2?timeRange=${timeRange}&coinId=bonk`),
+        fetch(`/api/test/lunarcrush-coins-v2?timeRange=24h&coinId=bonk`) // Always get current from 24h data
       ])
       
-      if (coinsResponse.ok && topicResponse.ok) {
+      if (coinsResponse.ok && topicResponse.ok && currentResponse.ok) {
         const coinsResult = await coinsResponse.json()
         const topicResult = await topicResponse.json()
+        const currentResult = await currentResponse.json()
+        
+        // Log cache status for debugging
+        if (coinsResult.cached) {
+          console.log(`💾 Coins data served from cache`)
+        }
+        if (topicResult.cached) {
+          console.log(`💾 Topic data served from cache`)
+        }
+        if (currentResult.cached) {
+          console.log(`💾 Current data served from cache`)
+        }
+        
+        console.log(`🔍 Received coins data (${timeRange}):`, coinsResult.data?.data?.length || 0, 'points')
+        console.log(`🔍 Latest coins data point:`, coinsResult.data?.data?.[coinsResult.data.data.length - 1])
+        console.log(`🔍 Received current data (24h):`, currentResult.data?.data?.length || 0, 'points')
+        console.log(`🔍 Latest current data point:`, currentResult.data?.data?.[currentResult.data.data.length - 1])
+        console.log(`🔍 Received topic data:`, topicResult.results?.hour?.data?.length || 0, 'points')
         
         setCoinsData(coinsResult.data)
         setTopicData(topicResult.results.hour)
+        setCurrentData(currentResult.data) // Always use 24h data for current values
       } else {
         throw new Error('Failed to fetch BONK data')
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch BONK performance data")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -113,7 +343,7 @@ export default function PerformancePage() {
   }
 
   const getChartData = (data: LunarCrushDataPoint[] | undefined) => {
-    if (!data) return []
+    if (!data || data.length === 0) return []
     
     return data.map((point, index) => {
       const date = new Date(point.time * 1000)
@@ -142,7 +372,7 @@ export default function PerformancePage() {
   }
 
   const getTopicChartData = (data: LunarCrushDataPoint[] | undefined) => {
-    if (!data) return []
+    if (!data || data.length === 0) return []
     
     return data.map((point, index) => {
       const date = new Date(point.time * 1000)
@@ -170,17 +400,55 @@ export default function PerformancePage() {
   }
 
   const getPerformanceChange = (data: LunarCrushDataPoint[] | undefined) => {
-    if (!data || data.length < 2) return { priceChange: 0, volumeChange: 0, sentimentChange: 0, interactionsChange: 0 }
+    if (!data || data.length < 2) {
+      console.log(`⚠️ Insufficient data for change calculation: ${data?.length || 0} points`)
+      return { 
+        priceChange: 0, 
+        volumeChange: 0, 
+        sentimentChange: 0, 
+        interactionsChange: 0,
+        marketCapChange: 0,
+        galaxyScoreChange: 0,
+        socialDominanceChange: 0,
+        altRankChange: 0
+      }
+    }
     
-    const latest = data[data.length - 1]
-    const previous = data[data.length - 2]
+    // Compare current (latest) values with the beginning of the time period
+    const latest = data[data.length - 1] // Most recent data point
+    const earliest = data[0] // First data point in the selected time range
     
-    const priceChange = latest.close && previous.close ? ((latest.close - previous.close) / previous.close) * 100 : 0
-    const volumeChange = latest.volume_24h && previous.volume_24h ? ((latest.volume_24h - previous.volume_24h) / previous.volume_24h) * 100 : 0
-    const sentimentChange = latest.sentiment && previous.sentiment ? latest.sentiment - previous.sentiment : 0
-    const interactionsChange = latest.interactions && previous.interactions ? ((latest.interactions - previous.interactions) / previous.interactions) * 100 : 0
+    // Calculate percentage changes from beginning of period to now
+    const priceChange = latest.close && earliest.close ? ((latest.close - earliest.close) / earliest.close) * 100 : 0
+    const volumeChange = latest.volume_24h && earliest.volume_24h ? ((latest.volume_24h - earliest.volume_24h) / earliest.volume_24h) * 100 : 0
+    const sentimentChange = latest.sentiment && earliest.sentiment ? latest.sentiment - earliest.sentiment : 0
+    const interactionsChange = latest.interactions && earliest.interactions ? ((latest.interactions - earliest.interactions) / earliest.interactions) * 100 : 0
+    const marketCapChange = latest.market_cap && earliest.market_cap ? ((latest.market_cap - earliest.market_cap) / earliest.market_cap) * 100 : 0
+    const galaxyScoreChange = latest.galaxy_score && earliest.galaxy_score ? latest.galaxy_score - earliest.galaxy_score : 0
+    const socialDominanceChange = latest.social_dominance && earliest.social_dominance ? ((latest.social_dominance - earliest.social_dominance) / earliest.social_dominance) * 100 : 0
+    const altRankChange = latest.alt_rank && earliest.alt_rank ? earliest.alt_rank - latest.alt_rank : 0 // Lower rank is better, so we reverse the calculation
     
-    return { priceChange, volumeChange, sentimentChange, interactionsChange }
+    console.log(`Performance change calculation for ${timeRange}:`)
+    console.log(`Period: ${new Date(earliest.time * 1000).toLocaleString()} → ${new Date(latest.time * 1000).toLocaleString()}`)
+    console.log(`Data points: ${data.length}`)
+    console.log(`Price: ${earliest.close} → ${latest.close} (${priceChange.toFixed(2)}%)`)
+    console.log(`Volume: ${earliest.volume_24h} → ${latest.volume_24h} (${volumeChange.toFixed(2)}%)`)
+    console.log(`Social Dominance: ${earliest.social_dominance} → ${latest.social_dominance} (${socialDominanceChange.toFixed(2)}%)`)
+    console.log(`Galaxy Score: ${earliest.galaxy_score} → ${latest.galaxy_score} (${galaxyScoreChange.toFixed(1)})`)
+    console.log(`Sentiment: ${earliest.sentiment} → ${latest.sentiment} (${sentimentChange.toFixed(1)})`)
+    console.log(`First data point:`, earliest)
+    console.log(`Last data point:`, latest)
+    
+    return { 
+      priceChange, 
+      volumeChange, 
+      sentimentChange, 
+      interactionsChange,
+      marketCapChange,
+      galaxyScoreChange,
+      socialDominanceChange,
+      altRankChange
+    }
   }
 
   const calculateCorrelation = (data: LunarCrushDataPoint[] | undefined) => {
@@ -288,6 +556,36 @@ export default function PerformancePage() {
   const getNormalizedData = (data: LunarCrushDataPoint[] | undefined) => {
     if (!data || data.length === 0) return []
     
+    // Ensure we have at least 2 data points to prevent Recharts Area chart errors
+    if (data.length < 2) {
+      // If we only have 1 point, duplicate it to avoid the points[1] error
+      const singlePoint = data[0]
+      return [singlePoint, singlePoint].map((point, index) => {
+        const date = new Date(point.time * 1000)
+        
+        let timeLabel: string
+        if (timeRange === "1h" || timeRange === "24h") {
+          timeLabel = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        } else {
+          timeLabel = date.toLocaleDateString([], { month: 'short', day: 'numeric' })
+        }
+        
+        return {
+          time: timeLabel,
+          price: 0,
+          volume: 0,
+          sentiment: 0,
+          interactions: 0,
+          contributors: 0,
+          posts: 0,
+          galaxyScore: 0,
+          socialDominance: 0,
+          altRank: 0,
+          index: index
+        }
+      })
+    }
+    
     return data.map((point, index) => {
       const date = new Date(point.time * 1000)
       
@@ -329,9 +627,15 @@ export default function PerformancePage() {
 
 
 
-  const coinsChartData = getChartData(coinsData?.data)
-  const topicChartData = getTopicChartData(topicData?.data)
-  const performanceChange = getPerformanceChange(coinsData?.data)
+  // Safe data processing with loading checks
+  const coinsChartData = loading ? [] : getChartData(coinsData?.data)
+  const topicChartData = loading ? [] : getTopicChartData(topicData?.data)
+  const performanceChange = loading ? null : getPerformanceChange(coinsData?.data)
+  
+  // Helper function to check if we have sufficient data for charts
+  const hasValidChartData = (data: any[]) => {
+    return !loading && data && data.length >= 1
+  }
 
   return (
     <AuthGuard>
@@ -346,7 +650,7 @@ export default function PerformancePage() {
               <TrendingUp className="h-8 w-8 text-[#ff6b35] transition-all duration-500 group-hover/header:scale-110 group-hover/header:rotate-2 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]" />
               <div>
                 <h1 className="text-3xl font-bold text-white transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
-                  BONK Performance Analytics Internationally 🔥
+                  BONK Performance Analytics Internationally
                 </h1>
                 <p className="text-gray-400 transition-all duration-500 group-hover/header:text-gray-300">
                   Real-time performance analysis of the most memeable dog coin on Solana
@@ -354,23 +658,13 @@ export default function PerformancePage() {
               </div>
             </div>
             
-            {/* Time Range Selector */}
-            <div className="flex justify-center mt-8">
-              <Select value={timeRange} onValueChange={setTimeRange}>
-                <SelectTrigger className="w-48 bg-gray-900 border-gray-700 text-white hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-900 border-gray-700">
-                  <SelectItem value="1h">Last Hour</SelectItem>
-                  <SelectItem value="24h">Last 24 Hours</SelectItem>
-                  <SelectItem value="7d">Last 7 Days</SelectItem>
-                  <SelectItem value="30d">Last 30 Days</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+
           </div>
 
           {/* Key Performance Metrics - 8 Cards */}
+          {loading ? (
+            <CardSkeletonGrid count={8} showTrend={true} className="mb-8" />
+          ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* 1. Current Price */}
             <Card className="group/price bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
@@ -382,13 +676,13 @@ export default function PerformancePage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/price:text-[#ff6b35]">
-                  {formatPrice(coinsData?.data?.[coinsData.data.length - 1]?.close)}
+                  {formatPrice(currentData?.data?.[currentData.data.length - 1]?.close)}
                 </div>
                 <div className="flex items-center gap-2 mt-2">
-                  <span className={`text-sm font-medium ${performanceChange.priceChange >= 0 ? 'text-[#ff6b35]' : 'text-red-400'} transition-all duration-500 group-hover/price:scale-105`}>
-                    {performanceChange.priceChange >= 0 ? '+' : ''}{performanceChange.priceChange.toFixed(2)}%
+                  <span className={`text-sm font-medium flex items-center gap-1 ${performanceChange?.priceChange !== undefined && performanceChange.priceChange > 0 ? 'text-green-400' : performanceChange?.priceChange !== undefined && performanceChange.priceChange < 0 ? 'text-red-400' : 'text-gray-400'} transition-all duration-500`}>
+                    {performanceChange?.priceChange !== undefined && performanceChange.priceChange > 0 ? '▲' : performanceChange?.priceChange !== undefined && performanceChange.priceChange < 0 ? '▼' : '➡️'}
+                    {performanceChange?.priceChange !== undefined && performanceChange.priceChange > 5 ? 'Trending up' : performanceChange?.priceChange !== undefined && performanceChange.priceChange < -5 ? 'Trending down' : 'Stable'}
                   </span>
-                  <span className="text-xs text-gray-500 transition-all duration-500 group-hover/price:text-gray-400">vs previous</span>
                 </div>
               </CardContent>
             </Card>
@@ -403,13 +697,13 @@ export default function PerformancePage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/volume:text-[#ff6b35]">
-                  {formatNumber(coinsData?.data?.[coinsData.data.length - 1]?.volume_24h)}
+                  {formatNumber(currentData?.data?.[currentData.data.length - 1]?.volume_24h)}
                 </div>
                 <div className="flex items-center gap-2 mt-2">
-                  <span className={`text-sm font-medium ${performanceChange.volumeChange >= 0 ? 'text-[#ff6b35]' : 'text-red-400'} transition-all duration-500 group-hover/volume:scale-105`}>
-                    {performanceChange.volumeChange >= 0 ? '+' : ''}{performanceChange.volumeChange.toFixed(1)}%
+                  <span className={`text-sm font-medium flex items-center gap-1 ${performanceChange?.volumeChange !== undefined && performanceChange.volumeChange > 0 ? 'text-green-400' : performanceChange?.volumeChange !== undefined && performanceChange.volumeChange < 0 ? 'text-red-400' : 'text-gray-400'} transition-all duration-500`}>
+                    {performanceChange?.volumeChange !== undefined && performanceChange.volumeChange > 0 ? '▲' : performanceChange?.volumeChange !== undefined && performanceChange.volumeChange < 0 ? '▼' : '➡️'}
+                    {performanceChange?.volumeChange !== undefined && performanceChange.volumeChange > 10 ? 'High activity' : performanceChange?.volumeChange !== undefined && performanceChange.volumeChange < -10 ? 'Low activity' : 'Normal activity'}
                   </span>
-                  <span className="text-xs text-gray-500 transition-all duration-500 group-hover/volume:text-gray-400">vs previous</span>
                 </div>
               </CardContent>
             </Card>
@@ -424,7 +718,13 @@ export default function PerformancePage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/marketcap:text-[#ff6b35]">
-                  {formatNumber(coinsData?.data?.[coinsData.data.length - 1]?.market_cap)}
+                  {formatNumber(currentData?.data?.[currentData.data.length - 1]?.market_cap)}
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className={`text-sm font-medium flex items-center gap-1 ${performanceChange?.marketCapChange !== undefined && performanceChange.marketCapChange > 0 ? 'text-green-400' : performanceChange?.marketCapChange !== undefined && performanceChange.marketCapChange < 0 ? 'text-red-400' : 'text-gray-400'} transition-all duration-500`}>
+                    {performanceChange?.marketCapChange !== undefined && performanceChange.marketCapChange > 0 ? '▲' : performanceChange?.marketCapChange !== undefined && performanceChange.marketCapChange < 0 ? '▼' : '➡️'}
+                    {performanceChange?.marketCapChange !== undefined && performanceChange.marketCapChange > 5 ? 'Growing' : performanceChange?.marketCapChange !== undefined && performanceChange.marketCapChange < -5 ? 'Declining' : 'Stable'}
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -439,9 +739,14 @@ export default function PerformancePage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/altrank:text-[#ff6b35]">
-                  #{coinsData?.data?.[coinsData.data.length - 1]?.alt_rank || 0}
+                  #{currentData?.data?.[currentData.data.length - 1]?.alt_rank || 0}
                 </div>
-                <p className="text-xs text-gray-500 mt-2 transition-all duration-500 group-hover/altrank:text-gray-400">Among all altcoins</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className={`text-sm font-medium flex items-center gap-1 ${performanceChange?.altRankChange !== undefined && performanceChange.altRankChange > 0 ? 'text-green-400' : performanceChange?.altRankChange !== undefined && performanceChange.altRankChange < 0 ? 'text-red-400' : 'text-gray-400'} transition-all duration-500`}>
+                    {performanceChange?.altRankChange !== undefined && performanceChange.altRankChange > 0 ? '▲' : performanceChange?.altRankChange !== undefined && performanceChange.altRankChange < 0 ? '▼' : '➡️'}
+                    {performanceChange?.altRankChange !== undefined && performanceChange.altRankChange > 10 ? 'Rising fast' : performanceChange?.altRankChange !== undefined && performanceChange.altRankChange < -10 ? 'Falling fast' : 'Stable rank'}
+                  </span>
+                </div>
               </CardContent>
             </Card>
 
@@ -455,7 +760,13 @@ export default function PerformancePage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/social:text-[#ff6b35]">
-                  {(coinsData?.data?.[coinsData.data.length - 1]?.social_dominance || 0).toFixed(2)}%
+                  {(currentData?.data?.[currentData.data.length - 1]?.social_dominance || 0).toFixed(2)}%
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className={`text-sm font-medium flex items-center gap-1 ${performanceChange?.socialDominanceChange !== undefined && performanceChange.socialDominanceChange > 0 ? 'text-green-400' : performanceChange?.socialDominanceChange !== undefined && performanceChange.socialDominanceChange < 0 ? 'text-red-400' : 'text-gray-400'} transition-all duration-500`}>
+                    {performanceChange?.socialDominanceChange !== undefined && performanceChange.socialDominanceChange > 0 ? '▲' : performanceChange?.socialDominanceChange !== undefined && performanceChange.socialDominanceChange < 0 ? '▼' : '➡️'}
+                    {performanceChange?.socialDominanceChange !== undefined && performanceChange.socialDominanceChange > 10 ? 'Trending up' : performanceChange?.socialDominanceChange !== undefined && performanceChange.socialDominanceChange < -10 ? 'Trending down' : 'Stable'}
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -470,13 +781,13 @@ export default function PerformancePage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/sentiment:text-[#ff6b35]">
-                  {coinsData?.data?.[coinsData.data.length - 1]?.sentiment || 0}/100
+                  {currentData?.data?.[currentData.data.length - 1]?.sentiment || 0}/100
                 </div>
                 <div className="flex items-center gap-2 mt-2">
-                  <span className={`text-sm font-medium ${performanceChange.sentimentChange >= 0 ? 'text-[#ff6b35]' : 'text-red-400'} transition-all duration-500 group-hover/sentiment:scale-105`}>
-                    {performanceChange.sentimentChange >= 0 ? '+' : ''}{performanceChange.sentimentChange.toFixed(1)}
+                  <span className={`text-sm font-medium flex items-center gap-1 ${performanceChange?.sentimentChange !== undefined && performanceChange.sentimentChange > 0 ? 'text-green-400' : performanceChange?.sentimentChange !== undefined && performanceChange.sentimentChange < 0 ? 'text-red-400' : 'text-gray-400'} transition-all duration-500`}>
+                    {performanceChange?.sentimentChange !== undefined && performanceChange.sentimentChange > 0 ? '▲' : performanceChange?.sentimentChange !== undefined && performanceChange.sentimentChange < 0 ? '▼' : '➡️'}
+                    {performanceChange?.sentimentChange !== undefined && performanceChange.sentimentChange > 5 ? 'Positive mood' : performanceChange?.sentimentChange !== undefined && performanceChange.sentimentChange < -5 ? 'Negative mood' : 'Neutral mood'}
                   </span>
-                  <span className="text-xs text-gray-500 transition-all duration-500 group-hover/sentiment:text-gray-400">vs previous</span>
                 </div>
               </CardContent>
             </Card>
@@ -491,13 +802,13 @@ export default function PerformancePage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/interactions:text-[#ff6b35]">
-                  {formatNumber(coinsData?.data?.[coinsData.data.length - 1]?.interactions || 0)}
+                  {formatNumber(currentData?.data?.[currentData.data.length - 1]?.interactions || 0)}
                 </div>
                 <div className="flex items-center gap-2 mt-2">
-                  <span className={`text-sm font-medium ${performanceChange.interactionsChange >= 0 ? 'text-[#ff6b35]' : 'text-red-400'} transition-all duration-500 group-hover/interactions:scale-105`}>
-                    {performanceChange.interactionsChange >= 0 ? '+' : ''}{performanceChange.interactionsChange.toFixed(1)}%
+                  <span className={`text-sm font-medium flex items-center gap-1 ${performanceChange?.interactionsChange !== undefined && performanceChange.interactionsChange > 0 ? 'text-green-400' : performanceChange?.interactionsChange !== undefined && performanceChange.interactionsChange < 0 ? 'text-red-400' : 'text-gray-400'} transition-all duration-500`}>
+                    {performanceChange?.interactionsChange !== undefined && performanceChange.interactionsChange > 0 ? '▲' : performanceChange?.interactionsChange !== undefined && performanceChange.interactionsChange < 0 ? '▼' : '➡️'}
+                    {performanceChange?.interactionsChange !== undefined && performanceChange.interactionsChange > 15 ? 'High engagement' : performanceChange?.interactionsChange !== undefined && performanceChange.interactionsChange < -15 ? 'Low engagement' : 'Normal engagement'}
                   </span>
-                  <span className="text-xs text-gray-500 transition-all duration-500 group-hover/interactions:text-gray-400">vs previous</span>
                 </div>
               </CardContent>
             </Card>
@@ -512,14 +823,58 @@ export default function PerformancePage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/galaxy:text-[#ff6b35]">
-                  {coinsData?.data?.[coinsData.data.length - 1]?.galaxy_score || 0}/100
+                  {currentData?.data?.[currentData.data.length - 1]?.galaxy_score || 0}/100
                 </div>
-                <p className="text-xs text-gray-500 mt-2 transition-all duration-500 group-hover/galaxy:text-gray-400">LunarCrush rating</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className={`text-sm font-medium flex items-center gap-1 ${performanceChange?.galaxyScoreChange !== undefined && performanceChange.galaxyScoreChange > 0 ? 'text-green-400' : performanceChange?.galaxyScoreChange !== undefined && performanceChange.galaxyScoreChange < 0 ? 'text-red-400' : 'text-gray-400'} transition-all duration-500`}>
+                    {performanceChange?.galaxyScoreChange !== undefined && performanceChange.galaxyScoreChange > 0 ? '▲' : performanceChange?.galaxyScoreChange !== undefined && performanceChange.galaxyScoreChange < 0 ? '▼' : '➡️'}
+                    {performanceChange?.galaxyScoreChange !== undefined && performanceChange.galaxyScoreChange > 5 ? 'Improving' : performanceChange?.galaxyScoreChange !== undefined && performanceChange.galaxyScoreChange < -5 ? 'Declining' : 'Stable rating'}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          )}
+
+          {/* Performance Comparison Table */}
+          <div className="mt-8 mb-8">
+            <Card className="group/comparison bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-white text-2xl flex items-center gap-3 transition-all duration-500 group-hover/comparison:text-[#ff6b35]">
+                  <Table className="w-8 h-8 text-[#ff6b35] transition-all duration-500 group-hover/comparison:scale-110 group-hover/comparison:rotate-2 group-hover/comparison:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+                  Performance Comparison Across Time Ranges
+                </CardTitle>
+                <CardDescription className="text-gray-400 text-lg transition-all duration-500 group-hover/comparison:text-gray-200">
+                  Compare how each metric has changed over different time periods with visual indicators
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b-2 border-orange-500/20">
+                        <th className="text-left py-4 px-6 text-gray-300 font-semibold text-base">Metric</th>
+                        <th className="text-center py-4 px-4 text-gray-300 font-semibold text-base">Current</th>
+                        <th className="text-center py-4 px-4 text-gray-300 font-semibold text-base">1H Change</th>
+                        <th className="text-center py-4 px-4 text-gray-300 font-semibold text-base">24H Change</th>
+                        <th className="text-center py-4 px-4 text-gray-300 font-semibold text-base">7D Change</th>
+                        <th className="text-center py-4 px-4 text-gray-300 font-semibold text-base">30D Change</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <PerformanceComparisonRows 
+                        currentData={currentData} 
+                        timeRanges={['1h', '24h', '7d', '30d']}
+                        loading={loading}
+                      />
+                    </tbody>
+                  </table>
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Spacing between metric cards and Data Insights */}
+          {/* Spacing between comparison table and Data Insights */}
           <div className="mb-8"></div>
 
           {/* Data Insights Panel */}
@@ -543,12 +898,12 @@ export default function PerformancePage() {
                 </h4>
                 <div className="space-y-3 text-sm text-gray-300">
                   <p>
-                    <strong>Price Trend:</strong> {performanceChange.priceChange >= 0 ? 'BONK is showing positive momentum' : 'BONK is experiencing downward pressure'} 
-                    with a {Math.abs(performanceChange.priceChange).toFixed(2)}% change.
+                    <strong>Price Trend:</strong> {loading ? 'Loading...' : performanceChange?.priceChange !== undefined ? (performanceChange.priceChange >= 0 ? 'BONK is showing positive momentum' : 'BONK is experiencing downward pressure') : 'Data not available'} 
+                    {performanceChange?.priceChange !== undefined ? ` with a ${Math.abs(performanceChange.priceChange).toFixed(2)}% change.` : '.'}
                   </p>
                   <p>
-                    <strong>Volume Analysis:</strong> {performanceChange.volumeChange >= 0 ? 'Trading activity is increasing' : 'Trading activity is decreasing'}, 
-                    indicating {performanceChange.volumeChange >= 0 ? 'growing' : 'declining'} market interest.
+                    <strong>Volume Analysis:</strong> {loading ? 'Loading...' : performanceChange?.volumeChange !== undefined ? (performanceChange.volumeChange >= 0 ? 'Trading activity is increasing' : 'Trading activity is decreasing') : 'Volume data not available'}, 
+                    {performanceChange?.volumeChange !== undefined ? `indicating ${performanceChange.volumeChange >= 0 ? 'growing' : 'declining'} market interest.` : ''}
                   </p>
                   <p>
                     <strong>Market Cap:</strong> Current market capitalization reflects the overall value perception 
@@ -565,16 +920,16 @@ export default function PerformancePage() {
                 </h4>
                 <div className="space-y-3 text-sm text-gray-300">
                   <p>
-                    <strong>Sentiment Score:</strong> {coinsData?.data?.[coinsData.data.length - 1]?.sentiment || 0}/100 indicates 
-                    {(coinsData?.data?.[coinsData.data.length - 1]?.sentiment || 0) >= 70 ? ' very positive' : (coinsData?.data?.[coinsData.data.length - 1]?.sentiment || 0) >= 50 ? ' moderately positive' : ' negative'} community sentiment.
+                    <strong>Sentiment Score:</strong> {currentData?.data?.[currentData.data.length - 1]?.sentiment || 0}/100 indicates 
+                    {(currentData?.data?.[currentData.data.length - 1]?.sentiment || 0) >= 70 ? ' very positive' : (currentData?.data?.[currentData.data.length - 1]?.sentiment || 0) >= 50 ? ' moderately positive' : ' negative'} community sentiment.
                   </p>
                   <p>
-                    <strong>Social Dominance:</strong> {(coinsData?.data?.[coinsData.data.length - 1]?.social_dominance || 0).toFixed(2)}% 
+                    <strong>Social Dominance:</strong> {(currentData?.data?.[currentData.data.length - 1]?.social_dominance || 0).toFixed(2)}% 
                     of social media discussions about cryptocurrencies mention BONK.
                   </p>
                   <p>
-                    <strong>Community Engagement:</strong> {formatNumber(coinsData?.data?.[coinsData.data.length - 1]?.interactions || 0)} interactions 
-                    show {performanceChange.interactionsChange >= 0 ? 'increasing' : 'decreasing'} community activity.
+                    <strong>Community Engagement:</strong> {formatNumber(currentData?.data?.[currentData.data.length - 1]?.interactions || 0)} interactions 
+                    show {loading ? 'loading' : performanceChange?.interactionsChange !== undefined ? (performanceChange.interactionsChange >= 0 ? 'increasing' : 'decreasing') : 'stable'} community activity.
                   </p>
                 </div>
               </div>
@@ -588,17 +943,17 @@ export default function PerformancePage() {
               </h5>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-300">
                 <div>
-                  <strong className="text-[#ff6b35]">Market Position:</strong> Alt Rank #{coinsData?.data?.[coinsData.data.length - 1]?.alt_rank || 0} 
+                  <strong className="text-[#ff6b35]">Market Position:</strong> Alt Rank #{currentData?.data?.[currentData.data.length - 1]?.alt_rank || 0} 
                   places BONK among the top altcoins by market performance.
                 </div>
                 <div>
-                  <strong className="text-[#ff6b35]">Galaxy Score:</strong> Score of {coinsData?.data?.[coinsData.data.length - 1]?.galaxy_score || 0} 
-                  indicates {(coinsData?.data?.[coinsData.data.length - 1]?.galaxy_score || 0) >= 70 ? 'strong' : (coinsData?.data?.[coinsData.data.length - 1]?.galaxy_score || 0) >= 50 ? 'moderate' : 'weak'} 
+                  <strong className="text-[#ff6b35]">Galaxy Score:</strong> Score of {currentData?.data?.[currentData.data.length - 1]?.galaxy_score || 0} 
+                  indicates {(currentData?.data?.[currentData.data.length - 1]?.galaxy_score || 0) >= 70 ? 'strong' : (currentData?.data?.[currentData.data.length - 1]?.galaxy_score || 0) >= 50 ? 'moderate' : 'weak'} 
                   overall market health and social engagement.
                 </div>
                 <div>
-                  <strong className="text-[#ff6b35]">Trend Analysis:</strong> {timeRange} data shows {performanceChange.priceChange >= 0 ? 'positive' : 'negative'} 
-                  momentum with {performanceChange.volumeChange >= 0 ? 'increasing' : 'decreasing'} trading volume.
+                  <strong className="text-[#ff6b35]">Trend Analysis:</strong> {timeRange} data shows {loading ? 'loading' : performanceChange?.priceChange !== undefined ? (performanceChange.priceChange >= 0 ? 'positive' : 'negative') : 'neutral'} 
+                  momentum with {loading ? 'loading' : performanceChange?.volumeChange !== undefined ? (performanceChange.volumeChange >= 0 ? 'increasing' : 'decreasing') : 'stable'} trading volume.
                 </div>
               </div>
             </div>
@@ -610,23 +965,42 @@ export default function PerformancePage() {
 
                                     {/* Main Dashboard Tabs */}
                      <Tabs defaultValue="metrics-comparison" className="space-y-6">
-             <TabsList className="group/tabs bg-gray-800 border-gray-700 hover:shadow-[0_0_10px_rgba(255,107,53,0.2)] transition-all duration-500 p-2 flex justify-center">
-               <TabsTrigger value="metrics-comparison" className="data-[state=active]:bg-orange-500 data-[state=active]:text-black transition-all duration-500 hover:scale-105 px-6 py-3 text-base font-medium">
-                 Metrics Comparison
-               </TabsTrigger>
-               <TabsTrigger value="correlation-analysis" className="data-[state=active]:bg-orange-500 data-[state=active]:text-black transition-all duration-500 hover:scale-105 px-6 py-3 text-base font-medium">
-                 Correlation Analysis
-               </TabsTrigger>
-               <TabsTrigger value="price-charts" className="data-[state=active]:bg-orange-500 data-[state=active]:text-black transition-all duration-500 hover:scale-105 px-6 py-3 text-base font-medium">
-                 Price Charts
-               </TabsTrigger>
-               <TabsTrigger value="social-analytics" className="data-[state=active]:bg-orange-500 data-[state=active]:text-black transition-all duration-500 hover:scale-105 px-6 py-3 text-base font-medium">
-                 Social Analytics
-               </TabsTrigger>
-               <TabsTrigger value="market-health" className="data-[state=active]:bg-orange-500 data-[state=active]:text-black transition-all duration-500 hover:scale-105 px-6 py-3 text-base font-medium">
-                 Market Health
-               </TabsTrigger>
-             </TabsList>
+             <div className="flex items-center justify-between mb-6">
+               <TabsList className="group/tabs bg-gray-800 border-gray-700 hover:shadow-[0_0_10px_rgba(255,107,53,0.2)] transition-all duration-500 p-2">
+                 <TabsTrigger value="metrics-comparison" className="data-[state=active]:bg-orange-500 data-[state=active]:text-black transition-all duration-500 hover:scale-105 px-6 py-3 text-base font-medium">
+                   Metrics Comparison
+                 </TabsTrigger>
+                 <TabsTrigger value="correlation-analysis" className="data-[state=active]:bg-orange-500 data-[state=active]:text-black transition-all duration-500 hover:scale-105 px-6 py-3 text-base font-medium">
+                   Correlation Analysis
+                 </TabsTrigger>
+                 <TabsTrigger value="price-charts" className="data-[state=active]:bg-orange-500 data-[state=active]:text-black transition-all duration-500 hover:scale-105 px-6 py-3 text-base font-medium">
+                   Price Charts
+                 </TabsTrigger>
+                 <TabsTrigger value="social-analytics" className="data-[state=active]:bg-orange-500 data-[state=active]:text-black transition-all duration-500 hover:scale-105 px-6 py-3 text-base font-medium">
+                   Social Analytics
+                 </TabsTrigger>
+                 <TabsTrigger value="market-health" className="data-[state=active]:bg-orange-500 data-[state=active]:text-black transition-all duration-500 hover:scale-105 px-6 py-3 text-base font-medium">
+                   Market Health
+                 </TabsTrigger>
+               </TabsList>
+               
+               {/* Time Range Selector - Moved to tabs area */}
+               <div className="flex items-center gap-3">
+                 <span className="text-gray-400 text-sm font-medium">Time Range:</span>
+                 <Select value={timeRange} onValueChange={setTimeRange}>
+                   <SelectTrigger className="w-40 bg-gray-800 border-gray-600 text-white hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500">
+                     <SelectValue />
+                   </SelectTrigger>
+                   <SelectContent className="bg-gray-800 border-gray-600">
+                     <SelectItem value="1h">Last Hour</SelectItem>
+                     <SelectItem value="24h">Last 24 Hours</SelectItem>
+                     <SelectItem value="7d">Last 7 Days</SelectItem>
+                     <SelectItem value="30d">Last 30 Days</SelectItem>
+                   </SelectContent>
+                 </Select>
+
+               </div>
+             </div>
 
                       {/* Metrics Comparison Tab */}
             <TabsContent value="metrics-comparison" className="space-y-6">
@@ -803,8 +1177,19 @@ export default function PerformancePage() {
                       </p>
                       
                       <div className="h-96 bg-gray-800 rounded-lg p-4 border border-gray-700">
+                        <ChartErrorWrapper onRetry={() => fetchAllData(true)}>
                         <ResponsiveContainer width="100%" height="100%">
-                          {chartType === "stacked-area" ? (
+                            {loading ? (
+                              <ChartLoading 
+                                title="Loading Performance Chart"
+                                description="Fetching normalized metrics data..."
+                                chartType="area"
+                              />
+                            ) : !hasValidChartData(getNormalizedData(coinsData?.data)) ? (
+                              <div className="flex items-center justify-center h-full">
+                                <div className="text-gray-400 text-lg">No data available for selected time range</div>
+                              </div>
+                            ) : chartType === "stacked-area" ? (
                             <AreaChart data={getNormalizedData(coinsData?.data)}>
                               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                               <XAxis dataKey="time" stroke="#9CA3AF" fontSize={12} tick={{ fill: '#9CA3AF' }} />
@@ -1020,6 +1405,7 @@ export default function PerformancePage() {
                             </LineChart>
                           )}
                         </ResponsiveContainer>
+                        </ChartErrorWrapper>
                       </div>
                                          </div>
                    </div>
@@ -1217,6 +1603,7 @@ export default function PerformancePage() {
                       Price Trend ({timeRange === "1h" ? "1h" : timeRange === "24h" ? "24h" : timeRange === "7d" ? "7d" : "30d"})
                     </h3>
                     <div className="h-80 bg-gray-800 rounded-lg p-4 border border-gray-700">
+                      <ChartErrorWrapper onRetry={() => fetchAllData()}>
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={coinsChartData}>
                           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -1243,6 +1630,7 @@ export default function PerformancePage() {
                           />
                         </LineChart>
                       </ResponsiveContainer>
+                      </ChartErrorWrapper>
                     </div>
                   </div>
 
@@ -1253,6 +1641,7 @@ export default function PerformancePage() {
                       Trading Volume Analysis
                     </h3>
                     <div className="h-64 bg-gray-800 rounded-lg p-4 border border-gray-700">
+                      <ChartErrorWrapper onRetry={() => fetchAllData()}>
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={coinsChartData}>
                           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -1271,6 +1660,7 @@ export default function PerformancePage() {
                           <Bar dataKey="volume" fill="#F59E0B" name="Trading Volume" />
                         </BarChart>
                       </ResponsiveContainer>
+                      </ChartErrorWrapper>
                     </div>
                   </div>
                 </div>
@@ -1297,7 +1687,19 @@ export default function PerformancePage() {
                       Social Sentiment Trend (Market Data)
                     </h3>
                     <div className="h-80 bg-gray-800 rounded-lg p-4 border border-gray-700">
+                      <ChartErrorWrapper onRetry={() => fetchAllData()}>
                       <ResponsiveContainer width="100%" height="100%">
+                                                  {loading ? (
+                          <ChartLoading 
+                            title="Loading Sentiment Chart"
+                            description="Processing social sentiment data..."
+                            chartType="area"
+                          />
+                        ) : !hasValidChartData(coinsChartData) ? (
+                            <div className="flex items-center justify-center h-full">
+                              <div className="text-gray-400 text-lg">No sentiment data available</div>
+                            </div>
+                          ) : (
                         <AreaChart data={coinsChartData}>
                           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                           <XAxis dataKey="time" stroke="#9CA3AF" fontSize={12} tick={{ fill: '#9CA3AF' }} />
@@ -1321,7 +1723,9 @@ export default function PerformancePage() {
                             name="Social Sentiment" 
                           />
                         </AreaChart>
+                        )}
                       </ResponsiveContainer>
+                      </ChartErrorWrapper>
                     </div>
                   </div>
 
@@ -1463,7 +1867,7 @@ export default function PerformancePage() {
           <TabsContent value="market-health" className="space-y-6">
             <Card className="group/market-health bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
               <CardHeader>
-                <CardTitle className="text-white text-2xl transition-all duration-500 group-hover/market-health:text-orange-400">📊 BONK Market Health</CardTitle>
+                <CardTitle className="text-white text-2xl transition-all duration-500 group-hover/market-health:text-orange-400">BONK Market Health</CardTitle>
                 <CardDescription className="text-gray-400 transition-all duration-500 group-hover/market-health:text-gray-200">
                   Market ranking, health indicators, and performance metrics
                 </CardDescription>
@@ -1521,15 +1925,15 @@ export default function PerformancePage() {
                       <div className="space-y-3">
                         <div className="flex justify-between">
                           <span className="text-gray-400">Current Alt Rank:</span>
-                          <span className="text-white font-medium">#{coinsData?.data?.[coinsData.data.length - 1]?.alt_rank || 0}</span>
+                          <span className="text-white font-medium">#{currentData?.data?.[currentData.data.length - 1]?.alt_rank || 0}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-400">Galaxy Score:</span>
-                          <span className="text-white font-medium">{coinsData?.data?.[coinsData.data.length - 1]?.galaxy_score || 0}</span>
+                          <span className="text-white font-medium">{currentData?.data?.[currentData.data.length - 1]?.galaxy_score || 0}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-400">Market Cap:</span>
-                          <span className="text-white font-medium">{formatNumber(coinsData?.data?.[coinsData.data.length - 1]?.market_cap)}</span>
+                          <span className="text-white font-medium">{formatNumber(currentData?.data?.[currentData.data.length - 1]?.market_cap)}</span>
                         </div>
                       </div>
                     </div>
@@ -1539,20 +1943,20 @@ export default function PerformancePage() {
                       <div className="space-y-3">
                         <div className="flex justify-between">
                           <span className="text-gray-400">Price Change:</span>
-                          <span className={`font-medium ${performanceChange.priceChange >= 0 ? 'text-[#ff6b35]' : 'text-red-400'}`}>
-                            {performanceChange.priceChange >= 0 ? '+' : ''}{performanceChange.priceChange.toFixed(2)}%
+                          <span className={`font-medium ${performanceChange?.priceChange !== undefined && performanceChange.priceChange >= 0 ? 'text-[#ff6b35]' : 'text-red-400'}`}>
+                            {loading ? 'Loading...' : performanceChange?.priceChange !== undefined ? `${performanceChange.priceChange >= 0 ? '+' : ''}${performanceChange.priceChange.toFixed(2)}%` : 'N/A'}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-400">Volume Change:</span>
-                          <span className={`font-medium ${performanceChange.volumeChange >= 0 ? 'text-[#ff6b35]' : 'text-red-400'}`}>
-                            {performanceChange.volumeChange >= 0 ? '+' : ''}{performanceChange.volumeChange.toFixed(1)}%
+                          <span className={`font-medium ${performanceChange?.volumeChange !== undefined && performanceChange.volumeChange >= 0 ? 'text-[#ff6b35]' : 'text-red-400'}`}>
+                            {loading ? 'Loading...' : performanceChange?.volumeChange !== undefined ? `${performanceChange.volumeChange >= 0 ? '+' : ''}${performanceChange.volumeChange.toFixed(1)}%` : 'N/A'}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-400">Sentiment Change:</span>
-                          <span className={`font-medium ${performanceChange.sentimentChange >= 0 ? 'text-[#ff6b35]' : 'text-red-400'}`}>
-                            {performanceChange.sentimentChange >= 0 ? '+' : ''}{performanceChange.sentimentChange.toFixed(1)}
+                          <span className={`font-medium ${performanceChange?.sentimentChange !== undefined && performanceChange.sentimentChange >= 0 ? 'text-[#ff6b35]' : 'text-red-400'}`}>
+                            {loading ? 'Loading...' : performanceChange?.sentimentChange !== undefined ? `${performanceChange.sentimentChange >= 0 ? '+' : ''}${performanceChange.sentimentChange.toFixed(1)}` : 'N/A'}
                           </span>
                         </div>
                       </div>
@@ -1643,7 +2047,19 @@ export default function PerformancePage() {
                         Social Sentiment Trend (Topic Data)
                       </h3>
                       <div className="h-80 bg-gray-800 rounded-lg p-4 border border-gray-700 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:border-orange-500/30 transition-all duration-500">
+                        <ChartErrorWrapper onRetry={() => fetchAllData(true)}>
                         <ResponsiveContainer width="100%" height="100%">
+                                                      {loading ? (
+                            <ChartLoading 
+                              title="Loading Topic Chart"
+                              description="Analyzing topic sentiment data..."
+                              chartType="area"
+                            />
+                          ) : !hasValidChartData(topicChartData) ? (
+                              <div className="flex items-center justify-center h-full">
+                                <div className="text-gray-400 text-lg">No topic data available</div>
+                              </div>
+                            ) : (
                           <AreaChart data={topicChartData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                             <XAxis dataKey="time" stroke="#9CA3AF" fontSize={12} tick={{ fill: '#9CA3AF' }} />
@@ -1667,7 +2083,9 @@ export default function PerformancePage() {
                               name="Social Score" 
                             />
                           </AreaChart>
+                          )}
                         </ResponsiveContainer>
+                        </ChartErrorWrapper>
                       </div>
                     </div>
 
@@ -1728,6 +2146,7 @@ export default function PerformancePage() {
                             <Bar dataKey="socialEngagement" fill="#8B5CF6" name="Social Engagement" />
                           </BarChart>
                         </ResponsiveContainer>
+
                       </div>
                     </div>
 

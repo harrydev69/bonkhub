@@ -25,6 +25,7 @@ import {
   Minus,
 } from "lucide-react"
 import { TokenPriceChart } from "@/components/token-price-chart"
+import { UnifiedLoading } from "@/components/loading"
 
 interface TokenData {
   id: string
@@ -212,21 +213,13 @@ export default function TokenPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-950 text-white">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-gray-800 rounded w-64"></div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-1 space-y-4">
-                <div className="h-64 bg-gray-800 rounded"></div>
-                <div className="h-32 bg-gray-800 rounded"></div>
-              </div>
-              <div className="lg:col-span-2 space-y-4">
-                <div className="h-96 bg-gray-800 rounded"></div>
-                <div className="h-32 bg-gray-800 rounded"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <UnifiedLoading 
+          title="Loading Token Data"
+          description="Fetching comprehensive token information..."
+          icon="activity"
+          variant="page"
+          size="lg"
+        />
       </div>
     )
   }

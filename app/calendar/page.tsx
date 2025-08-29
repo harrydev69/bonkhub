@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { UnifiedLoading } from "@/components/loading"
 import {
   Calendar,
   Clock,
@@ -195,7 +196,7 @@ export default function CalendarPage() {
 
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-white mb-2">🔥 Hot BONK events Internationally</h1>
+            <h1 className="text-4xl font-bold text-white mb-2">Hot BONK Events Internationally</h1>
             <p className="text-gray-400">Loading BONK ecosystem events...</p>
           </div>
 
@@ -248,7 +249,7 @@ export default function CalendarPage() {
         {/* Header */}
         <div className="group/header mb-8 transition-all duration-500 hover:scale-[1.01] transform-gpu">
           <h1 className="text-4xl font-bold text-white mb-2 transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
-            🔥 Hot BONK events Internationally
+            Hot BONK Events Internationally
           </h1>
           <p className="text-gray-400 transition-all duration-500 group-hover/header:text-gray-300">
             Stay updated with BONK ecosystem events, launches, and community activities. Let the dog run!

@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import { Heart, MessageCircle, Repeat2, ExternalLink, TrendingUp, TrendingDown, Minus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { UnifiedLoading } from "@/components/loading"
 
 interface SocialPost {
   id: string

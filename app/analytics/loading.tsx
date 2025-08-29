@@ -3,9 +3,9 @@ import { UnifiedLoading } from "@/components/loading"
 export default function Loading() {
   return (
     <UnifiedLoading 
-      title="Loading Audio Library"
-      description="Gathering hot BONK ecosystem audio content..."
-      icon="volume"
+      title="Loading Analytics"
+      description="Processing BONK market analytics and insights..."
+      icon="chart"
       variant="page"
       size="lg"
     />

@@ -37,7 +37,7 @@ export default function MemeGalleryPage() {
   const memes = [
     {
       id: 1,
-      title: "BONK to the moon! 🚀",
+      title: "BONK to the moon!",
       creator: "BONKWarrior",
       image: "/bonk-meme-1.jpg",
       category: "bull-run",
@@ -160,7 +160,7 @@ export default function MemeGalleryPage() {
             {/* Header */}
             <div className="group/header mb-8 transition-all duration-500 hover:scale-[1.01] transform-gpu">
               <h1 className="text-4xl font-bold text-white mb-2 transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
-                🎭 BONK Meme Gallery
+                BONK Meme Gallery
               </h1>
               <p className="text-gray-400 transition-all duration-500 group-hover/header:text-gray-300">
                 Discover, share, and create the best BONK memes from our community

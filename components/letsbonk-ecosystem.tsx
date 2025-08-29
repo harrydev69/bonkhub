@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { UnifiedLoading } from "@/components/loading"
 import {
   TrendingUp,
   TrendingDown,
@@ -219,9 +220,14 @@ export function LetsBonkEcosystem() {
 
       {/* Loading State */}
       {loading && !ecosystemData && (
-        <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-12 mb-8 text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-500 mx-auto mb-6"></div>
-          <p className="text-gray-400 text-lg">Loading ecosystem data...</p>
+        <div className="mb-8">
+          <UnifiedLoading 
+            title="Loading Ecosystem"
+            description="Fetching LetsBonk ecosystem data..."
+            icon="activity"
+            variant="chart"
+            size="md"
+          />
         </div>
       )}
 

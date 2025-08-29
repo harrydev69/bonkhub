@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { UnifiedLoading, ChartLoading } from "@/components/loading"
 
 import { BONKNewsFeed } from "./bonk-news-feed"
 import { TrendingUp, ArrowUpRight, ArrowDownRight, AlertCircle, ChevronDown, Copy, ExternalLink } from "lucide-react"
@@ -410,7 +411,7 @@ export function ComprehensiveBONKDashboard() {
               {/* Exchange Rows */}
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {tickersLoading ? (
-                  // Loading skeleton
+                  // Enhanced loading skeleton
                   [...Array(5)].map((_, i) => (
                     <div key={i} className="grid grid-cols-4 gap-3 p-2 bg-gray-800/30 rounded animate-pulse">
                       <div className="flex items-center space-x-2">
@@ -674,25 +675,13 @@ export function ComprehensiveBONKDashboard() {
           </CardHeader>
           <CardContent className="space-y-6">
             {holdersLoading ? (
-              <div className="space-y-6">
-                <div className="text-center">
-                  <div className="text-gray-400 text-sm mb-2">Total Holders</div>
-                  <div className="h-12 bg-gray-800 rounded animate-pulse"></div>
-                </div>
-                <div className="grid grid-cols-2 gap-6">
-                  {[...Array(4)].map((_, i) => (
-                    <div key={i} className="text-center p-3 bg-gray-800/50 rounded-lg">
-                      <div className="text-gray-400 text-xs mb-1">Loading...</div>
-                      <div className="h-6 bg-gray-700 rounded animate-pulse mb-1"></div>
-                      <div className="h-4 bg-gray-700 rounded animate-pulse"></div>
-                    </div>
-                  ))}
-                </div>
-                <div className="text-center p-3 bg-gray-800/50 rounded-lg">
-                  <div className="text-gray-400 text-xs mb-1">Loading...</div>
-                  <div className="h-6 bg-gray-700 rounded animate-pulse mb-1"></div>
-                  <div className="h-4 bg-gray-700 rounded animate-pulse"></div>
-                </div>
+              <div className="py-8">
+                <UnifiedLoading 
+                  title="Loading Holders"
+                  description="Analyzing BONK holder distribution..."
+                  variant="chart"
+                  size="md"
+                />
               </div>
             ) : (
               <>

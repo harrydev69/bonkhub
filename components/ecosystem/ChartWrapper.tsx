@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import InteractivePriceChart, { ChartPayload, TF } from '@/components/interactive-price-chart';
+import { ChartLoading } from '@/components/loading';
 
 export default function ChartWrapper() {
   const [tf, setTf] = useState<TF>('7d');
@@ -14,7 +15,15 @@ export default function ChartWrapper() {
     return () => { cancelled = true; };
   }, [tf]);
 
-  if (!payload) return <div className="h-72 flex items-center justify-center text-neutral-400">Loading chart…</div>;
+  if (!payload) return (
+    <div className="h-72">
+      <ChartLoading 
+        title="Loading Ecosystem Chart"
+        description="Fetching BONK ecosystem data..."
+        chartType="line"
+      />
+    </div>
+  );
 
   return (
     <InteractivePriceChart

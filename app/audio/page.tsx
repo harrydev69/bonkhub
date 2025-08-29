@@ -6,6 +6,7 @@ import { PornhubHeader } from "../../components/pornhub-header"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { UnifiedLoading } from "@/components/loading"
 import {
   Play,
   Heart,
@@ -45,7 +46,7 @@ function PlatformPlayer({ track }: { track: AudioTrack }) {
         return {
           name: "Spotify",
           color: "from-green-500 to-green-600",
-          icon: "🎵",
+          icon: "",
           description: "Listen on Spotify",
           accent: "bg-green-500",
         }
@@ -69,7 +70,7 @@ function PlatformPlayer({ track }: { track: AudioTrack }) {
         return {
           name: "Binance Square",
           color: "from-yellow-500 to-yellow-600",
-          icon: "📊",
+          icon: "",
           description: "Read on Binance Square",
           accent: "bg-yellow-500",
         }
@@ -85,7 +86,7 @@ function PlatformPlayer({ track }: { track: AudioTrack }) {
         return {
           name: "BONK Community",
           color: "from-orange-500 to-orange-600",
-          icon: "🎵",
+          icon: "",
           description: "BONK Community Content",
           accent: "bg-orange-500",
         }
@@ -270,26 +271,12 @@ export default function AudioPage() {
       <div className="min-h-screen bg-black text-white">
         <PornhubNavigation />
         <PornhubHeader />
-
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-2">Hot audio content Internationally 🔥</h1>
-            <p className="text-gray-400">Loading BONK ecosystem content...</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-gray-800 rounded-lg overflow-hidden animate-pulse">
-                <div className="h-48 bg-gray-700" />
-                <div className="p-4 space-y-3">
-                  <div className="h-4 bg-gray-700 rounded" />
-                  <div className="h-3 bg-gray-700 rounded w-3/4" />
-                  <div className="h-3 bg-gray-700 rounded w-1/2" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <UnifiedLoading 
+          title="Loading Audio Library"
+          description="Gathering hot BONK ecosystem audio content..."
+          variant="page"
+          size="lg"
+        />
       </div>
     )
   }
@@ -323,8 +310,8 @@ export default function AudioPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="group/header mb-8 transition-all duration-500 hover:scale-[1.01] transform-gpu">
-          <h1 className="text-4xl font-bold mb-2 transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
-            Hot audio content Internationally 🔥
+                      <h1 className="text-4xl font-bold mb-2 transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
+            Hot Audio Content Internationally
           </h1>
           <p className="text-gray-400 transition-all duration-500 group-hover/header:text-gray-300">
             Discover BONK ecosystem podcasts, interviews, and analysis from trusted platforms. Let the dog run!

@@ -15,7 +15,7 @@ export default function DashboardPage() {
           {/* Main heading */}
           <div className="mb-6">
             <h1 className="text-white text-2xl font-bold mb-4 flex items-center">
-              Hot analytics data Internationally 🔥
+              Hot Analytics Data Internationally
             </h1>
 
             {/* Category tags */}
