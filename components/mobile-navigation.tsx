@@ -26,7 +26,7 @@ const navigationItems = [
   { name: "SENTIMENT", href: "/sentiment" },
   { name: "MINDSHARE", href: "/feed" },
   { name: "ALERTS", href: "/alerts" },
-  { name: "NARRATIVE", href: "/narrative" },
+  { name: "PERFORMANCE", href: "/performance" },
   { name: "CALENDAR", href: "/calendar" },
   { name: "AUDIO LIBRARY", href: "/audio" },
 ]

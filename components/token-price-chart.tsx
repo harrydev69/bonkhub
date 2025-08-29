@@ -388,7 +388,7 @@ export function TokenPriceChart({
                     : "border-gray-600 text-gray-300 hover:bg-gray-800 hover:border-orange-500/50 hover:text-orange-400"
                 }`}
               >
-                $ Price
+                Price
               </Button>
               <Button
                 variant={chartType === "market_cap" ? "default" : "outline"}

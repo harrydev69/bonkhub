@@ -9,7 +9,7 @@ export function DashboardSidebar() {
     { name: "Sentiment", href: "/sentiment", badge: "Bullish" },
     { name: "Mindshare", href: "/mindshare", badge: "83" },
     { name: "Alerts", href: "/alerts", badge: "3" },
-    { name: "Narrative", href: "/narrative", badge: "Hot" },
+    { name: "Performance", href: "/performance", badge: "Hot" },
     { name: "Analytics", href: "/analytics", badge: "Pro" },
     { name: "Calendar", href: "/calendar" },
     { name: "Audio Library", href: "/audio-library" },

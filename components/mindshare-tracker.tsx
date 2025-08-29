@@ -7,7 +7,6 @@ import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import {
-  Brain,
   TrendingUp,
   Users,
   MessageSquare,
@@ -318,118 +317,112 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Brain className="h-8 w-8 text-orange-500" />
-          <div>
-            <h1 className="text-3xl font-bold text-white">BONK Mindshare Analytics</h1>
-            <p className="text-gray-400">Loading live mindshare data...</p>
-          </div>
+        <div>
+          <h1 className="text-3xl font-bold text-white">BONK Mindshare Analytics</h1>
+          <p className="text-gray-400">Loading live mindshare data...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 group">
       {/* Header */}
-      <div className="flex items-center justify-between group/header transition-all duration-500 hover:scale-[1.01] transform-gpu">
-        <div className="flex items-center gap-4">
-          <Brain className="h-8 w-8 text-orange-500 transition-all duration-500 group-hover/header:scale-110 group-hover/header:rotate-2 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]" />
-          <div>
-            <h1 className="text-3xl font-bold text-white transition-all duration-500 group-hover/header:text-orange-400 group-hover/header:drop-shadow-[0_0_8px_rgba(255,107,53,0.4)]">
-              BONK Mindshare Analytics
-            </h1>
-            <p className="text-gray-400 transition-all duration-500 group-hover/header:text-gray-300">
-              Real-time tracking of BONK's presence in the crypto consciousness
-            </p>
-          </div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white transition-all duration-500 group-hover:text-orange-400">
+            BONK Mindshare Analytics
+          </h1>
+          <p className="text-gray-400 transition-all duration-500 group-hover:text-gray-300">
+            Real-time tracking of BONK's presence in the crypto consciousness
+          </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="group/rank bg-orange-500/20 text-orange-400 border-orange-500/30 transition-all duration-500 group-hover/rank:scale-105 group-hover/rank:shadow-[0_0_4px_rgba(255,107,53,0.3)]">
+          <Badge variant="secondary" className="bg-blue-500/20 text-blue-400 border-blue-500/30 hover:scale-105 hover:shadow-[0_0_4px_rgba(59,130,246,0.3)] transition-all duration-500 transform-gpu">
             Rank #3
           </Badge>
-          <Badge variant="secondary" className="group/hot bg-red-500/20 text-red-400 border-red-500/30 transition-all duration-500 group-hover/hot:scale-105 group-hover/hot:shadow-[0_0_4px_rgba(239,68,68,0.3)]">
-            <Flame className="h-3 w-3 mr-1 transition-all duration-500 group-hover/hot:scale-110 group-hover/hot:rotate-2" />
+          <Badge variant="secondary" className="bg-red-500/20 text-red-400 border-red-500/30 hover:scale-105 hover:shadow-[0_0_4px_rgba(239,68,68,0.3)] transition-all duration-500 transform-gpu">
+            <Flame className="h-3 w-3 mr-1 transition-all duration-500 group-hover:scale-110 group-hover:rotate-2" />
             Hot
           </Badge>
         </div>
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="group/mindshare bg-gray-900/50 border-gray-700/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300 transition-all duration-500 group-hover/mindshare:text-gray-200">
+            <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
               Mindshare Score
             </CardTitle>
-            <Target className="h-4 w-4 text-orange-500 transition-all duration-500 group-hover/mindshare:scale-110 group-hover/mindshare:rotate-2 group-hover/mindshare:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+            <Target className="h-4 w-4 text-[#ff6b35] transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/mindshare:text-orange-400">
+            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/stats:text-orange-400">
               {mindshareScore}
             </div>
-            <p className="text-xs text-gray-400 transition-all duration-500 group-hover/mindshare:text-gray-300">
+            <p className="text-xs text-gray-500 transition-all duration-500 group-hover/stats:text-gray-400">
               {change24h >= 0 ? "+" : ""}
               {change24h}% from earlier window
             </p>
-            <Progress value={mindshareScore} className="mt-2 transition-all duration-500 group-hover/mindshare:shadow-[0_0_6px_rgba(255,107,53,0.25)]" />
+            <Progress value={mindshareScore} className="mt-2" />
           </CardContent>
         </Card>
 
-        <Card className="group/social bg-gray-900/50 border-gray-700/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300 transition-all duration-500 group-hover/social:text-gray-200">
+            <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
               Social Mentions
             </CardTitle>
-            <MessageSquare className="h-4 w-4 text-orange-500 transition-all duration-500 group-hover/social:scale-110 group-hover/social:rotate-2 group-hover/social:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+            <MessageSquare className="h-4 w-4 text-green-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(34,197,94,0.4)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/social:text-orange-400">
+            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/stats:text-green-400">
               {socialMentions.toLocaleString()}
             </div>
-            <p className="text-xs text-gray-400 transition-all duration-500 group-hover/social:text-gray-300">
+            <p className="text-xs text-gray-500 transition-all duration-500 group-hover/stats:text-gray-400">
               Sampled posts
             </p>
-            <Badge variant="secondary" className="mt-1 group/change bg-green-500/20 text-green-400 border-green-500/30 transition-all duration-500 group-hover/change:scale-105 group-hover/change:shadow-[0_0_4px_rgba(34,197,94,0.3)]">
+            <Badge variant="secondary" className="mt-1 bg-green-500/20 text-green-400 border-green-500/30 hover:scale-105 hover:shadow-[0_0_4px_rgba(34,197,94,0.3)] transition-all duration-500 transform-gpu">
               {change24h >= 0 ? "+" : ""}
               {change24h}% vs earlier
             </Badge>
           </CardContent>
         </Card>
 
-        <Card className="group/influencer bg-gray-900/50 border-gray-700/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300 transition-all duration-500 group-hover/influencer:text-gray-200">
+            <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
               Influencer Mentions
             </CardTitle>
-            <Users className="h-4 w-4 text-orange-500 transition-all duration-500 group-hover/influencer:scale-110 group-hover/influencer:rotate-2 group-hover/influencer:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+            <Users className="h-4 w-4 text-purple-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(168,85,247,0.4)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/influencer:text-orange-400">
+            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/stats:text-purple-400">
               {influencerMentions}
             </div>
-            <p className="text-xs text-gray-400 transition-all duration-500 group-hover/influencer:text-gray-300">
+            <p className="text-xs text-gray-500 transition-all duration-500 group-hover/stats:text-gray-400">
               Top creators
             </p>
-            <Badge variant="secondary" className="mt-1 group/live bg-orange-500/20 text-orange-400 border-orange-500/30 transition-all duration-500 group-hover/live:scale-105 group-hover/live:shadow-[0_0_4px_rgba(255,107,53,0.3)]">
+            <Badge variant="secondary" className="mt-1 bg-blue-500/20 text-blue-400 border-blue-500/30 hover:scale-105 hover:shadow-[0_0_4px_rgba(59,130,246,0.3)] transition-all duration-500 transform-gpu">
               live
             </Badge>
           </CardContent>
         </Card>
 
-        <Card className="group/brand bg-gray-900/50 border-gray-700/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+        <Card className="group/stats bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300 transition-all duration-500 group-hover/brand:text-gray-200">
+            <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/stats:text-gray-300">
               Brand Awareness
             </CardTitle>
-            <Eye className="h-4 w-4 text-orange-500 transition-all duration-500 group-hover/brand:scale-110 group-hover/brand:rotate-2 group-hover/brand:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+            <Eye className="h-4 w-4 text-cyan-500 transition-all duration-500 group-hover/stats:scale-110 group-hover/stats:rotate-2 group-hover/stats:drop-shadow-[0_0_4px_rgba(6,182,212,0.4)]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/brand:text-orange-400">
+            <div className="text-2xl font-bold text-white transition-all duration-500 group-hover/stats:text-cyan-400">
               {brandAwareness.toFixed(0)}%
             </div>
-            <Progress value={brandAwareness} className="mt-2 transition-all duration-500 group-hover/brand:shadow-[0_0_6px_rgba(255,107,53,0.25)]" />
-            <p className="text-xs text-gray-400 mt-1 transition-all duration-500 group-hover/brand:text-gray-300">
+            <Progress value={brandAwareness} className="mt-2" />
+            <p className="text-xs text-gray-500 mt-1 transition-all duration-500 group-hover/stats:text-gray-400">
               unique creator ratio
             </p>
           </CardContent>
@@ -437,16 +430,16 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
       </div>
 
       {/* Latest BONK News */}
-      <Card className="group/news bg-gray-900/50 border-gray-700/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+      <Card className="group/main bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Activity className="h-5 w-5 text-orange-500 transition-all duration-500 group-hover/news:scale-110 group-hover/news:rotate-2 group-hover/news:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
+              <Activity className="h-5 w-5 text-[#ff6b35] transition-all duration-500 group-hover/main:scale-110 group-hover/main:rotate-2 group-hover/main:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
               <div>
-                <CardTitle className="text-white transition-all duration-500 group-hover/news:text-orange-400">
+                <CardTitle className="text-white transition-all duration-500 group-hover/main:text-orange-400">
                   Latest BONK News & Updates
                 </CardTitle>
-                <CardDescription className="text-gray-400 transition-all duration-500 group-hover/news:text-gray-300">
+                <CardDescription className="text-gray-400 transition-all duration-500 group-hover/main:text-gray-300">
                   Real-time news and developments from the BONK ecosystem
                 </CardDescription>
               </div>
@@ -454,9 +447,9 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
             <Button
               variant="outline"
               size="sm"
-              className="group/view-all border-orange-500/50 text-orange-400 hover:bg-orange-500/10 bg-transparent hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu"
+              className="group/button border-orange-300 focus:border-orange-500 text-gray-300 hover:bg-gray-800 hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-105 transition-all duration-500 transform-gpu"
             >
-              <ExternalLink className="h-4 w-4 mr-2 transition-all duration-500 group-hover/view-all:scale-110 group-hover/view-all:rotate-2" />
+              <ExternalLink className="h-4 w-4 mr-2 transition-all duration-500 group-hover/button:scale-110 group-hover/button:rotate-2" />
               View All
             </Button>
           </div>
@@ -471,8 +464,8 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
                 onClick={() => setSelectedCategory(category)}
                 className={
                   selectedCategory === category
-                    ? "bg-orange-500 hover:bg-orange-600 border-orange-500 text-white hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu"
-                    : "border-gray-600 text-gray-300 hover:border-orange-500/50 hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu"
+                    ? "bg-[#ff6b35] hover:bg-[#ff6b35]/80 border-[#ff6b35] text-white hover:scale-105 hover:shadow-[0_0_8px_rgba(255,107,53,0.3)] transition-all duration-500 transform-gpu"
+                    : "border-orange-300 focus:border-orange-500 text-gray-300 hover:bg-gray-800 hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-105 transition-all duration-500 transform-gpu"
                 }
               >
                 {category === "all" ? "All News" : category}
@@ -484,48 +477,48 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
             {filteredNews.map((news) => (
               <div
                 key={news.id}
-                className="group/news-item border border-gray-700/50 rounded-lg p-4 hover:border-orange-500/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer"
+                className="group/news border border-gray-700 rounded-lg p-4 hover:bg-gray-800 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer"
               >
                 <div className="flex items-start justify-between mb-2">
-                  <h3 className="font-semibold text-white transition-all duration-500 group-hover/news-item:text-orange-400">
+                  <h3 className="font-semibold text-white transition-all duration-500 group-hover/news:text-orange-400">
                     {news.title}
                   </h3>
                   {news.trending && (
-                    <Badge variant="secondary" className="group/trending bg-red-500/20 text-red-400 border-red-500/30 transition-all duration-500 group-hover/trending:scale-105 group-hover/trending:shadow-[0_0_4px_rgba(239,68,68,0.3)]">
-                      <Flame className="h-3 w-3 mr-1 transition-all duration-500 group-hover/trending:scale-110 group-hover/trending:rotate-2" />
+                    <Badge variant="secondary" className="bg-red-500/20 text-red-400 border-red-500/30 hover:scale-105 hover:shadow-[0_0_4px_rgba(239,68,68,0.3)] transition-all duration-500 transform-gpu">
+                      <Flame className="h-3 w-3 mr-1 transition-all duration-500 group-hover/news:scale-110 group-hover/news:rotate-2" />
                       Trending
                     </Badge>
                   )}
                 </div>
-                <Badge variant="outline" className={`${getSentimentColor(news.sentiment)} transition-all duration-500 group-hover/news-item:scale-105 group-hover/news-item:shadow-[0_0_4px_rgba(255,107,53,0.2)]`}>
+                <Badge variant="outline" className={`${getSentimentColor(news.sentiment)} hover:scale-105 transition-all duration-500 transform-gpu`}>
                   {news.sentiment}
                 </Badge>
-                <p className="text-gray-400 text-sm mt-2 transition-all duration-500 group-hover/news-item:text-gray-300">
+                <p className="text-gray-400 text-sm mt-2 transition-all duration-500 group-hover/news:text-gray-300">
                   {news.summary}
                 </p>
                 <div className="flex items-center justify-between mt-3 text-xs text-gray-500">
                   <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/news-item:text-gray-400">
-                      <Calendar className="h-3 w-3 transition-all duration-500 group-hover/news-item:scale-110 group-hover/news-item:rotate-2" />
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/news:text-gray-400">
+                      <Calendar className="h-3 w-3 transition-all duration-500 group-hover/news:scale-110 group-hover/news:rotate-2" />
                       {news.timestamp}
                     </span>
-                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/news-item:text-gray-400">
-                      <ExternalLink className="h-3 w-3 transition-all duration-500 group-hover/news-item:scale-110 group-hover/news-item:rotate-2" />
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/news:text-gray-400">
+                      <ExternalLink className="h-3 w-3 transition-all duration-500 group-hover/news:scale-110 group-hover/news:rotate-2" />
                       {news.source}
                     </span>
-                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/news-item:text-gray-400">
-                      <Activity className="h-3 w-3 transition-all duration-500 group-hover/news-item:scale-110 group-hover/news-item:rotate-2" />
+                    <span className="flex items-center gap-1 transition-all duration-500 group-hover/news:text-gray-400">
+                      <Activity className="h-3 w-3 transition-all duration-500 group-hover/news:scale-110 group-hover/news:rotate-2" />
                       {news.engagement.toLocaleString()} engagements
                     </span>
                   </div>
-                  <Badge variant="outline" className="group/category border-gray-600 text-gray-400 transition-all duration-500 group-hover/category:scale-105 group-hover/category:shadow-[0_0_4px_rgba(255,107,53,0.2)]">
+                  <Badge variant="outline" className="border-gray-600 text-gray-400 hover:scale-105 transition-all duration-500 transform-gpu">
                     {news.category}
                   </Badge>
                 </div>
               </div>
             ))}
             {!filteredNews.length && (
-              <p className="text-gray-400 text-center py-8 transition-all duration-500 hover:text-gray-300">
+              <p className="text-gray-400 text-center py-8">
                 No recent posts in this category.
               </p>
             )}
@@ -535,26 +528,26 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
 
       {/* Detailed Analysis */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="group/tabs bg-gray-900/50 border-gray-700/50 hover:shadow-[0_0_10px_rgba(255,107,53,0.2)] transition-all duration-500">
-          <TabsTrigger value="overview" className="data-[state=active]:bg-orange-500 data-[state=active]:text-black transition-all duration-500 hover:scale-105">
+        <TabsList className="group/tabs grid w-full grid-cols-3 bg-gray-800 border-gray-700 hover:shadow-[0_0_10px_rgba(255,107,53,0.2)] transition-all duration-500">
+          <TabsTrigger value="overview" className="data-[state=active]:bg-[#ff6b35] data-[state=active]:text-white transition-all duration-500 hover:scale-105">
             Overview
           </TabsTrigger>
-          <TabsTrigger value="trends" className="data-[state=active]:bg-orange-500 data-[state=active]:text-black transition-all duration-500 hover:scale-105">
+          <TabsTrigger value="trends" className="data-[state=active]:bg-[#ff6b35] data-[state=active]:text-white transition-all duration-500 hover:scale-105">
             Trends
           </TabsTrigger>
-          <TabsTrigger value="sentiment" className="data-[state=active]:bg-orange-500 data-[state=active]:text-black transition-all duration-500 hover:scale-105">
+          <TabsTrigger value="sentiment" className="data-[state=active]:bg-[#ff6b35] data-[state=active]:text-white transition-all duration-500 hover:scale-105">
             Sentiment
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="group/competitors bg-gray-900/50 border-gray-700/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+            <Card className="group/competitor bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
               <CardHeader>
-                <CardTitle className="text-white transition-all duration-500 group-hover/competitors:text-orange-400">
+                <CardTitle className="text-white transition-all duration-500 group-hover/competitor:text-orange-400">
                   Competitor Analysis
                 </CardTitle>
-                <CardDescription className="text-gray-400 transition-all duration-500 group-hover/competitors:text-gray-300">
+                <CardDescription className="text-gray-400 transition-all duration-500 group-hover/competitor:text-gray-300">
                   BONK vs other memecoins in mindshare
                 </CardDescription>
               </CardHeader>
@@ -569,17 +562,17 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
                   ].map((competitor) => (
                     <div
                       key={competitor.name}
-                      className="group/competitor flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 hover:scale-[1.01] hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu cursor-pointer"
+                      className="group/item flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-700 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer"
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-black font-bold text-sm transition-all duration-500 group-hover/competitor:scale-110 group-hover/competitor:shadow-[0_0_4px_rgba(255,107,53,0.3)]">
+                        <div className="w-8 h-8 bg-[#ff6b35] rounded-full flex items-center justify-center text-black font-bold text-sm transition-all duration-500 group-hover/item:scale-110 group-hover/item:shadow-[0_0_4px_rgba(255,107,53,0.3)]">
                           {competitor.name.slice(0, 2)}
                         </div>
                         <div>
-                          <div className="text-white font-medium transition-all duration-500 group-hover/competitor:text-orange-400">
+                          <div className="text-white font-medium transition-all duration-500 group-hover/item:text-orange-400">
                             {competitor.name}
                           </div>
-                          <div className="text-gray-400 text-sm transition-all duration-500 group-hover/competitor:text-gray-300">
+                          <div className="text-gray-400 text-sm transition-all duration-500 group-hover/item:text-gray-300">
                             Score: {competitor.score}
                           </div>
                         </div>
@@ -587,9 +580,9 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
                       <div className="flex items-center space-x-2">
                         <Badge
                           variant={competitor.change >= 0 ? "default" : "destructive"}
-                          className={`${
-                            competitor.change >= 0 ? "bg-green-500" : "bg-red-500"
-                          } text-white transition-all duration-500 group-hover/competitor:scale-105 group-hover/competitor:shadow-[0_0_4px_rgba(255,107,53,0.2)]`}
+                          className={
+                            competitor.change >= 0 ? "bg-green-500 hover:scale-105 hover:shadow-[0_0_4px_rgba(34,197,94,0.3)]" : "bg-red-500 hover:scale-105 hover:shadow-[0_0_4px_rgba(239,68,68,0.3)]"
+                          }
                         >
                           {competitor.change >= 0 ? "+" : ""}
                           {competitor.change}%
@@ -601,7 +594,7 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
               </CardContent>
             </Card>
 
-            <Card className="group/trending bg-gray-900/50 border-gray-700/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+            <Card className="group/trending bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
               <CardHeader>
                 <CardTitle className="text-white transition-all duration-500 group-hover/trending:text-orange-400">
                   Trending Topics
@@ -615,31 +608,31 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
                   {trendingTopics.map((topic, index) => (
                     <div
                       key={topic.topic}
-                      className="group/topic flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 hover:scale-[1.01] hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu cursor-pointer"
+                      className="group/item flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-700 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer"
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-black font-bold text-sm transition-all duration-500 group-hover/topic:scale-110 group-hover/topic:shadow-[0_0_4px_rgba(255,107,53,0.3)]">
+                        <div className="w-8 h-8 bg-[#ff6b35] rounded-full flex items-center justify-center text-black font-bold text-sm transition-all duration-500 group-hover/item:scale-110 group-hover/item:shadow-[0_0_4px_rgba(255,107,53,0.3)]">
                           #{index + 1}
                         </div>
                         <div>
-                          <div className="text-white font-medium transition-all duration-500 group-hover/topic:text-orange-400">
+                          <div className="text-white font-medium transition-all duration-500 group-hover/item:text-orange-400">
                             {topic.topic}
                           </div>
-                          <div className="text-gray-400 text-sm transition-all duration-500 group-hover/topic:text-gray-300">
+                          <div className="text-gray-400 text-sm transition-all duration-500 group-hover/item:text-gray-300">
                             {topic.mentions} mentions
                           </div>
                         </div>
                       </div>
                       <Badge
                         variant={topic.trend === "up" ? "default" : "secondary"}
-                        className={`${
-                          topic.trend === "up" ? "bg-green-500" : "bg-gray-500"
-                        } text-white transition-all duration-500 group-hover/topic:scale-105 group-hover/topic:shadow-[0_0_4px_rgba(255,107,53,0.2)]`}
+                        className={
+                          topic.trend === "up" ? "bg-green-500 hover:scale-105 hover:shadow-[0_0_4px_rgba(34,197,94,0.3)]" : "bg-gray-500 hover:scale-105 hover:shadow-[0_0_4px_rgba(107,114,128,0.3)]"
+                        }
                       >
                         {topic.trend === "up" ? (
-                          <TrendingUp className="h-3 w-3 mr-1 transition-all duration-500 group-hover/topic:scale-110 group-hover/topic:rotate-2" />
+                          <TrendingUp className="h-3 w-3 mr-1 transition-all duration-500 group-hover/item:scale-110 group-hover/item:rotate-2" />
                         ) : (
-                          <Activity className="h-3 w-3 mr-1 transition-all duration-500 group-hover/topic:scale-110 group-hover/topic:rotate-2" />
+                          <Activity className="h-3 w-3 mr-1 transition-all duration-500 group-hover/item:scale-110 group-hover/item:rotate-2" />
                         )}
                         {topic.trend}
                       </Badge>
@@ -652,7 +645,7 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
         </TabsContent>
 
         <TabsContent value="trends" className="space-y-6">
-          <Card className="group/trends bg-gray-900/50 border-gray-700/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+          <Card className="group/trends bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
             <CardHeader>
               <CardTitle className="text-white transition-all duration-500 group-hover/trends:text-orange-400">
                 Mindshare Trends
@@ -671,17 +664,17 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
                 ].map((trend) => (
                   <div
                     key={trend.period}
-                    className="group/trend flex items-center justify-between p-4 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 hover:scale-[1.01] hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu cursor-pointer"
+                    className="group/item flex items-center justify-between p-4 bg-gray-800 rounded-lg hover:bg-gray-700 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer"
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-black font-bold text-sm transition-all duration-500 group-hover/trend:scale-110 group-hover/trend:shadow-[0_0_4px_rgba(255,107,53,0.3)]">
+                      <div className="w-10 h-10 bg-[#ff6b35] rounded-full flex items-center justify-center text-black font-bold text-sm transition-all duration-500 group-hover/item:scale-110 group-hover/item:shadow-[0_0_4px_rgba(255,107,53,0.3)]">
                         {trend.score}
                       </div>
                       <div>
-                        <div className="text-white font-medium transition-all duration-500 group-hover/trend:text-orange-400">
+                        <div className="text-white font-medium transition-all duration-500 group-hover/item:text-orange-400">
                           {trend.period}
                         </div>
-                        <div className="text-gray-400 text-sm transition-all duration-500 group-hover/trend:text-gray-300">
+                        <div className="text-gray-400 text-sm transition-all duration-500 group-hover/item:text-gray-300">
                           Mindshare Score
                         </div>
                       </div>
@@ -689,17 +682,17 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
                     <div className="flex items-center space-x-2">
                       <Badge
                         variant={trend.change >= 0 ? "default" : "destructive"}
-                        className={`${
-                          trend.change >= 0 ? "bg-green-500" : "bg-red-500"
-                        } text-white transition-all duration-500 group-hover/trend:scale-105 group-hover/trend:shadow-[0_0_4px_rgba(255,107,53,0.2)]`}
+                        className={
+                          trend.change >= 0 ? "bg-green-500 hover:scale-105 hover:shadow-[0_0_4px_rgba(34,197,94,0.3)]" : "bg-red-500 hover:scale-105 hover:shadow-[0_0_4px_rgba(239,68,68,0.3)]"
+                        }
                       >
                         {trend.change >= 0 ? "+" : ""}
                         {trend.change}%
                       </Badge>
                       {trend.trend === "up" ? (
-                        <TrendingUp className="h-4 w-4 text-green-400 transition-all duration-500 group-hover/trend:scale-110 group-hover/trend:rotate-2" />
+                        <TrendingUp className="h-4 w-4 text-green-400 transition-all duration-500 group-hover/item:scale-110 group-hover/item:rotate-2 group-hover/item:drop-shadow-[0_0_4px_rgba(34,197,94,0.4)]" />
                       ) : (
-                        <TrendingDown className="h-4 w-4 text-red-400 transition-all duration-500 group-hover/trend:scale-110 group-hover/trend:rotate-2" />
+                        <TrendingDown className="h-4 w-4 text-red-400 transition-all duration-500 group-hover/item:scale-110 group-hover/item:rotate-2 group-hover/item:drop-shadow-[0_0_4px_rgba(239,68,68,0.4)]" />
                       )}
                     </div>
                   </div>
@@ -723,9 +716,9 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
             return (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Card className="group/positive bg-gray-900/50 border-gray-700/50 hover:shadow-[0_0_15px_rgba(34,197,94,0.2)] hover:border-green-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+                  <Card className="group/positive bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(34,197,94,0.2)] hover:border-green-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-300 transition-all duration-500 group-hover/positive:text-gray-200">
+                      <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/positive:text-gray-300">
                         Positive
                       </CardTitle>
                       <TrendingUp className="h-4 w-4 text-green-400 transition-all duration-500 group-hover/positive:scale-110 group-hover/positive:rotate-2 group-hover/positive:drop-shadow-[0_0_4px_rgba(34,197,94,0.4)]" />
@@ -734,34 +727,34 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
                       <div className="text-2xl font-bold text-green-400 transition-all duration-500 group-hover/positive:text-green-300">
                         {posPct}%
                       </div>
-                      <Progress value={posPct} className="mt-2 transition-all duration-500 group-hover/positive:shadow-[0_0_6px_rgba(34,197,94,0.25)]" />
-                      <p className="text-xs text-gray-400 mt-1 transition-all duration-500 group-hover/positive:text-gray-300">
+                      <Progress value={posPct} className="mt-2" />
+                      <p className="text-xs text-gray-500 mt-1 transition-all duration-500 group-hover/positive:text-gray-400">
                         Based on recent posts
                       </p>
                     </CardContent>
                   </Card>
 
-                  <Card className="group/neutral bg-gray-900/50 border-gray-700/50 hover:shadow-[0_0_15px_rgba(156,163,175,0.2)] hover:border-gray-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+                  <Card className="group/neutral bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-300 transition-all duration-500 group-hover/neutral:text-gray-200">
+                      <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/neutral:text-gray-300">
                         Neutral
                       </CardTitle>
-                      <Activity className="h-4 w-4 text-gray-400 transition-all duration-500 group-hover/neutral:scale-110 group-hover/neutral:rotate-2 group-hover/neutral:drop-shadow-[0_0_4px_rgba(156,163,175,0.4)]" />
+                      <Activity className="h-4 w-4 text-gray-400 transition-all duration-500 group-hover/neutral:scale-110 group-hover/neutral:rotate-2 group-hover/neutral:drop-shadow-[0_0_4px_rgba(255,107,53,0.4)]" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold text-gray-400 transition-all duration-500 group-hover/neutral:text-gray-300">
+                      <div className="text-2xl font-bold text-gray-400 transition-all duration-500 group-hover/neutral:text-orange-400">
                         {neuPct}%
                       </div>
-                      <Progress value={neuPct} className="mt-2 transition-all duration-500 group-hover/neutral:shadow-[0_0_6px_rgba(156,163,175,0.25)]" />
-                      <p className="text-xs text-gray-400 mt-1 transition-all duration-500 group-hover/neutral:text-gray-300">
+                      <Progress value={neuPct} className="mt-2" />
+                      <p className="text-xs text-gray-500 mt-1 transition-all duration-500 group-hover/neutral:text-gray-400">
                         Based on recent posts
                       </p>
                     </CardContent>
                   </Card>
 
-                  <Card className="group/negative bg-gray-900/50 border-gray-700/50 hover:shadow-[0_0_15px_rgba(239,68,68,0.2)] hover:border-red-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+                  <Card className="group/negative bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(239,68,68,0.2)] hover:border-red-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-300 transition-all duration-500 group-hover/negative:text-gray-200">
+                      <CardTitle className="text-sm font-medium text-gray-400 transition-all duration-500 group-hover/negative:text-gray-300">
                         Negative
                       </CardTitle>
                       <TrendingDown className="h-4 w-4 text-red-400 transition-all duration-500 group-hover/negative:scale-110 group-hover/negative:rotate-2 group-hover/negative:drop-shadow-[0_0_4px_rgba(239,68,68,0.4)]" />
@@ -770,15 +763,15 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
                       <div className="text-2xl font-bold text-red-400 transition-all duration-500 group-hover/negative:text-red-300">
                         {negPct}%
                       </div>
-                      <Progress value={negPct} className="mt-2 transition-all duration-500 group-hover/negative:shadow-[0_0_6px_rgba(239,68,68,0.25)]" />
-                      <p className="text-xs text-gray-400 mt-1 transition-all duration-500 group-hover/negative:text-gray-300">
+                      <Progress value={negPct} className="mt-2" />
+                      <p className="text-xs text-gray-500 mt-1 transition-all duration-500 group-hover/negative:text-gray-400">
                         Based on recent posts
                       </p>
                     </CardContent>
                   </Card>
                 </div>
 
-                <Card className="group/timeline bg-gray-900/50 border-gray-700/50 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+                <Card className="group/timeline bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
                   <CardHeader>
                     <CardTitle className="text-white transition-all duration-500 group-hover/timeline:text-orange-400">
                       Sentiment Timeline
@@ -804,7 +797,7 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
                         { date: "5 days ago", positive: 55, neutral: 32, negative: 13, event: "NFT collection launch" },
                         { date: "6 days ago", positive: 52, neutral: 35, negative: 13, event: "Regular trading" },
                       ].map((day) => (
-                        <div key={day.date} className="group/day border border-gray-700/50 rounded-lg p-4 hover:border-orange-500/50 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
+                        <div key={day.date} className="group/day border border-gray-700 rounded-lg p-4 hover:bg-gray-800 hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
                           <div className="flex justify-between items-center mb-2">
                             <h4 className="font-semibold text-white transition-all duration-500 group-hover/day:text-orange-400">
                               {day.date}
@@ -823,7 +816,7 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
                                   {day.positive}%
                                 </span>
                               </div>
-                              <Progress value={day.positive} className="h-2 transition-all duration-500 group-hover/day:shadow-[0_0_4px_rgba(34,197,94,0.2)]" />
+                              <Progress value={day.positive} className="h-2" />
                             </div>
                             <div className="flex-1">
                               <div className="flex justify-between text-sm mb-1">
@@ -834,7 +827,7 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
                                   {day.neutral}%
                                 </span>
                               </div>
-                              <Progress value={day.neutral} className="h-2 transition-all duration-500 group-hover/day:shadow-[0_0_4px_rgba(156,163,175,0.2)]" />
+                              <Progress value={day.neutral} className="h-2" />
                             </div>
                             <div className="flex-1">
                               <div className="flex justify-between text-sm mb-1">
@@ -845,7 +838,7 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
                                   {day.negative}%
                                 </span>
                               </div>
-                              <Progress value={day.negative} className="h-2 transition-all duration-500 group-hover/day:shadow-[0_0_4px_rgba(239,68,68,0.2)]" />
+                              <Progress value={day.negative} className="h-2" />
                             </div>
                           </div>
                         </div>
@@ -861,3 +854,4 @@ export function MindshareTracker({ refreshMs = 30_000 }: { refreshMs?: number } 
     </div>
   )
 }
+

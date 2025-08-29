@@ -125,7 +125,7 @@ export default function InteractivePriceChart(props: Props) {
                      onClick={() => setView(v)}
                      className={`px-3 py-1 text-sm ${view===v ? 'bg-orange-600 text-white' : 'bg-neutral-800 text-neutral-300'}`}
                    >
-                     {v === 'price' ? '$ Price' : v === 'marketCap' ? 'Market Cap' : 'Volume'}
+                     {v === 'price' ? ' Price' : v === 'marketCap' ? 'Market Cap' : 'Volume'}
                    </button>
                  ))}
         </div>

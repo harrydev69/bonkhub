@@ -36,6 +36,9 @@ type InfluencerRow = {
   impact: number // 0..100-ish
   avatar?: string
   url?: string // URL to creator's profile or social media
+  creator_id?: string // For navigation
+  handle?: string // For navigation
+  username?: string // For navigation
 }
 
 type TimeseriesPoint = {
@@ -285,7 +288,17 @@ export default function SentimentDashboard({
             }
           }
           
-          return { name, followers, impact, sentiment, avatar: i.creator_avatar, url }
+          return { 
+            name, 
+            followers, 
+            impact, 
+            sentiment, 
+            avatar: i.creator_avatar, 
+            url,
+            creator_id: i.creator_id,
+            handle: i.handle,
+            username: i.username
+          }
         })
         .sort((a, b) => (b.impact || 0) - (a.impact || 0))
         .slice(0, 25), // Keep 25 for overview sidebar
@@ -314,7 +327,17 @@ export default function SentimentDashboard({
             }
           }
           
-          return { name, followers, impact, sentiment, avatar: i.creator_avatar, url }
+          return { 
+            name, 
+            followers, 
+            impact, 
+            sentiment, 
+            avatar: i.creator_avatar, 
+            url,
+            creator_id: i.creator_id,
+            handle: i.handle,
+            username: i.username
+          }
         })
         .sort((a, b) => (b.impact || 0) - (a.impact || 0)), // No limit - show all
     [influencers],
