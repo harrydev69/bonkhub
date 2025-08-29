@@ -12,14 +12,15 @@ import { getCoinFeeds } from "@/lib/lunarcrush";
  */
 export async function GET(
   req: Request,
-  { params }: { params: { tokenId: string } }
+  { params }: { params: Promise<{ tokenId: string }> }
 ) {
   try {
+    const { tokenId } = await params;
     const url = new URL(req.url);
     const rawLimit = parseInt(url.searchParams.get("limit") || "50", 10);
     const limit = Math.max(1, Math.min(200, isFinite(rawLimit) ? rawLimit : 50));
 
-    const feeds = await getCoinFeeds(params.tokenId, limit);
+    const feeds = await getCoinFeeds(tokenId, limit);
     return Response.json({ feeds });
   } catch (error: any) {
     const message = String(error?.message || "Failed to fetch feeds");

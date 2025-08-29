@@ -23,6 +23,7 @@ interface NewsTabProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  isFallback?: boolean;
 }
 
 export function NewsTab({
@@ -32,6 +33,7 @@ export function NewsTab({
   currentPage,
   totalPages,
   onPageChange,
+  isFallback = false,
 }: NewsTabProps) {
   const newsPerPage = 6;
   const newsIndexOfLast = currentPage * newsPerPage;
@@ -71,16 +73,36 @@ export function NewsTab({
     <Card className="group/news bg-gray-900 border-gray-700 hover:shadow-[0_0_15px_rgba(255,107,53,0.2)] hover:border-orange-500/40 hover:scale-[1.01] transition-all duration-500 transform-gpu cursor-pointer">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-white transition-all duration-500 group-hover/news:text-orange-400">
-          Latest News & Updates
+          {isFallback ? "General Crypto News" : "Latest News & Updates"}
         </CardTitle>
-        <Badge
-          variant="outline"
-          className="transition-all duration-500 group-hover/news:scale-105 group-hover/news:shadow-[0_0_4px_rgba(255,107,53,0.2)]"
-        >
-          {filteredNews.length} articles
-        </Badge>
+        <div className="flex items-center gap-2">
+          {isFallback && (
+            <Badge
+              variant="secondary"
+              className="bg-blue-500/20 text-blue-400 border-blue-500/30 text-xs transition-all duration-500 group-hover/news:scale-105 group-hover/news:shadow-[0_0_4px_rgba(59,130,246,0.2)]"
+            >
+              Fallback News
+            </Badge>
+          )}
+          <Badge
+            variant="outline"
+            className="transition-all duration-500 group-hover/news:scale-105 group-hover/news:shadow-[0_0_4px_rgba(255,107,53,0.2)]"
+          >
+            {filteredNews.length} articles
+          </Badge>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        {isFallback && filteredNews.length > 0 && (
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 mb-4">
+            <div className="flex items-center gap-2 text-blue-400 text-sm">
+              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+              <span>
+                No token-specific news found. Showing general cryptocurrency news instead.
+              </span>
+            </div>
+          </div>
+        )}
         {currentNews.map((article) => {
           const name = article.creator_display_name || "Source";
           const handle = article.creator_name ? `@${article.creator_name}` : "";

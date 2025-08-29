@@ -40,6 +40,9 @@ interface MetaSearchState {
   socialDominanceLoading: boolean;
   technicalDataLoading: boolean;
 
+  // News fallback state
+  newsIsFallback: boolean;
+
   // Pagination states
   currentSocialPage: number;
   currentNewsPage: number;
@@ -86,6 +89,8 @@ interface MetaSearchState {
   setAiSummaryLoading: (loading: boolean) => void;
   setSocialDominanceLoading: (loading: boolean) => void;
   setTechnicalDataLoading: (loading: boolean) => void;
+
+  setNewsIsFallback: (isFallback: boolean) => void;
 
   setCurrentSocialPage: (page: number) => void;
   setCurrentNewsPage: (page: number) => void;
@@ -144,6 +149,8 @@ const initialState = {
   aiSummaryLoading: false,
   socialDominanceLoading: false,
   technicalDataLoading: false,
+
+  newsIsFallback: false,
 
   currentSocialPage: 1,
   currentNewsPage: 1,
@@ -205,6 +212,8 @@ export const useMetaSearchStore = create<MetaSearchState>()(
         setSocialDominanceLoading: (loading: boolean) => set({ socialDominanceLoading: loading }),
         setTechnicalDataLoading: (loading: boolean) => set({ technicalDataLoading: loading }),
 
+        setNewsIsFallback: (isFallback: boolean) => set({ newsIsFallback: isFallback }),
+
         setCurrentSocialPage: (page: number) => set({ currentSocialPage: page }),
         setCurrentNewsPage: (page: number) => set({ currentNewsPage: page }),
 
@@ -257,6 +266,7 @@ export const useMetaSearchStore = create<MetaSearchState>()(
           aiSummaryError: null,
           socialDominanceError: null,
           technicalDataError: null,
+          newsIsFallback: false,
         }),
 
         queryKeys: {

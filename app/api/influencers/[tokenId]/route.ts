@@ -11,14 +11,15 @@ import { getCoinInfluencers } from "@/lib/lunarcrush";
  */
 export async function GET(
   req: Request,
-  { params }: { params: { tokenId: string } }
+  { params }: { params: Promise<{ tokenId: string }> }
 ) {
   try {
+    const { tokenId } = await params;
     const url = new URL(req.url);
     const rawLimit = parseInt(url.searchParams.get("limit") || "25", 10);
     const limit = Math.max(1, Math.min(100, isFinite(rawLimit) ? rawLimit : 25));
 
-    const influencers = await getCoinInfluencers(params.tokenId, limit);
+    const influencers = await getCoinInfluencers(tokenId, limit);
     return Response.json({ influencers });
   } catch (error: any) {
     const message = String(error?.message || "Failed to fetch influencers");

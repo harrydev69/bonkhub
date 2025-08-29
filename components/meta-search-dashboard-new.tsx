@@ -14,6 +14,7 @@ import {
   useNewsQuery,
   usePriceChartQuery,
   useAiSummaryQuery,
+  useSocialDominanceQuery,
 } from "./metasearch/hooks";
 import { fetchTokenStats, fetchCreators } from "./metasearch/utils";
 
@@ -45,6 +46,7 @@ export function MetaSearchDashboard({
   useNewsQuery();
   usePriceChartQuery("7");
   useAiSummaryQuery();
+  useSocialDominanceQuery();
 
   useEffect(() => {
     if (initialQuery && initialQuery !== inputValue) {

@@ -15,6 +15,7 @@ import { Streamdown } from "streamdown";
 import { TokenPriceChart } from "@/components/token-price-chart";
 import { SocialDominanceChart } from "./social-dominance-chart";
 import { CoinTechnicalChart } from "./coin-technical-chart";
+
 import type { TokenStats, Creator, AIInsight } from "./types";
 import { formatNumber, formatPrice } from "./utils";
 import { useMetaSearchStore } from "./store";
@@ -178,6 +179,56 @@ export function OverviewTab({
 
       {/* Left Panel - Market Info */}
       <div className="lg:col-span-1 space-y-6">
+        {/* Token Header */}
+        {tokenStats && (tokenStats.name || tokenStats.symbol || tokenStats.image) && (
+          <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] hover:border-orange-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/20 hover:scale-[1.02]">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                {tokenStats.image && (
+                  <div className="flex-shrink-0">
+                    <img
+                      src={tokenStats.image}
+                      alt={tokenStats.name || tokenStats.symbol || 'Token'}
+                      className="w-12 h-12 rounded-full ring-2 ring-orange-500/20 group-hover:ring-orange-500/50 transition-all duration-300"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    {tokenStats.name && (
+                      <h3 className="text-lg font-bold text-white truncate group-hover:text-orange-400 transition-colors duration-300">
+                        {tokenStats.name}
+                      </h3>
+                    )}
+                    {tokenStats.symbol && (
+                      <Badge variant="secondary" className="bg-orange-500/20 text-orange-400 border-orange-500/30 text-xs uppercase">
+                        {tokenStats.symbol}
+                      </Badge>
+                    )}
+                  </div>
+                  {tokenStats.rank && (
+                    <div className="text-sm text-gray-400">
+                      Rank #{tokenStats.rank}
+                    </div>
+                  )}
+                  {tokenStats.contractAddress && (
+                    <div className="text-sm font-mono text-gray-400 mt-2 break-all">
+                      <span className="text-xs text-gray-500 uppercase tracking-wide">Contract:</span>
+                      <div className="text-xs text-orange-400 mt-1 select-all cursor-pointer hover:text-orange-300 transition-colors duration-200">
+                        {tokenStats.contractAddress}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Market Stats */}
         <Card className="group bg-gray-900 border-gray-800 hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] hover:border-orange-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/20 hover:scale-[1.02]">
           <CardHeader>
@@ -353,31 +404,49 @@ export function OverviewTab({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-3">
                 <h4 className="text-lg font-semibold text-white">
-                  Social Metrics
+                  Performance Metrics
                 </h4>
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center p-2 bg-gray-800 rounded-lg">
-                    <span className="text-gray-400 text-sm">Social Score</span>
-                    <span className="text-white font-semibold text-sm">
-                      87/100
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-gray-800 rounded-lg">
-                    <span className="text-gray-400 text-sm">
-                      Community Score
-                    </span>
-                    <span className="text-white font-semibold text-sm">
-                      92/100
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-gray-800 rounded-lg">
-                    <span className="text-gray-400 text-sm">
-                      Developer Score
-                    </span>
-                    <span className="text-white font-semibold text-sm">
-                      78/100
-                    </span>
-                  </div>
+                  {/* Real data from social dominance API (more comprehensive) */}
+                  {socialDominanceData && socialDominanceData.length > 0 && (
+                    <>
+                      <div className="flex justify-between items-center p-2 bg-gray-800 rounded-lg">
+                        <span className="text-gray-400 text-sm">Galaxy Score</span>
+                        <span className="text-white font-semibold text-sm">
+                          {socialDominanceData[socialDominanceData.length - 1]?.galaxy_score || 0}/100
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center p-2 bg-gray-800 rounded-lg">
+                        <span className="text-gray-400 text-sm">Sentiment Score</span>
+                        <span className="text-white font-semibold text-sm">
+                          {socialDominanceData[socialDominanceData.length - 1]?.sentiment || 0}/100
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center p-2 bg-gray-800 rounded-lg">
+                        <span className="text-gray-400 text-sm">Social Dominance</span>
+                        <span className="text-white font-semibold text-sm">
+                          {(socialDominanceData[socialDominanceData.length - 1]?.social_dominance || 0).toFixed(2)}%
+                        </span>
+                      </div>
+                    </>
+                  )}
+                  {/* Fallback to static data if no technical data */}
+                  {(!technicalData || technicalData.length === 0) && (
+                    <>
+                      <div className="flex justify-between items-center p-2 bg-gray-800 rounded-lg">
+                        <span className="text-gray-400 text-sm">Galaxy Score</span>
+                        <span className="text-gray-500 font-semibold text-sm">N/A</span>
+                      </div>
+                      <div className="flex justify-between items-center p-2 bg-gray-800 rounded-lg">
+                        <span className="text-gray-400 text-sm">Sentiment Score</span>
+                        <span className="text-gray-500 font-semibold text-sm">N/A</span>
+                      </div>
+                      <div className="flex justify-between items-center p-2 bg-gray-800 rounded-lg">
+                        <span className="text-gray-400 text-sm">Social Dominance</span>
+                        <span className="text-gray-500 font-semibold text-sm">N/A</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -386,7 +455,29 @@ export function OverviewTab({
                   Market Metrics
                 </h4>
                 <div className="space-y-2">
-                  {tokenStats && (
+                  {/* Use social dominance data for market metrics (more comprehensive) */}
+                  {socialDominanceData && socialDominanceData.length > 0 ? (
+                    <>
+                      <div className="flex justify-between items-center p-2 bg-gray-800 rounded-lg">
+                        <span className="text-gray-400 text-sm">Market Dominance</span>
+                        <span className="text-white font-semibold text-sm">
+                          {(socialDominanceData[socialDominanceData.length - 1]?.market_dominance || 0).toFixed(2)}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center p-2 bg-gray-800 rounded-lg">
+                        <span className="text-gray-400 text-sm">Alt Rank</span>
+                        <span className="text-white font-semibold text-sm">
+                          #{socialDominanceData[socialDominanceData.length - 1]?.alt_rank || 0}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center p-2 bg-gray-800 rounded-lg">
+                        <span className="text-gray-400 text-sm">24h Volume</span>
+                        <span className="text-white font-semibold text-sm">
+                          ${formatNumber(socialDominanceData[socialDominanceData.length - 1]?.volume_24h || 0)}
+                        </span>
+                      </div>
+                    </>
+                  ) : tokenStats && (
                     <>
                       <div className="flex justify-between items-center p-2 bg-gray-800 rounded-lg">
                         <span className="text-gray-400 text-sm">ATH</span>
@@ -426,7 +517,7 @@ export function OverviewTab({
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {creators.slice(0, 3).map((creator, index) => (
+              {creators.map((creator, index) => (
                 <div
                   key={creator.id}
                   className="group/creator flex items-center gap-4 p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-orange-500/50 hover:bg-gray-750 hover:scale-[1.02] transition-all duration-300 cursor-pointer"
@@ -558,7 +649,7 @@ export function OverviewTab({
               </Badge>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             {aiSummaryLoading ? (
               <div className="space-y-3">
                 <div className="h-4 bg-gray-800 rounded animate-pulse" />
@@ -566,23 +657,35 @@ export function OverviewTab({
                 <div className="h-4 bg-gray-800 rounded animate-pulse w-1/2" />
               </div>
             ) : aiSummaryError ? (
-              <div className="text-red-400 text-sm">
+              <div className="text-red-400 text-sm p-4 bg-red-900/20 rounded-lg border border-red-800">
                 Failed to generate AI summary: {String(aiSummaryError)}
               </div>
             ) : aiSummaryData?.summary ? (
               <div className="space-y-4">
-                <Streamdown className="text-gray-300 leading-relaxed">
-                  {aiSummaryData.summary}
-                </Streamdown>
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <Brain className="h-3 w-3" />
-                  Generated by AI • {aiSummaryData.tokenId?.toUpperCase()}{" "}
-                  Analysis
+                <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+                  <div className="prose prose-gray max-w-none">
+                    <div className="text-gray-300 leading-relaxed text-sm font-mono whitespace-pre-wrap break-words">
+                      {aiSummaryData.summary}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-xs text-gray-500 bg-gray-800/30 rounded-lg p-3">
+                  <div className="flex items-center gap-2">
+                    <Brain className="h-3 w-3 text-orange-400" />
+                    <span>Generated by AI • {aiSummaryData.tokenId?.toUpperCase()} Analysis</span>
+                  </div>
+                  <div className="text-orange-400 font-medium">
+                    {aiSummaryData?.generatedAt
+                      ? new Date(aiSummaryData.generatedAt).toLocaleTimeString()
+                      : "Live"}
+                  </div>
                 </div>
               </div>
             ) : (
-              <div className="text-gray-400 text-sm">
-                No AI summary available
+              <div className="text-gray-400 text-sm text-center py-8">
+                <Brain className="h-8 w-8 mx-auto mb-2 text-gray-600" />
+                <p>No AI summary available</p>
+                <p className="text-xs text-gray-600 mt-1">Try searching for a different token</p>
               </div>
             )}
           </CardContent>
@@ -596,11 +699,13 @@ export function OverviewTab({
         />
 
         <CoinTechnicalChart
-          data={technicalData}
-          loading={technicalDataLoading}
-          error={technicalDataError}
+          data={socialDominanceData}
+          loading={socialDominanceLoading}
+          error={socialDominanceError}
         />
       </div>
+
+
     </div>
   );
 }

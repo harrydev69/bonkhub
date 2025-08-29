@@ -24,12 +24,28 @@ export function SocialDominanceChart({ data, loading, error }: SocialDominanceCh
   const processedData = useMemo(() => {
     if (!data || !Array.isArray(data) || data.length === 0) return []
 
-    return data.map((item) => ({
-      time: item.time,
-      date: new Date(item.time * 1000).toLocaleDateString(),
-      postsActive: item.posts_active || 0,
-      interactions: item.interactions || 0,
-    }))
+    return data
+      .filter(item => item.time && typeof item.time === 'number' && item.time > 0)
+      .slice(-24) // Show last 24 hours for better social activity tracking
+      .map((item) => ({
+        time: item.time,
+        // Use hour format for social activity (more relevant than dates)
+        timeLabel: new Date(item.time * 1000).toLocaleTimeString('en-US', { 
+          hour: 'numeric',
+          hour12: true 
+        }),
+        date: new Date(item.time * 1000).toLocaleDateString('en-US', { 
+          month: 'short', 
+          day: 'numeric' 
+        }),
+        postsActive: item.posts_active || 0,
+        interactions: item.interactions || 0,
+        // Additional social metrics
+        sentiment: item.sentiment || 0,
+        socialDominance: item.social_dominance || 0,
+        contributors: item.contributors_active || 0,
+      }))
+      .filter(item => item.postsActive > 0 || item.interactions > 0); // Only valid social data
   }, [data])
 
   // Smart X-axis tick calculation
@@ -91,10 +107,10 @@ export function SocialDominanceChart({ data, loading, error }: SocialDominanceCh
     return [min - padding, max + padding]
   }
 
-  // Clean time formatting
+  // Format time as hours for social activity (more relevant than dates)
   const formatTimeLabel = (timestamp: number): string => {
-    const date = new Date(timestamp)
-    return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
+    const date = new Date(timestamp * 1000) // Convert Unix timestamp to milliseconds
+    return date.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true })
   }
 
   // Get X-axis ticks for smart labeling

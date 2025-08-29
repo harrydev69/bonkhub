@@ -167,6 +167,23 @@ export default function SentimentDashboard({
     staleTime: 55 * 60 * 1000, // Consider stale after 55 minutes
   })
 
+  // New topic keywords query using /public/topic/bonk/v1
+  const {
+    data: topicKeywords,
+    isLoading: topicKeywordsLoading,
+    error: topicKeywordsError,
+  } = useQuery({
+    queryKey: ["topicKeywords"],
+    queryFn: async () => {
+      const res = await fetch("/api/sentiment/bonk/topic-keywords")
+      if (!res.ok) throw new Error("Failed to fetch topic keywords")
+      const data = await res.json()
+      return data.data
+    },
+    refetchInterval: 5 * 60 * 1000, // 5 minutes
+    staleTime: 4 * 60 * 1000, // Consider stale after 4 minutes
+  })
+
   const {
     data: timeseries,
     isLoading: timeseriesLoading,
@@ -199,8 +216,8 @@ export default function SentimentDashboard({
     staleTime: 55 * 60 * 1000, // Consider stale after 55 minutes
   })
 
-  const loading = comprehensiveLoading || insightsLoading || timeseriesLoading || influencersLoading
-  const error = comprehensiveError || insightsError || timeseriesError || influencersError
+  const loading = comprehensiveLoading || insightsLoading || topicKeywordsLoading || timeseriesLoading || influencersLoading
+  const error = comprehensiveError || insightsError || topicKeywordsError || timeseriesError || influencersError
 
   /* -------------------------------
    Helpers
@@ -386,6 +403,30 @@ export default function SentimentDashboard({
   }, [allInfluencerRows, impactFilter, searchQuery, sortBy])
 
   const keywordRows: KeywordRow[] = useMemo(() => {
+    // Use topic keywords if available, fallback to insights
+    if (topicKeywords?.data?.related_topics && Array.isArray(topicKeywords.data.related_topics)) {
+      const relatedTopics = topicKeywords.data.related_topics
+        .slice(0, 15) // Take top 15 related topics
+        .map((topic: string, index: number) => {
+          // Estimate sentiment based on position and platform data
+          const tweetSentiment = topicKeywords.data.types_sentiment?.tweet || 80;
+          const sentiment = tweetSentiment > 85 ? "positive" : tweetSentiment < 75 ? "negative" : "neutral";
+          
+          // Estimate mention count based on position (higher position = more mentions)
+          const estimatedCount = Math.floor(topicKeywords.data.num_posts / (index + 1) * 0.1);
+          
+          return {
+            word: topic.replace(/^[$#]/, ""), // Remove $ and # prefixes
+            count: estimatedCount,
+            sentiment: sentiment as "positive" | "negative" | "neutral"
+          };
+        })
+        .sort((a, b) => b.count - a.count);
+      
+      return relatedTopics.length ? relatedTopics : [{ word: "bonk", count: 0, sentiment: "neutral" }];
+    }
+
+    // Fallback to original insights data
     const fromInsights = (insights?.keywords ?? [])
       .slice(0, 30)
       .map((k) => ({ word: k.word.replace(/^#/, ""), count: k.count, sentiment: "neutral" as const }))
@@ -393,15 +434,17 @@ export default function SentimentDashboard({
       .slice(0, 10)
 
     return fromInsights.length ? fromInsights : [{ word: "bonk", count: 0, sentiment: "neutral" }]
-  }, [insights])
+  }, [topicKeywords, insights])
 
   const chartData: ChartData[] = useMemo(() => {
-    if (!Array.isArray(timeseries)) return []
+    // Handle both old format (array) and new format (object with data array)
+    const dataArray = Array.isArray(timeseries) ? timeseries : (timeseries?.data || []);
+    if (!Array.isArray(dataArray) || dataArray.length === 0) return []
 
-    return timeseries.map((point) => ({
-      hour: new Date(point.ts || 0).toLocaleTimeString("en-US", { hour: "numeric", hour12: true }),
-      engagement: Math.round(point.social_score || 0),
-      sentiment: Math.round((point.average_sentiment || point.sentiment || 0) * 100) / 100,
+    return dataArray.map((point) => ({
+      hour: new Date((point.ts || point.time || 0) * 1000).toLocaleTimeString("en-US", { hour: "numeric", hour12: true }),
+      engagement: Math.round(point.social_score || point.galaxy_score || point.interactions || 0),
+      sentiment: (point.average_sentiment || point.sentiment || 0) / 100, // Convert to 0-1 range for chart
     }))
   }, [timeseries])
 
@@ -620,36 +663,50 @@ export default function SentimentDashboard({
                 Trending Keywords
               </CardTitle>
               <CardDescription className="text-gray-400 transition-all duration-500 group-hover/keywords:text-gray-300">
-                Most mentioned keywords and their sentiment impact
+                Top trending topics related to BONK across all platforms
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {keywordRows.map((keyword) => (
+                {keywordRows.map((keyword, index) => (
                   <div
                     key={keyword.word}
                     className="group/keyword flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-700 hover:scale-[1.01] hover:shadow-[0_0_8px_rgba(255,107,53,0.2)] transition-all duration-500 transform-gpu cursor-pointer"
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="text-[#ff6b35] font-mono transition-all duration-500 group-hover/keyword:text-orange-400 group-hover/keyword:scale-105">
-                        #{keyword.word}
+                      {/* Trending Rank */}
+                      <div className="flex items-center justify-center w-6 h-6 bg-gradient-to-br from-[#ff6b35] to-[#ff8c42] rounded-full text-black font-bold text-xs transition-all duration-500 group-hover/keyword:scale-110">
+                        #{index + 1}
                       </div>
-                      <div className="text-gray-400 text-sm transition-all duration-500 group-hover/keyword:text-gray-300">
-                        {keyword.count.toLocaleString()} mentions
+                      <div>
+                        <div className="text-[#ff6b35] font-mono transition-all duration-500 group-hover/keyword:text-orange-400 group-hover/keyword:scale-105">
+                          #{keyword.word}
+                        </div>
+                        <div className="text-gray-400 text-sm transition-all duration-500 group-hover/keyword:text-gray-300">
+                          {keyword.count.toLocaleString()} mentions
+                        </div>
                       </div>
                     </div>
-                    <Badge
-                      variant={
-                        keyword.sentiment === "positive"
-                          ? "default"
-                          : keyword.sentiment === "negative"
-                            ? "destructive"
-                            : "secondary"
-                      }
-                      className={`${keyword.sentiment === "positive" ? "bg-[#ff6b35] text-black" : ""} transition-all duration-500 group-hover/keyword:scale-105 group-hover/keyword:shadow-[0_0_4px_rgba(255,107,53,0.2)]`}
-                    >
-                      {keyword.sentiment}
-                    </Badge>
+                    <div className="flex items-center space-x-2">
+                      <Badge
+                        variant={
+                          keyword.sentiment === "positive"
+                            ? "default"
+                            : keyword.sentiment === "negative"
+                              ? "destructive"
+                              : "secondary"
+                        }
+                        className={`${keyword.sentiment === "positive" ? "bg-green-600 text-white" : keyword.sentiment === "negative" ? "bg-red-600 text-white" : "bg-gray-600 text-white"} transition-all duration-500 group-hover/keyword:scale-105 group-hover/keyword:shadow-[0_0_4px_rgba(255,107,53,0.2)]`}
+                      >
+                        {keyword.sentiment}
+                      </Badge>
+                      {/* Trending indicator for top keywords */}
+                      {index < 3 && (
+                        <span className="text-orange-400 text-sm font-semibold transition-all duration-500 group-hover/keyword:scale-105">
+                          🔥
+                        </span>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>

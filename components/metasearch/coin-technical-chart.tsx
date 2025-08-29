@@ -24,12 +24,26 @@ export function CoinTechnicalChart({ data, loading, error }: CoinTechnicalChartP
   const processedData = useMemo(() => {
     if (!data || !Array.isArray(data) || data.length === 0) return [];
 
-    return data.map((item) => ({
-      time: item.time,
-      date: new Date(item.time * 1000).toLocaleDateString(),
-      interactions: item.interactions || 0,
-      marketCap: item.market_cap || 0,
-    }));
+    return data
+      .filter(item => item.time && typeof item.time === 'number' && item.time > 0)
+      .slice(-30) // Show last 30 days for better readability
+      .map((item) => ({
+        time: item.time,
+        date: new Date(item.time * 1000).toLocaleDateString('en-US', { 
+          month: 'short', 
+          day: 'numeric' 
+        }),
+        // Use real market cap if available, otherwise calculate
+        marketCap: item.market_cap || ((item.circulating_supply || 0) * (item.close || 0)),
+        interactions: item.interactions || 0,
+        volume: item.volume_24h || 0,
+        price: item.close || 0,
+        // Additional performance metrics
+        galaxyScore: item.galaxy_score || 0,
+        socialDominance: item.social_dominance || 0,
+        marketDominance: item.market_dominance || 0,
+      }))
+      .filter(item => item.marketCap > 0 || item.interactions > 0); // Only valid data
   }, [data]);
 
   const computeXTicks = (timestamps: number[]): number[] => {
@@ -166,13 +180,21 @@ export function CoinTechnicalChart({ data, loading, error }: CoinTechnicalChartP
             <CardTitle className="text-2xl font-bold text-white transition-colors duration-300 group-hover:text-purple-400">
               Market Cap & Interactions
             </CardTitle>
-            <Badge
-              variant="secondary"
-              className="transition-all duration-300 hover:scale-110 bg-purple-900/20 text-purple-400 border-purple-500/30 hover:bg-purple-900/40"
-            >
-              <Activity className="h-3 w-3 mr-1 transition-transform duration-300 group-hover:rotate-12" />
-              {processedData.length} data points
-            </Badge>
+            <div className="flex items-center space-x-2">
+              <Badge
+                variant="secondary"
+                className="transition-all duration-300 hover:scale-110 bg-purple-900/20 text-purple-400 border-purple-500/30 hover:bg-purple-900/40"
+              >
+                <Activity className="h-3 w-3 mr-1 transition-transform duration-300 group-hover:rotate-12" />
+                {processedData.length} data points
+              </Badge>
+              <Badge
+                variant="outline"
+                className="text-gray-400 border-gray-600"
+              >
+                Last 30 days
+              </Badge>
+            </div>
           </div>
         </div>
       </CardHeader>

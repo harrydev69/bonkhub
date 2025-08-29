@@ -300,3 +300,11 @@ export async function getTopicData(topic: string) {
     throw error
   }
 }
+
+/**
+ * Fetch meme coins list from LunarCrush API
+ * @returns Promise with meme coins data including BONK
+ */
+export async function getMemeCoins() {
+  return await fetchJson("/public/coins/list/v2?filter=meme");
+}

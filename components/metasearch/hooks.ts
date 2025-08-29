@@ -21,7 +21,7 @@ export function useInfluencersQuery() {
     },
     refetchInterval: 60 * 60 * 1000, // 1 hour
     staleTime: 55 * 60 * 1000, // Consider stale after 55 minutes
-    enabled: !!debouncedSearchQuery || hasSearched,
+    enabled: true, // Always enable to show BONK influencers by default
   });
 
   useEffect(() => {
@@ -91,21 +91,67 @@ export function useNewsQuery() {
     queryKeys,
     setRawNewsData,
     setNewsQueryError,
+    setNewsIsFallback,
   } = useMetaSearchStore();
 
   const query = useQuery({
     queryKey: queryKeys.news(debouncedSearchQuery, 50),
     queryFn: async () => {
       const tokenId = debouncedSearchQuery || "bonk";
-      const res = await fetch(`/api/news/${tokenId}`, {
-        cache: "no-store",
-      });
-      if (!res.ok) {
-        const body = await res.text().catch(() => "");
-        throw new Error(`news ${res.status}: ${body || res.statusText}`);
+      
+      try {
+        // First, try to get token-specific news
+        console.log(`📰 Fetching token-specific news for: ${tokenId}`);
+        const tokenRes = await fetch(`/api/news/${tokenId}`, {
+          cache: "no-store",
+        });
+        
+        if (tokenRes.ok) {
+          const tokenJson = await tokenRes.json().catch(() => ({}));
+          const tokenNews = tokenJson.data?.data || [];
+          
+          // If we have token-specific news, use it
+          if (tokenNews.length > 0) {
+            console.log(`✅ Found ${tokenNews.length} token-specific news articles`);
+            return {
+              articles: tokenNews,
+              isFallback: false,
+              source: 'token-specific'
+            };
+          } else {
+            console.log(`⚠️ No token-specific news found for ${tokenId}, trying fallback...`);
+          }
+        } else {
+          console.log(`⚠️ Token-specific news API failed (${tokenRes.status}), trying fallback...`);
+        }
+      } catch (tokenError) {
+        console.log(`⚠️ Token-specific news request failed, trying fallback...`, tokenError);
       }
-      const json = await res.json().catch(() => ({}));
-      return json.data?.data || [];
+
+      // Fallback to general crypto news
+      try {
+        console.log(`🔄 Fetching general crypto news as fallback`);
+        const fallbackRes = await fetch(`/api/public/category/cryptocurrencies/news/v1?limit=25`, {
+          cache: "no-store",
+        });
+        
+        if (!fallbackRes.ok) {
+          throw new Error(`General crypto news ${fallbackRes.status}: ${fallbackRes.statusText}`);
+        }
+        
+        const fallbackJson = await fallbackRes.json().catch(() => ({}));
+        const fallbackNews = fallbackJson.data?.data || [];
+        
+        console.log(`✅ Found ${fallbackNews.length} general crypto news articles as fallback`);
+        return {
+          articles: fallbackNews,
+          isFallback: true,
+          source: 'general-crypto'
+        };
+      } catch (fallbackError) {
+        console.error(`❌ Both token-specific and fallback news failed:`, fallbackError);
+        throw fallbackError;
+      }
     },
     refetchInterval: 10 * 60 * 1000, // 10 minutes
     staleTime: 9 * 60 * 1000, // Consider stale after 9 minutes
@@ -114,9 +160,10 @@ export function useNewsQuery() {
 
   useEffect(() => {
     if (query.data) {
-      setRawNewsData(query.data);
+      setRawNewsData(query.data.articles || []);
+      setNewsIsFallback(query.data.isFallback || false);
     }
-  }, [query.data, setRawNewsData]);
+  }, [query.data, setRawNewsData, setNewsIsFallback]);
 
   useEffect(() => {
     if (query.error) {
@@ -220,6 +267,7 @@ export function useSocialDominanceQuery() {
     queryKeys,
     setSocialDominanceData,
     setSocialDominanceError,
+    setSocialDominanceLoading,
   } = useMetaSearchStore();
 
   const query = useQuery({
@@ -246,6 +294,10 @@ export function useSocialDominanceQuery() {
   });
 
   useEffect(() => {
+    setSocialDominanceLoading(query.isLoading);
+  }, [query.isLoading, setSocialDominanceLoading]);
+
+  useEffect(() => {
     if (query.data) {
       setSocialDominanceData(query.data);
     }
@@ -256,7 +308,6 @@ export function useSocialDominanceQuery() {
       setSocialDominanceError(query.error);
     }
   }, [query.error, setSocialDominanceError]);
-
   return query;
 }
 export function useTechnicalDataQuery() {

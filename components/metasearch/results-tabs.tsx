@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OverviewTab } from "./overview-tab";
 import { SocialTab } from "./social-tab";
 import { NewsTab } from "./news-tab";
+
 import { useMetaSearchStore } from "./store";
 
 export function ResultsTabs() {
@@ -33,6 +34,7 @@ export function ResultsTabs() {
     currentNewsPage,
     totalNewsPages,
     setCurrentNewsPage,
+    newsIsFallback,
   } = useMetaSearchStore();
 
   return (
@@ -61,6 +63,7 @@ export function ResultsTabs() {
           >
             News
           </TabsTrigger>
+
         </TabsList>
       </div>
 
@@ -97,6 +100,7 @@ export function ResultsTabs() {
           currentPage={currentNewsPage}
           totalPages={totalNewsPages}
           onPageChange={setCurrentNewsPage}
+          isFallback={newsIsFallback}
         />
       </TabsContent>
     </Tabs>

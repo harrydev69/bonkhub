@@ -3,10 +3,10 @@ import { getCoinTimeseries } from "@/lib/lunarcrush";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { tokenId: string } }
+  { params }: { params: Promise<{ tokenId: string }> }
 ) {
   try {
-    const { tokenId } = params;
+    const { tokenId } = await params;
 
     if (!process.env.LUNARCRUSH_API_KEY) {
       return NextResponse.json(

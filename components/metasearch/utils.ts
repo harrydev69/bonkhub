@@ -73,6 +73,7 @@ export async function fetchTokenStats(tokenId: string) {
     name: data.name || '',
     symbol: data.symbol || '',
     contractAddress: data.contract_address || tokenId,
+    image: data.image?.small || data.image?.thumb || data.image?.large || '',
   };
 }
 

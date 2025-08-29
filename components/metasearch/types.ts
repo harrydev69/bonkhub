@@ -96,6 +96,7 @@ export interface TokenStats {
   name?: string;
   symbol?: string;
   contractAddress?: string;
+  image?: string;
 }
 
 export interface MetaSearchDashboardProps {
