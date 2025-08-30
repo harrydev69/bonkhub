@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import {
   TrendingUp,
   TrendingDown,
@@ -13,6 +14,7 @@ import {
   BarChart3,
   Users,
   ExternalLink,
+  UserCheck,
   Copy,
   Star,
   Activity,
@@ -23,6 +25,7 @@ import {
   Wallet,
   Plus,
   Minus,
+  BarChart2,
 } from "lucide-react"
 import { TokenPriceChart } from "@/components/token-price-chart"
 import { UnifiedLoading } from "@/components/loading"
@@ -151,6 +154,12 @@ export default function TokenPage() {
   const [tokenData, setTokenData] = useState<TokenData | null>(null)
   const [activeTab, setActiveTab] = useState("overview")
   const [chartTimeRange, setChartTimeRange] = useState("7") // Default to 7 days
+  const [showPortfolioDialog, setShowPortfolioDialog] = useState(false)
+  const [influencers, setInfluencers] = useState<any[]>([])
+  const [influencersLoading, setInfluencersLoading] = useState(true)
+  const [showAllInfluencers, setShowAllInfluencers] = useState(false)
+  const [timeSeriesData, setTimeSeriesData] = useState<any>(null)
+  const [timeSeriesLoading, setTimeSeriesLoading] = useState(true)
 
   useEffect(() => {
     const fetchTokenData = async () => {
@@ -177,8 +186,49 @@ export default function TokenPage() {
       }
     }
 
+    const fetchInfluencers = async () => {
+      try {
+        setInfluencersLoading(true)
+        const response = await fetch(`/api/influencers/${tokenId}?limit=10`)
+        if (response.ok) {
+          const data = await response.json()
+          console.log('Influencers API response:', data)
+          if (data.success && data.data) {
+            setInfluencers(data.data.influencers || [])
+          } else if (data.influencers) {
+            // Handle legacy response format
+            setInfluencers(data.influencers || [])
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching influencers:', err)
+      } finally {
+        setInfluencersLoading(false)
+      }
+    }
+
+    const fetchTimeSeriesData = async () => {
+      try {
+        setTimeSeriesLoading(true)
+        const response = await fetch(`/api/public/coins/${tokenId}/time-series/v2?days=7&interval=1d`)
+        if (response.ok) {
+          const data = await response.json()
+          console.log('Time Series API response:', data)
+          if (data.success) {
+            setTimeSeriesData(data.data)
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching time series data:', err)
+      } finally {
+        setTimeSeriesLoading(false)
+      }
+    }
+
     if (tokenId) {
       fetchTokenData()
+      fetchInfluencers()
+      fetchTimeSeriesData()
     }
   }, [tokenId, chartTimeRange])
 
@@ -208,6 +258,32 @@ export default function TokenPage() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
+  }
+
+  // Get Jupiter trading URL
+  const getJupiterUrl = () => {
+    // Get the Solana contract address if available
+    const solanaAddress = tokenData?.platforms?.solana || tokenData?.contract_address
+    if (solanaAddress) {
+      return `https://jup.ag/swap/SOL-${solanaAddress}`
+    }
+    // Fallback to Jupiter tokens page with token symbol
+    return `https://jup.ag/tokens/${tokenData?.symbol?.toLowerCase()}`
+  }
+
+  // Get Twitter URL
+  const getTwitterUrl = () => {
+    if (tokenData?.links?.twitter_screen_name) {
+      return `https://twitter.com/${tokenData.links.twitter_screen_name}`
+    }
+    // Fallback to homepage if no Twitter
+    const homepage = tokenData?.links?.homepage?.[0]
+    return homepage || '#'
+  }
+
+  // Handle Add to Portfolio click
+  const handleAddToPortfolio = () => {
+    setShowPortfolioDialog(true)
   }
 
   if (loading) {
@@ -360,21 +436,44 @@ export default function TokenPage() {
              </div>
            </div>
 
-                       {/* Action Buttons */}
-             <div className="flex items-center space-x-4">
-               <Button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-green-500/30 group">
-                 <Plus className="h-5 w-5 mr-2 transition-transform duration-300 group-hover:rotate-90" />
-                 Add to Portfolio
-               </Button>
-               <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white hover:border-orange-500/50 hover:text-orange-400 px-6 py-3 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/20 group">
-                 <Wallet className="h-5 w-5 mr-2 transition-transform duration-300 group-hover:scale-110" />
-                 Buy / Sell
-               </Button>
-               <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white hover:border-orange-500/50 hover:text-orange-400 px-6 py-3 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/20 group">
-                 <Globe className="h-5 w-5 mr-2 transition-transform duration-300 group-hover:rotate-12" />
-                 Website
-               </Button>
-             </div>
+                                              {/* Action Buttons */}
+            <div className="flex items-center space-x-4">
+              <Button 
+                onClick={handleAddToPortfolio}
+                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-green-500/30 group"
+              >
+                <Plus className="h-5 w-5 mr-2 transition-transform duration-300 group-hover:rotate-90" />
+                Add to Portfolio
+              </Button>
+              <Button 
+                variant="outline" 
+                className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white hover:border-orange-500/50 hover:text-orange-400 px-6 py-3 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/20 group"
+                asChild
+              >
+                <a 
+                  href={getJupiterUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Wallet className="h-5 w-5 mr-2 transition-transform duration-300 group-hover:scale-110" />
+                  Buy / Sell
+                </a>
+              </Button>
+              <Button 
+                variant="outline" 
+                className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white hover:border-orange-500/50 hover:text-orange-400 px-6 py-3 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/20 group"
+                asChild
+              >
+                <a 
+                  href={getTwitterUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Globe className="h-5 w-5 mr-2 transition-transform duration-300 group-hover:rotate-12" />
+                  {tokenData?.links?.twitter_screen_name ? 'Twitter' : 'Website'}
+                </a>
+              </Button>
+            </div>
         </div>
 
         {/* Main Content Grid */}
@@ -544,62 +643,99 @@ export default function TokenPage() {
                </CardContent>
              </Card>
 
-             {/* Community & Developer Scores */}
+             {/* Top Influencers */}
              <Card className="group bg-gray-900 border-gray-700 hover:border-orange-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/20 hover:scale-[1.02]">
                <CardHeader>
-                 <CardTitle className="text-lg text-white transition-colors duration-300 group-hover:text-orange-400">Scores & Ratings</CardTitle>
+                 <CardTitle className="text-lg text-white transition-colors duration-300 group-hover:text-orange-400 flex items-center gap-2">
+                   <UserCheck className="h-5 w-5" />
+                   Top Influencers
+                 </CardTitle>
                </CardHeader>
-               <CardContent className="space-y-4">
-                 {tokenData.community_score && (
-                   <div className="flex justify-between items-center">
-                     <span className="text-gray-400">Community Score</span>
-                     <div className="flex items-center space-x-2">
-                       <div className="w-20 bg-gray-800 rounded-full h-2">
-                         <div 
-                           className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                           style={{ width: `${tokenData.community_score}%` }}
-                         />
+               <CardContent className="space-y-3">
+                 {influencersLoading ? (
+                   <div className="space-y-3">
+                     {[...Array(5)].map((_, i) => (
+                       <div key={i} className="flex items-center space-x-3 animate-pulse">
+                         <div className="w-8 h-8 bg-gray-700 rounded-full"></div>
+                         <div className="flex-1">
+                           <div className="h-3 bg-gray-700 rounded mb-1"></div>
+                           <div className="h-2 bg-gray-800 rounded w-1/2"></div>
+                         </div>
                        </div>
-                       <span className="text-white font-medium text-sm">
-                         {tokenData.community_score.toFixed(1)}
-                       </span>
-                     </div>
+                     ))}
                    </div>
-                 )}
-                 {tokenData.developer_score && (
-                   <div className="flex justify-between items-center">
-                     <span className="text-gray-400">Developer Score</span>
-                     <div className="flex items-center space-x-2">
-                       <div className="w-20 bg-gray-800 rounded-full h-2">
-                         <div 
-                           className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                           style={{ width: `${tokenData.developer_score}%` }}
-                         />
+                 ) : influencers.length > 0 ? (
+                   <div className="space-y-3">
+                     {influencers.slice(0, showAllInfluencers ? influencers.length : 5).map((influencer, index) => (
+                       <div key={influencer.id || index} className="flex items-center space-x-3 p-2 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition-all duration-300 group/influencer">
+                         <div className="flex items-center justify-center w-8 h-8 bg-orange-500 text-black font-bold text-xs rounded-full transition-all duration-300 group-hover/influencer:scale-110">
+                           #{index + 1}
+                         </div>
+                         <div className="flex-1 min-w-0">
+                           <div className="font-medium text-white text-sm truncate transition-colors duration-300 group-hover/influencer:text-orange-400">
+                             {influencer.creator_name || influencer.display_name || influencer.name || 'Unknown'}
+                           </div>
+                           <div className="text-xs text-gray-400 transition-colors duration-300 group-hover/influencer:text-gray-300">
+                             {influencer.creator_followers 
+                               ? `${(influencer.creator_followers / 1000).toFixed(1)}K followers` 
+                               : influencer.followers 
+                               ? `${(influencer.followers / 1000).toFixed(1)}K followers` 
+                               : 'Influencer'}
+                           </div>
+                         </div>
+                         {(influencer.url || influencer.creator_name) && (
+                           <Button
+                             size="sm"
+                             variant="ghost"
+                             className="h-6 w-6 p-0 text-gray-400 hover:text-orange-400 transition-colors"
+                             asChild
+                           >
+                             <a 
+                               href={influencer.url || `https://twitter.com/${influencer.creator_name}`}
+                               target="_blank"
+                               rel="noopener noreferrer"
+                             >
+                               <ExternalLink className="h-3 w-3" />
+                             </a>
+                           </Button>
+                         )}
                        </div>
-                       <span className="text-white font-medium text-sm">
-                         {tokenData.developer_score.toFixed(1)}
-                       </span>
-                     </div>
+                     ))}
+                     {influencers.length > 5 && !showAllInfluencers && (
+                       <div className="text-center pt-2">
+                         <Button
+                           variant="ghost"
+                           size="sm"
+                           className="text-xs text-gray-500 hover:text-orange-400 hover:bg-orange-500/10 transition-all duration-300"
+                           onClick={() => setShowAllInfluencers(true)}
+                         >
+                           +{influencers.length - 5} more influencers
+                         </Button>
+                       </div>
+                     )}
+                     {showAllInfluencers && influencers.length > 5 && (
+                       <div className="text-center pt-2">
+                         <Button
+                           variant="ghost"
+                           size="sm"
+                           className="text-xs text-gray-500 hover:text-orange-400 hover:bg-orange-500/10 transition-all duration-300"
+                           onClick={() => setShowAllInfluencers(false)}
+                         >
+                           Show less
+                         </Button>
+                       </div>
+                     )}
                    </div>
-                 )}
-                 {tokenData.liquidity_score && (
-                   <div className="flex justify-between items-center">
-                     <span className="text-gray-400">Liquidity Score</span>
-                     <div className="flex items-center space-x-2">
-                       <div className="w-20 bg-gray-800 rounded-full h-2">
-                         <div 
-                           className="bg-purple-500 h-2 rounded-full transition-all duration-300"
-                           style={{ width: `${tokenData.liquidity_score}%` }}
-                         />
-                       </div>
-                       <span className="text-white font-medium text-sm">
-                         {tokenData.liquidity_score.toFixed(1)}
-                       </span>
-                     </div>
+                 ) : (
+                   <div className="text-center py-4">
+                     <Users className="h-8 w-8 text-gray-600 mx-auto mb-2" />
+                     <p className="text-gray-500 text-sm">No influencer data available</p>
                    </div>
                  )}
                </CardContent>
              </Card>
+
+             
 
                          
           </div>
@@ -924,9 +1060,175 @@ export default function TokenPage() {
                 </Tabs>
               </CardContent>
             </Card>
+
+            {/* Analytics Overview */}
+            <Card className="bg-gray-900 border-gray-700 hover:border-orange-500/50 transition-all duration-300">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg text-white flex items-center gap-2">
+                  <BarChart2 className="h-4 w-4" />
+                  Analytics Overview
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                {timeSeriesLoading ? (
+                  <div className="grid grid-cols-6 gap-3">
+                    {[...Array(6)].map((_, i) => (
+                      <div key={i} className="animate-pulse bg-gray-800 rounded-lg p-3 h-16"></div>
+                    ))}
+                  </div>
+                ) : timeSeriesData?.summary ? (
+                  <div className="grid grid-cols-6 gap-3">
+                    {/* Sentiment */}
+                    <div className="group text-center p-3 bg-gray-800/50 rounded-lg border border-blue-500/20 hover:border-blue-400/50 hover:bg-blue-500/5 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20 cursor-pointer" 
+                         title="Community sentiment score (0-100). Poor: <30, Fair: 30-69, Good: ≥70">
+                      <div className="text-lg font-bold text-blue-400 mb-1 group-hover:text-blue-300 transition-colors duration-300">
+                        {(timeSeriesData.summary.sentiment_avg || 0).toFixed(1)}
+                      </div>
+                      <div className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Sentiment</div>
+                      <div className={`text-xs mt-1 font-medium transition-colors duration-300 ${
+                        timeSeriesData.summary.sentiment_avg >= 70 ? 'text-green-400 group-hover:text-green-300' : 
+                        timeSeriesData.summary.sentiment_avg >= 30 ? 'text-yellow-400 group-hover:text-yellow-300' : 'text-red-400 group-hover:text-red-300'
+                      }`}>
+                        {timeSeriesData.summary.sentiment_avg >= 70 ? 'Good' : 
+                         timeSeriesData.summary.sentiment_avg >= 30 ? 'Fair' : 'Poor'}
+                      </div>
+                    </div>
+
+                    {/* Social Dominance */}
+                    <div className="group text-center p-3 bg-gray-800/50 rounded-lg border border-green-500/20 hover:border-green-400/50 hover:bg-green-500/5 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/20 cursor-pointer"
+                         title="Share of social media discussions. High: ≥1%, Medium: 0.5-1%, Low: <0.5%">
+                      <div className="text-lg font-bold text-green-400 mb-1 group-hover:text-green-300 transition-colors duration-300">
+                        {((timeSeriesData.summary.social_dominance_avg || 0) * 100).toFixed(1)}%
+                      </div>
+                      <div className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Social</div>
+                      <div className={`text-xs mt-1 font-medium transition-colors duration-300 ${
+                        ((timeSeriesData.summary.social_dominance_avg || 0) * 100) >= 1 ? 'text-green-400 group-hover:text-green-300' : 
+                        ((timeSeriesData.summary.social_dominance_avg || 0) * 100) >= 0.5 ? 'text-yellow-400 group-hover:text-yellow-300' : 'text-red-400 group-hover:text-red-300'
+                      }`}>
+                        {((timeSeriesData.summary.social_dominance_avg || 0) * 100) >= 1 ? 'High' : 
+                         ((timeSeriesData.summary.social_dominance_avg || 0) * 100) >= 0.5 ? 'Medium' : 'Low'}
+                      </div>
+                    </div>
+
+                    {/* Interactions */}
+                    <div className="group text-center p-3 bg-gray-800/50 rounded-lg border border-purple-500/20 hover:border-purple-400/50 hover:bg-purple-500/5 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 cursor-pointer"
+                         title="Total social media interactions (likes, shares, comments)">
+                      <div className="text-lg font-bold text-purple-400 mb-1 group-hover:text-purple-300 transition-colors duration-300">
+                        {(timeSeriesData.summary.total_interactions || 0) >= 1000000 
+                          ? `${((timeSeriesData.summary.total_interactions || 0) / 1000000).toFixed(1)}M`
+                          : (timeSeriesData.summary.total_interactions || 0) >= 1000
+                          ? `${((timeSeriesData.summary.total_interactions || 0) / 1000).toFixed(1)}K`
+                          : (timeSeriesData.summary.total_interactions || 0).toLocaleString()}
+                      </div>
+                      <div className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Interactions</div>
+                      <div className="text-xs text-purple-400 mt-1 group-hover:text-purple-300 transition-colors duration-300">
+                        Engagements
+                      </div>
+                    </div>
+
+                    {/* Posts */}
+                    <div className="group text-center p-3 bg-gray-800/50 rounded-lg border border-orange-500/20 hover:border-orange-400/50 hover:bg-orange-500/5 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/20 cursor-pointer"
+                         title="Total number of posts and mentions about this token">
+                      <div className="text-lg font-bold text-orange-400 mb-1 group-hover:text-orange-300 transition-colors duration-300">
+                        {(timeSeriesData.summary.total_posts_created || 0) >= 1000 
+                          ? `${((timeSeriesData.summary.total_posts_created || 0) / 1000).toFixed(1)}K`
+                          : (timeSeriesData.summary.total_posts_created || 0).toLocaleString()}
+                      </div>
+                      <div className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Posts</div>
+                      <div className="text-xs text-orange-400 mt-1 group-hover:text-orange-300 transition-colors duration-300">
+                        Content
+                      </div>
+                    </div>
+
+                    {/* Contributors */}
+                    <div className="group text-center p-3 bg-gray-800/50 rounded-lg border border-cyan-500/20 hover:border-cyan-400/50 hover:bg-cyan-500/5 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/20 cursor-pointer"
+                         title="Number of unique users discussing this token">
+                      <div className="text-lg font-bold text-cyan-400 mb-1 group-hover:text-cyan-300 transition-colors duration-300">
+                        {Math.round(timeSeriesData.summary.active_contributors || 0)}
+                      </div>
+                      <div className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Contributors</div>
+                      <div className="text-xs text-cyan-400 mt-1 group-hover:text-cyan-300 transition-colors duration-300">
+                        Users
+                      </div>
+                    </div>
+
+                    {/* Market Share */}
+                    <div className="group text-center p-3 bg-gray-800/50 rounded-lg border border-yellow-500/20 hover:border-yellow-400/50 hover:bg-yellow-500/5 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/20 cursor-pointer"
+                         title="This token's share of total crypto market discussions">
+                      <div className="text-lg font-bold text-yellow-400 mb-1 group-hover:text-yellow-300 transition-colors duration-300">
+                        {((timeSeriesData.summary.market_dominance_avg || 0) * 100).toFixed(3)}%
+                      </div>
+                      <div className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors duration-300">Market</div>
+                      <div className="text-xs text-yellow-400 mt-1 group-hover:text-yellow-300 transition-colors duration-300">
+                        Share
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <BarChart2 className="h-8 w-8 text-gray-600 mx-auto mb-2" />
+                    <p className="text-gray-400 text-xs">No Analytics Data</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
+
+      {/* Portfolio Dialog */}
+      <Dialog open={showPortfolioDialog} onOpenChange={setShowPortfolioDialog}>
+        <DialogContent className="bg-gray-900 border-gray-700 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-orange-400 flex items-center gap-2">
+              <Plus className="h-6 w-6" />
+              Add to Portfolio
+            </DialogTitle>
+            <DialogDescription className="text-gray-300">
+              Portfolio tracking functionality for {tokenData?.name} ({tokenData?.symbol?.toUpperCase()})
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-6">
+            <div className="bg-gradient-to-r from-orange-900/20 to-orange-800/20 rounded-lg p-6 border border-orange-700/50">
+              <div className="text-center">
+                <div className="text-4xl mb-4">🚀</div>
+                <h3 className="text-lg font-semibold text-orange-300 mb-2">Feature Coming Soon!</h3>
+                <p className="text-gray-300 mb-4">
+                  Portfolio tracking functionality is currently under development. 
+                  You'll soon be able to:
+                </p>
+                <ul className="text-left text-gray-300 space-y-2 mb-4">
+                  <li className="flex items-center gap-2">
+                    <span className="text-orange-400">•</span> Track your token holdings
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-orange-400">•</span> Monitor portfolio performance
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-orange-400">•</span> Set price alerts
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-orange-400">•</span> View profit/loss analytics
+                  </li>
+                </ul>
+                <p className="text-sm text-gray-400">
+                  Stay tuned for updates!
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button 
+              onClick={() => setShowPortfolioDialog(false)}
+              className="bg-orange-600 hover:bg-orange-700 text-white"
+            >
+              Got it!
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
