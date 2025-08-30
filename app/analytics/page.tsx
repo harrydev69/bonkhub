@@ -5,6 +5,7 @@ import { VolumeHeatmap } from "@/components/volume-heatmap"
 import { SentimentTrendAnalysis } from "@/components/sentiment-trend-analysis"
 import { SocialMentionWordCloud } from "@/components/social-mention-word-cloud"
 import { WhaleMovementTracker } from "@/components/whale-movement-tracker"
+import { WhalePortfolioTracker } from "@/components/whale-portfolio-tracker"
 
 export default function AnalyticsPage() {
   return (
@@ -28,6 +29,9 @@ export default function AnalyticsPage() {
 
           {/* Whale Movement Tracker */}
           <WhaleMovementTracker />
+
+          {/* Whale Portfolio Tracker */}
+          <WhalePortfolioTracker />
         </div>
       </main>
     </div>
