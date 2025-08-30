@@ -34,15 +34,16 @@ export default function HomePage() {
 
             <div className="text-gray-300 text-lg leading-relaxed space-y-4">
               <p>
-                This platform contains advanced analytics and trading data for the BONK ecosystem. By entering, you
-                affirm that you understand the risks associated with cryptocurrency trading and you consent to viewing
-                financial data and market analysis.
+                This platform contains advanced analytics and trading data for the BONK ecosystem.{" "}
+                By entering, you accept that volatility is part of the game, and that what you're seeing here is{" "}
+                information and AI-powered analysis. Not a magic money glitch.
               </p>
 
               <p>
-                Our Terms are changing. These changes will or have come into effect on{" "}
-                <span className="text-white font-semibold">30 June 2025</span>. To see the updated changes, please see
-                our <span className="text-orange-500 font-semibold">New Terms of Service</span>.
+                Everything changes, including data. We're an analytics platform,{" "}
+                <span className="text-white font-semibold">not a fortune-teller</span>.{" "}
+                Our insights are here to inform you,{" "}
+                <span className="text-orange-500 font-semibold">not advise you</span>.
               </p>
             </div>
 
@@ -50,17 +51,17 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
               <Button
                 onClick={handleEnter}
-                className="bg-orange-500 hover:bg-orange-600 text-black font-semibold text-lg px-12 py-4 rounded-lg w-full sm:w-auto transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,107,53,0.5)] hover:scale-105"
+                className="bg-orange-500 hover:bg-orange-600 text-black font-semibold text-lg px-12 py-4 rounded-lg w-full sm:w-auto transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,107,53,0.6),0_0_60px_rgba(255,107,53,0.3)] hover:scale-105 animate-pulse border border-orange-400/30 shadow-[0_0_25px_rgba(255,107,53,0.4),0_0_50px_rgba(255,107,53,0.2)]"
               >
-                I understand - Enter
+                Ready to BONK! - Enter
               </Button>
 
               <Button
                 onClick={handleExit}
                 variant="secondary"
-                className="bg-gray-700 hover:bg-gray-600 text-white font-semibold text-lg px-12 py-4 rounded-lg w-full sm:w-auto transition-all duration-300 hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] hover:scale-105"
+                className="bg-gray-700 hover:bg-gray-600 text-white font-semibold text-lg px-12 py-4 rounded-lg w-full sm:w-auto transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,255,255,0.5),0_0_60px_rgba(255,255,255,0.2)] hover:scale-105 animate-pulse border border-gray-400/30 shadow-[0_0_25px_rgba(255,255,255,0.3),0_0_50px_rgba(255,255,255,0.1)]"
               >
-                I do not agree - Exit
+                Not today - Exit
               </Button>
             </div>
 
@@ -68,15 +69,15 @@ export default function HomePage() {
             <div className="pt-8 space-y-2">
               <p className="text-gray-400 text-sm">
                 Our{" "}
-                <span className="text-orange-500 underline cursor-pointer hover:text-orange-400 transition-colors">
+                <Link href="/risk-disclosure" className="text-orange-500 underline cursor-pointer hover:text-orange-400 transition-colors">
                   risk disclosure page
-                </span>{" "}
+                </Link>{" "}
                 explains how you can easily understand trading risks.
               </p>
 
               <div className="flex items-center justify-center gap-4 pt-4">
-                <span className="text-gray-500 text-sm">© Bonkhub.com, 2025</span>
-                <div className="bg-white text-black px-3 py-1 rounded text-sm font-bold">RTA</div>
+                <span className="text-gray-500 text-sm">© Bonkhub.net, 2025</span>
+                <div className="bg-white text-black px-3 py-1 rounded text-sm font-bold">nBONK</div>
               </div>
             </div>
           </div>

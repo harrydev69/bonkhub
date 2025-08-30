@@ -10,11 +10,10 @@ export default function PrivacyPage() {
       <div className="border-b border-gray-800">
         <div className="max-w-6xl mx-auto px-4 py-6">
           <Link 
-            href="/dashboard" 
-            className="inline-flex items-center text-gray-400 hover:text-[#ff6b35] transition-colors duration-200"
+            href="/" 
+            className="inline-flex items-center justify-center w-10 h-10 bg-gray-800/50 hover:bg-gray-700/50 text-gray-400 hover:text-[#ff6b35] transition-all duration-200 rounded-lg border border-gray-700/50 hover:border-gray-600/50"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Dashboard
+            <ArrowLeft className="w-5 h-5" />
           </Link>
           
           <div className="mt-4">
@@ -146,7 +145,7 @@ export default function PrivacyPage() {
                 <h2 className="text-2xl font-semibold text-white mb-4">Contact Us</h2>
                 <p>
                   If you have questions about this Privacy Policy or our data practices, please contact us at{" "}
-                  <span className="text-[#ff6b35]">privacy@bonkhub.com</span>
+                  <span className="text-[#ff6b35]">team@bonkhub.net</span>
                 </p>
               </section>
             </div>
