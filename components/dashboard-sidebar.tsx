@@ -15,15 +15,20 @@ export function DashboardSidebar() {
     { name: "Audio Library", href: "/audio-library" },
   ]
 
+  const bonkEcosystem = [
+    { name: "BUY BONK", href: "https://jup.ag/tokens/DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263", badge: "Jupiter", external: true },
+    { name: "BUY NBONK", href: "https://jup.ag/tokens/AKytoLENhxBLssBFPwGnpYnsY5kpKz328GU6pbGudaos", badge: "Jupiter", external: true },
+    { name: "BONK WELLNESS", href: "https://x.com/moonwalkfitness", badge: "X", external: true },
+    { name: "BONK.FUN", href: "https://bonk.fun/", badge: "Fun", external: true },
+    { name: "BONK Website", href: "https://bonkcoin.com/", badge: "Official", external: true },
+    { name: "nBONK DAO", href: "https://t.me/nbonkdao", badge: "Telegram", external: true },
+  ]
+
   const quickLinks = [
-    { name: "Buy nBONK", href: "/buy-nbonk" },
-    { name: "Buy BONK", href: "/buy-bonk" },
-    { name: "BONK Website", href: "/bonk-website" },
-    { name: "LetsBonk.fun Ecosystem", href: "/letsbonk-ecosystem" },
-    { name: "BONK on CoinGecko", href: "/bonk-coingecko" },
     { name: "Take Tour", href: "/tour" },
     { name: "Profile", href: "/profile" },
     { name: "Settings", href: "/settings" },
+    { name: "FAQ", href: "/faq" },
   ]
 
   return (
@@ -80,6 +85,30 @@ export function DashboardSidebar() {
                   </Badge>
                 )}
               </Link>
+            ))}
+          </nav>
+        </div>
+
+        {/* BONK Ecosystem */}
+        <div className="p-4 border-t border-sidebar-border">
+          <div className="text-xs font-medium text-sidebar-foreground/60 mb-3">BONK Ecosystem</div>
+          <nav className="space-y-1">
+            {bonkEcosystem.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between px-3 py-2 rounded-md text-sm text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground transition-colors group"
+              >
+                <span className="group-hover:text-[#ff6b35] transition-colors">{item.name}</span>
+                <Badge
+                  variant="secondary"
+                  className="text-xs bg-[#ff6b35] text-white hover:bg-[#ff6b35]/80 transition-colors"
+                >
+                  {item.badge}
+                </Badge>
+              </a>
             ))}
           </nav>
         </div>

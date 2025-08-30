@@ -16,15 +16,33 @@ export function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center space-x-6">
-          <Link href="#features" className="text-sm font-medium hover:text-primary transition-colors">
-            Features
+          <Link href="/dashboard" className="text-sm font-medium hover:text-primary transition-colors">
+            Dashboard
           </Link>
-          <Link href="#analytics" className="text-sm font-medium hover:text-primary transition-colors">
-            Analytics
-          </Link>
-          <Link href="#pricing" className="text-sm font-medium hover:text-primary transition-colors">
-            Pricing
-          </Link>
+          <a 
+            href="https://jup.ag/tokens/DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
+            BUY BONK
+          </a>
+          <a 
+            href="https://jup.ag/tokens/AKytoLENhxBLssBFPwGnpYnsY5kpKz328GU6pbGudaos" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
+            BUY NBONK
+          </a>
+          <a 
+            href="https://bonk.fun/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
+            BONK.FUN
+          </a>
           <Link href="/faq" className="text-sm font-medium hover:text-primary transition-colors">
             FAQ
           </Link>

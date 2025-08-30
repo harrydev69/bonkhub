@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,6 +11,9 @@ import {
   ArrowUp,
   ArrowDown,
   Activity,
+  AlertCircle,
+  Loader2,
+  UserCircle,
 } from "lucide-react";
 import { Streamdown } from "streamdown";
 import { TokenPriceChart } from "@/components/token-price-chart";
@@ -35,11 +39,62 @@ interface OverviewTabProps {
   };
   priceChartLoading: boolean;
   priceChartError: any;
+  creatorsLoading?: boolean;
 }
 
 interface SocialDominanceData {
   time: number;
   social_dominance: number;
+}
+
+// Helper function to detect platform from creator ID with better logic
+function detectPlatform(creatorId?: string): "twitter" | "youtube" | "reddit" | "tiktok" {
+  if (!creatorId) return "twitter";
+  
+  const id = creatorId.toLowerCase();
+  
+  if (id.includes("youtube") || id.startsWith("youtube::") || id.includes("yt::")) {
+    return "youtube";
+  }
+  if (id.includes("reddit") || id.startsWith("reddit::") || id.includes("r/")) {
+    return "reddit";
+  }
+  if (id.includes("tiktok") || id.startsWith("tiktok::") || id.includes("tt::")) {
+    return "tiktok";
+  }
+  
+  // Default to twitter for unknown or twitter-like IDs
+  return "twitter";
+}
+
+// Helper function to validate and provide fallback for avatar URLs
+function getAvatarUrl(avatar?: string, name?: string): { src: string; hasError: boolean } {
+  if (!avatar || avatar.trim() === "" || avatar === "https://via.placeholder.com/40") {
+    // Create a better-looking avatar with gradient background
+    const cleanName = (name || "User").replace(/[^a-zA-Z0-9\s]/g, '').trim();
+    const encodedName = encodeURIComponent(cleanName);
+    return {
+      src: `https://ui-avatars.com/api/?name=${encodedName}&background=1f2937&color=f97316&size=64&font-size=0.6&bold=true&format=svg`,
+      hasError: false
+    };
+  }
+  
+  return {
+    src: avatar,
+    hasError: false
+  };
+}
+
+// Helper function to validate creator data
+function validateCreator(creator: any): creator is Creator {
+  return (
+    creator &&
+    typeof creator === "object" &&
+    creator.id &&
+    creator.name &&
+    typeof creator.name === "string" &&
+    creator.name.trim() !== ""
+  );
 }
 
 export function OverviewTab({
@@ -52,7 +107,9 @@ export function OverviewTab({
   priceChartData,
   priceChartLoading,
   priceChartError,
+  creatorsLoading = false,
 }: OverviewTabProps) {
+  const router = useRouter();
   const [currentTimeRange, setCurrentTimeRange] = useState("7");
   const {
     debouncedSearchQuery,
@@ -65,6 +122,7 @@ export function OverviewTab({
     technicalData,
     technicalDataLoading,
     technicalDataError,
+    creatorsError,
   } = useMetaSearchStore();
 
   // Fetch social dominance data
@@ -402,8 +460,8 @@ export function OverviewTab({
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-3">
-                <h4 className="text-lg font-semibold text-white">
+              <div>
+                <h4 className="text-lg font-semibold text-white mb-3">
                   Performance Metrics
                 </h4>
                 <div className="space-y-2">
@@ -450,8 +508,8 @@ export function OverviewTab({
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <h4 className="text-lg font-semibold text-white">
+              <div>
+                <h4 className="text-lg font-semibold text-white mb-3">
                   Market Metrics
                 </h4>
                 <div className="space-y-2">
@@ -516,50 +574,181 @@ export function OverviewTab({
             </CardTitle>
           </CardHeader>
           <CardContent>
+             {/* Loading State */}
+             {creatorsLoading && (
             <div className="space-y-4">
-              {creators.map((creator, index) => (
-                <div
-                  key={creator.id}
-                  className="group/creator flex items-center gap-4 p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-orange-500/50 hover:bg-gray-750 hover:scale-[1.02] transition-all duration-300 cursor-pointer"
-                >
-                  <div className="relative">
-                    <img
-                      src={creator.avatar}
-                      alt={creator.name}
-                      className="w-12 h-12 rounded-full"
-                    />
+                 {[...Array(5)].map((_, index) => (
+                   <div
+                     key={index}
+                     className="flex items-center gap-4 p-4 bg-gray-800 rounded-lg border border-gray-700 animate-pulse"
+                   >
+                     <div className="w-12 h-12 bg-gray-700 rounded-full" />
+                     <div className="flex-1 space-y-2">
+                       <div className="h-4 bg-gray-700 rounded w-1/3" />
+                       <div className="h-3 bg-gray-700 rounded w-2/3" />
+                     </div>
+                     <div className="w-8 h-8 bg-gray-700 rounded" />
+                   </div>
+                 ))}
+               </div>
+             )}
+
+             {/* Error State */}
+             {!creatorsLoading && creatorsError && (
+               <div className="flex flex-col items-center justify-center py-8 text-center">
+                 <AlertCircle className="h-12 w-12 text-red-400 mb-4" />
+                 <h3 className="text-lg font-semibold text-white mb-2">
+                   Failed to Load Creators
+                 </h3>
+                 <p className="text-gray-400 text-sm mb-4 max-w-md">
+                   {typeof creatorsError === 'string' 
+                     ? creatorsError 
+                     : 'Unable to fetch creator data. Please try searching again.'}
+                 </p>
+                 <div className="text-xs text-gray-500 bg-red-900/20 px-3 py-2 rounded-lg border border-red-800/30">
+                   <strong>API Error:</strong> LunarCrush creators endpoint may be temporarily unavailable
+                 </div>
+               </div>
+             )}
+
+             {/* Empty State */}
+             {!creatorsLoading && !creatorsError && creators.length === 0 && (
+               <div className="flex flex-col items-center justify-center py-8 text-center">
+                 <UserCircle className="h-12 w-12 text-gray-500 mb-4" />
+                 <h3 className="text-lg font-semibold text-white mb-2">
+                   No Creators Found
+                 </h3>
+                 <p className="text-gray-400 text-sm max-w-md">
+                   No influencers or creators were found for this token. This could be because:
+                 </p>
+                 <ul className="text-xs text-gray-500 mt-3 space-y-1 text-left">
+                   <li>• The token is new or has limited social coverage</li>
+                   <li>• No active creators are discussing this token</li>
+                   <li>• The token name may need exact symbol matching</li>
+                 </ul>
+               </div>
+             )}
+
+             {/* Success State - Display Creators */}
+             {!creatorsLoading && !creatorsError && creators.length > 0 && (
+               <div className="space-y-2">
+                 {creators
+                   .filter(validateCreator) // Filter out invalid creator data
+                   .slice(0, 6) // Limit to top 6 for cleaner display
+                   .map((creator, index) => {
+                     const avatarData = getAvatarUrl(creator.avatar, creator.name);
+                     const platform = detectPlatform(creator.id);
+                     
+                     const handleCreatorClick = () => {
+                       // Extract creator ID from the full ID (remove prefixes like "twitter::")
+                       const creatorId = creator.id.replace(/^(twitter::|youtube::|reddit::|tiktok::)/, '');
+                       router.push(`/creator/${creatorId}`);
+                     };
+
+                     return (
+                       <div
+                         key={creator.id || `creator-${index}`}
+                         className="group/creator relative bg-gray-800/80 hover:bg-gray-800 border border-gray-700/50 hover:border-orange-500/30 rounded-xl p-3 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/10 cursor-pointer"
+                         onClick={handleCreatorClick}
+                       >
+                         {/* Rank Badge - Top Right Corner */}
+                         <div className="absolute top-2 right-2">
+                           <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 text-white text-sm font-bold rounded-full shadow-lg">
+                             {index + 1}
+                           </div>
+                         </div>
+
+                         <div className="flex items-start gap-3">
+                           {/* Avatar */}
+                           <div className="relative flex-shrink-0">
+                             <img
+                               src={avatarData.src}
+                               alt={`${creator.name} avatar`}
+                               className="w-14 h-14 rounded-full object-cover ring-2 ring-gray-600/50 group-hover/creator:ring-orange-500/50 transition-all duration-300 shadow-lg bg-gray-700"
+                               onError={(e) => {
+                                 const img = e.target as HTMLImageElement;
+                                 if (!img.src.includes('ui-avatars.com')) {
+                                   const fallback = getAvatarUrl("", creator.name);
+                                   img.src = fallback.src;
+                                 }
+                               }}
+                             />
+                             {/* Platform indicator */}
+                             <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gray-900 border-2 border-gray-800 rounded-full flex items-center justify-center">
+                               {platform === 'twitter' && (
+                                 <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                               )}
+                               {platform === 'youtube' && (
+                                 <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                               )}
+                               {platform === 'reddit' && (
+                                 <div className="w-3 h-3 bg-orange-600 rounded-full"></div>
+                               )}
+                               {platform === 'tiktok' && (
+                                 <div className="w-3 h-3 bg-black border border-gray-500 rounded-full"></div>
+                               )}
+                             </div>
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold text-white group-hover/creator:text-orange-400 transition-colors duration-300">
+
+                           {/* Creator Info */}
+                           <div className="flex-1 min-w-0 pr-8">
+                             <div className="mb-2">
+                               <h4 className="font-bold text-white text-lg leading-tight group-hover/creator:text-orange-400 transition-colors duration-300 truncate">
                         {creator.name}
                       </h4>
-                      <Badge variant="outline" className="text-xs capitalize">
-                        {creator.platform}
-                      </Badge>
+                               <div className="flex items-center gap-2 mt-1">
                       <Badge
-                        variant="secondary"
-                        className="bg-orange-500/20 text-orange-400 border-orange-500/30"
+                                   variant="outline" 
+                                   className="text-xs capitalize text-gray-400 border-gray-600 hover:border-orange-500/30 transition-colors"
                       >
-                        Rank #{creator.rank}
+                                   {platform}
                       </Badge>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-400">
-                      <span>{formatNumber(creator.followers)} followers</span>
-                      <span>
-                        {formatNumber(creator.interactions24h)} interactions
-                        (24h)
+                                 <span className="text-xs text-gray-500">
+                                   Rank #{creator.rank || index + 1}
                       </span>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-orange-400">
-                      #{index + 1}
+                             
+                             {/* Stats */}
+                             <div className="grid grid-cols-2 gap-3 text-sm">
+                               <div>
+                                 <div className="text-gray-400 text-xs mb-1">Followers</div>
+                                 <div className="text-white font-semibold">
+                                   {formatNumber(creator.followers || 0)}
+                                 </div>
+                               </div>
+                               <div>
+                                 <div className="text-gray-400 text-xs mb-1">24h Interactions</div>
+                                 <div className="text-orange-400 font-semibold">
+                                   {formatNumber(creator.interactions24h || 0)}
+                                 </div>
+                               </div>
+                             </div>
                     </div>
                   </div>
                 </div>
-              ))}
+                     );
+                   })}
+                 
+                 {/* Show message if some creators were filtered out due to invalid data */}
+                 {creators.length > creators.filter(validateCreator).length && (
+                   <div className="text-xs text-gray-500 text-center py-3 bg-gray-800/30 rounded-lg border border-gray-700/30">
+                     <User className="w-4 h-4 inline mr-2 opacity-50" />
+                     Some creator entries were filtered out due to incomplete data
+                   </div>
+                 )}
+
+                 {/* Show more indicator if there are more creators */}
+                 {creators.filter(validateCreator).length > 6 && (
+                   <div className="text-center pt-2">
+                     <div className="text-xs text-gray-500 bg-gray-800/30 rounded-lg border border-gray-700/30 py-2 px-3 inline-flex items-center gap-1">
+                       <User className="w-3 h-3 opacity-50" />
+                       +{creators.filter(validateCreator).length - 6} more creators available
+                     </div>
+                   </div>
+                 )}
             </div>
+             )}
           </CardContent>
         </Card>
       </div>
@@ -633,6 +822,8 @@ export function OverviewTab({
           </Card>
         )}
 
+
+
         {/* AI Summary */}
         <Card className="group/ai-summary bg-gray-900 border-gray-800 hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] hover:border-orange-500/50 transition-all duration-500 transform-gpu">
           <CardHeader className="pb-4">
@@ -643,9 +834,7 @@ export function OverviewTab({
                 variant="secondary"
                 className="ml-auto bg-orange-500/20 text-orange-400 border-orange-500/30"
               >
-                {aiSummaryData?.generatedAt
-                  ? new Date(aiSummaryData.generatedAt).toLocaleTimeString()
-                  : "Live"}
+                Live Analysis
               </Badge>
             </CardTitle>
           </CardHeader>
@@ -675,9 +864,7 @@ export function OverviewTab({
                     <span>Generated by AI • {aiSummaryData.tokenId?.toUpperCase()} Analysis</span>
                   </div>
                   <div className="text-orange-400 font-medium">
-                    {aiSummaryData?.generatedAt
-                      ? new Date(aiSummaryData.generatedAt).toLocaleTimeString()
-                      : "Live"}
+                    Live Analysis
                   </div>
                 </div>
               </div>

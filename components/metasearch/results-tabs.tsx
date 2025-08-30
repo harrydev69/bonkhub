@@ -20,6 +20,7 @@ export function ResultsTabs() {
     priceChartData,
     priceChartLoading,
     priceChartError,
+    loading, // General loading state that covers creators loading
     // Social props
     socialPostsLoading,
     socialPostsQueryError,
@@ -78,6 +79,7 @@ export function ResultsTabs() {
           priceChartData={priceChartData}
           priceChartLoading={priceChartLoading}
           priceChartError={priceChartError}
+          creatorsLoading={loading}
         />
       </TabsContent>
 
