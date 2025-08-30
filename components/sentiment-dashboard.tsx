@@ -210,7 +210,8 @@ export default function SentimentDashboard({
       const res = await fetch("/api/influencers/bonk?limit=100")
       if (!res.ok) throw new Error("Failed to fetch influencers")
       const data = await res.json()
-      return data.influencers
+      // Handle the nested response structure from the API
+      return data.data?.influencers || data.influencers || []
     },
     refetchInterval: 60 * 60 * 1000, // 1 hour
     staleTime: 55 * 60 * 1000, // Consider stale after 55 minutes

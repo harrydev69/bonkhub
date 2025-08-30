@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,13 @@ import {
   Users,
   ExternalLink,
 } from "lucide-react";
+
+// Helper function for consistent number formatting
+function formatNumber(num: number) {
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
+  return String(num);
+}
 
 type Sentiment = "bullish" | "bearish" | "neutral";
 
@@ -81,6 +89,7 @@ function dedupeByKey<T extends Record<string, any>>(
 }
 
 export default function InfluencerList({ tokenId = "bonk", limit = 20 }: { tokenId?: string; limit?: number }) {
+  const router = useRouter();
   const [q, setQ] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("impact");
 
@@ -95,7 +104,9 @@ export default function InfluencerList({ tokenId = "bonk", limit = 20 }: { token
         throw new Error(`influencers ${res.status}: ${body || res.statusText}`)
       }
       const json = await res.json().catch(() => ({}))
-      return json.influencers || []
+      // Handle the nested response structure from the API
+      // API returns: { success: true, data: { influencers: [...] } }
+      return json.data?.influencers || json.influencers || []
     },
     refetchInterval: 60 * 60 * 1000, // 1 hour
     staleTime: 55 * 60 * 1000, // Consider stale after 55 minutes
@@ -138,34 +149,36 @@ export default function InfluencerList({ tokenId = "bonk", limit = 20 }: { token
   }, [influencers, q, sortKey, limit]);
 
   return (
-    <Card>
-      <div className="flex gap-4 px-4 ml-3">
-        <Users className="h-5 w-5 text-purple-500" />
-        <CardTitle>Creator Leaderboard</CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Top voices ranked by impact and reach
-        </p>
-      </div>
-      <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+    <Card className="group/leaderboard bg-gray-900 border-gray-800 hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] hover:border-orange-500/50 transition-all duration-500 transform-gpu">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-xl font-bold text-white flex items-center gap-3 transition-all duration-500 group-hover/leaderboard:text-orange-400">
+          <Users className="h-6 w-6 text-purple-400 transition-all duration-500 group-hover/leaderboard:scale-110 group-hover/leaderboard:rotate-2" />
+          Creator Leaderboard
+          <span className="text-sm font-normal text-gray-400 ml-2">
+            Top voices ranked by impact and reach
+          </span>
+        </CardTitle>
+        
+        {/* Controls */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mt-4">
           <div className="flex gap-2">
             <Select
               value={sortKey}
               onValueChange={(v) => setSortKey(v as SortKey)}
             >
-              <SelectTrigger className="w-36">
+              <SelectTrigger className="w-36 bg-gray-800 border-gray-700 text-white hover:border-orange-500/50 transition-all duration-300">
                 <SelectValue placeholder="Sort" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="impact">Impact</SelectItem>
-                <SelectItem value="followers">Followers</SelectItem>
+              <SelectContent className="bg-gray-800 border-gray-700">
+                <SelectItem value="impact" className="text-white hover:bg-gray-700">Impact</SelectItem>
+                <SelectItem value="followers" className="text-white hover:bg-gray-700">Followers</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="flex gap-2">
             <Input
-              className="w-48"
+              className="w-48 bg-gray-800 border-gray-700 text-white placeholder:text-gray-400 focus:border-orange-500 hover:border-orange-500/50 transition-all duration-300"
               placeholder="Search creators…"
               value={q}
               onChange={(e) => setQ(e.target.value)}
@@ -175,6 +188,7 @@ export default function InfluencerList({ tokenId = "bonk", limit = 20 }: { token
               onClick={() =>
                 setSortKey(sortKey === "impact" ? "followers" : "impact")
               }
+              className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 hover:border-orange-500/50 transition-all duration-300"
             >
               <ArrowUpDown className="h-4 w-4 mr-1" />
               Sort
@@ -183,82 +197,175 @@ export default function InfluencerList({ tokenId = "bonk", limit = 20 }: { token
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-2">
         {isLoading && (
-          <div className="h-24 w-full rounded-md bg-muted animate-pulse" />
+          <div className="space-y-2">
+            {[...Array(5)].map((_, index) => (
+              <div
+                key={index}
+                className="relative bg-gray-800/60 border border-gray-700/50 rounded-xl p-4 animate-pulse"
+              >
+                <div className="absolute top-3 right-3 w-8 h-8 bg-gray-700 rounded-full" />
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gray-700 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-700 rounded w-1/3" />
+                    <div className="h-3 bg-gray-700 rounded w-1/2" />
+                    <div className="grid grid-cols-2 gap-3 mt-2">
+                      <div className="h-3 bg-gray-700 rounded w-3/4" />
+                      <div className="h-3 bg-gray-700 rounded w-3/4" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
 
         {!isLoading && error && (
-          <div className="text-sm text-red-600">
-            Unable to load influencers: {error.message}
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <Users className="h-12 w-12 text-red-400 mb-4" />
+            <h3 className="text-lg font-semibold text-white mb-2">
+              Failed to Load Creators
+            </h3>
+            <p className="text-gray-400 text-sm mb-4 max-w-md">
+              Unable to load influencers: {error.message}
+            </p>
+            <div className="text-xs text-gray-500 bg-red-900/20 px-3 py-2 rounded-lg border border-red-800/30">
+              <strong>API Error:</strong> LunarCrush influencers endpoint may be temporarily unavailable
+            </div>
           </div>
         )}
 
         {!isLoading &&
           !error &&
-          rows.map((r: any, idx: number) => (
-            <div
-              key={`${r.id}-${idx}`}
-              className="flex items-center justify-between p-3 border rounded-lg"
-            >
-              <div className="flex items-center gap-3">
-                <div className="text-sm font-bold text-muted-foreground w-6 text-right">
-                  #{idx + 1}
+          rows.map((r: any, idx: number) => {
+            const handleCreatorClick = () => {
+              // Extract creator ID from the full ID (remove prefixes like "twitter::")
+              const creatorId = r.id.replace(/^(twitter::|youtube::|reddit::|tiktok::)/, '');
+              router.push(`/creator/${creatorId}`);
+            };
+
+            return (
+              <div
+                key={`${r.id}-${idx}`}
+                className="group/creator relative bg-gray-800/60 hover:bg-gray-800 border border-gray-700/50 hover:border-orange-500/30 rounded-xl p-4 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/10 cursor-pointer"
+                onClick={handleCreatorClick}
+              >
+              {/* Rank Badge - Top Right Corner */}
+              <div className="absolute top-3 right-3">
+                <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 text-white text-sm font-bold rounded-full shadow-lg">
+                  {idx + 1}
                 </div>
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={r.avatar || ""} />
-                  <AvatarFallback>
-                    {r.name.slice(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">{r.name}</span>
-                    <Badge variant={sentimentBadgeVariant(r.sentiment)}>
+              </div>
+
+              <div className="flex items-center gap-4">
+                {/* Avatar */}
+                <div className="relative flex-shrink-0">
+                  <Avatar className="h-12 w-12 transition-all duration-300 group-hover/creator:scale-110 group-hover/creator:shadow-lg ring-2 ring-gray-600/50 group-hover/creator:ring-orange-500/50">
+                    <AvatarImage 
+                      src={r.avatar || ""} 
+                      className="object-cover"
+                      onError={(e) => {
+                        const img = e.target as HTMLImageElement;
+                        img.style.display = 'none';
+                      }}
+                    />
+                    <AvatarFallback className="bg-gradient-to-br from-gray-700 to-gray-800 text-white font-bold text-sm transition-all duration-300 group-hover/creator:from-orange-500 group-hover/creator:to-orange-600">
+                      {r.name.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  {/* Platform indicator */}
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-900 border-2 border-gray-800 rounded-full flex items-center justify-center">
+                    <div className="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
+                  </div>
+                </div>
+
+                {/* Creator Info */}
+                <div className="flex-1 min-w-0 pr-10">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-bold text-white text-base leading-tight group-hover/creator:text-orange-400 transition-colors duration-300 truncate">
+                      {r.name}
+                    </h4>
+                    <Badge 
+                      variant={r.sentiment === "bullish" ? "default" : r.sentiment === "bearish" ? "destructive" : "secondary"}
+                      className="text-xs shrink-0 transition-all duration-300 group-hover/creator:scale-105"
+                    >
                       {r.sentiment}
                     </Badge>
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-gray-400 mb-2 truncate">
                     {r.handle}
                   </div>
+                  
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <div className="text-gray-400 text-xs mb-1 flex items-center gap-1">
+                        {r.impact >= 0 ? (
+                          <TrendingUp className="h-3 w-3 text-green-400" />
+                        ) : (
+                          <TrendingDown className="h-3 w-3 text-red-400" />
+                        )}
+                        Impact
+                      </div>
+                      <div className="text-orange-400 font-bold">
+                        {formatNumber(r.impact ?? 0)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-gray-400 text-xs mb-1">Followers</div>
+                      <div className="text-white font-semibold">
+                        {formatNumber(r.followers ?? 0)}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex items-center gap-6">
-                <div className="text-right">
-                  <div className="text-sm font-semibold">
-                    {(r.impact ?? 0).toLocaleString()}
-                  </div>
-                  <div className="text-xs text-muted-foreground flex items-center gap-1">
-                    {r.impact >= 0 ? (
-                      <TrendingUp className="h-3 w-3" />
-                    ) : (
-                      <TrendingDown className="h-3 w-3" />
-                    )}
-                    Impact
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm font-semibold">
-                    {(r.followers ?? 0).toLocaleString()}
-                  </div>
-                  <div className="text-xs text-muted-foreground">Followers</div>
-                </div>
-
+                {/* External Link */}
                 {r.url && (
-                  <a href={r.url} target="_blank" rel="noreferrer">
-                    <Button variant="ghost" size="sm" className="h-8 px-2">
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
-                  </a>
+                  <div className="absolute bottom-3 right-3">
+                    <a 
+                      href={r.url} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()} // Prevent triggering creator navigation
+                    >
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 w-8 p-0 bg-gray-700/50 hover:bg-orange-500 hover:scale-110 transition-all duration-300 group-hover/creator:shadow-lg"
+                      >
+                        <ExternalLink className="h-4 w-4 text-gray-300 hover:text-white transition-colors duration-300" />
+                      </Button>
+                    </a>
+                  </div>
                 )}
               </div>
             </div>
-          ))}
+            );
+          })}
 
         {!isLoading && !error && !rows.length && (
-          <div className="text-sm text-muted-foreground">
-            No influencers found.
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <Users className="h-12 w-12 text-gray-500 mb-4" />
+            <h3 className="text-lg font-semibold text-white mb-2">
+              No Creators Found
+            </h3>
+            <p className="text-gray-400 text-sm max-w-md">
+              {q ? `No creators match your search "${q}"` : "No creators found for this token"}
+            </p>
+            {q && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setQ("")}
+                className="mt-3 text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 transition-all duration-300"
+              >
+                Clear search
+              </Button>
+            )}
           </div>
         )}
       </CardContent>

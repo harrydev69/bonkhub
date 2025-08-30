@@ -230,11 +230,22 @@ export const useMetaSearchStore = create<MetaSearchState>()(
 
         updateFilteredSocialPosts: () => {
           const { rawSocialPostsData, influencerNames, postsPerPage, currentSocialPage } = get();
-          const filtered = rawSocialPostsData.filter(
+          
+          // Show all posts about the token, but prioritize posts from top influencers
+          const influencerPosts = rawSocialPostsData.filter(
             (post: SocialPost) =>
               post.creator_name &&
               influencerNames.has(post.creator_name.toLowerCase())
           );
+          
+          const otherPosts = rawSocialPostsData.filter(
+            (post: SocialPost) =>
+              !post.creator_name ||
+              !influencerNames.has(post.creator_name.toLowerCase())
+          );
+          
+          // Combine: influencer posts first, then other posts
+          const filtered = [...influencerPosts, ...otherPosts];
           const totalPages = Math.ceil(filtered.length / postsPerPage);
           set({
             filteredSocialPosts: filtered,

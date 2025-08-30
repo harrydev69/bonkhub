@@ -84,19 +84,21 @@ export async function fetchCreators(tokenId: string) {
   }
   const data = await response.json();
 
-  return (
-    data.influencers?.map((influencer: any, index: number) => ({
-      id: influencer.creator_id || Math.random().toString(),
-      name: influencer.creator_name || "Unknown",
-      avatar: influencer.creator_avatar || "https://via.placeholder.com/40",
-      followers: influencer.creator_followers || 0,
-      rank: influencer.creator_rank || index + 1,
-      interactions24h: influencer.interactions_24h || 0,
-      platform: influencer.creator_id?.startsWith("youtube::")
-        ? "youtube"
-        : influencer.creator_id?.startsWith("twitter::")
-        ? "twitter"
-        : "twitter",
-    })) || []
-  );
+  // Handle the nested response structure from the API
+  // API returns: { success: true, data: { influencers: [...] } }
+  const influencers = data.data?.influencers || data.influencers || [];
+
+  return influencers.map((influencer: any, index: number) => ({
+    id: influencer.creator_id || Math.random().toString(),
+    name: influencer.creator_name || "Unknown",
+    avatar: influencer.creator_avatar || "https://via.placeholder.com/40",
+    followers: influencer.creator_followers || 0,
+    rank: influencer.creator_rank || index + 1,
+    interactions24h: influencer.interactions_24h || 0,
+    platform: influencer.creator_id?.startsWith("youtube::")
+      ? "youtube"
+      : influencer.creator_id?.startsWith("twitter::")
+      ? "twitter"
+      : "twitter",
+  }));
 }

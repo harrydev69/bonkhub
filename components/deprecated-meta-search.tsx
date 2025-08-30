@@ -186,8 +186,11 @@ async function fetchCreators(tokenId: string): Promise<Creator[]> {
   }
   const data = await response.json();
 
-  return (
-    data.influencers?.map((influencer: any, index: number) => ({
+  // Handle the nested response structure from the API
+  // API returns: { success: true, data: { influencers: [...] } }
+  const influencers = data.data?.influencers || data.influencers || [];
+
+  return influencers.map((influencer: any, index: number) => ({
       id: influencer.creator_id || Math.random().toString(),
       name: influencer.creator_name || "Unknown",
       avatar: influencer.creator_avatar || "https://via.placeholder.com/40",
